@@ -6,12 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     menuToggle.addEventListener('click', () => sidebar.classList.toggle('open'));
 
-    // Configuración Modular
+    // Configuración Modular Actualizada
     const modules = [
         { id: 'm1', title: 'Granulometría', render: renderM1 },
         { id: 'm2', title: 'Propiedades Físicas', render: renderM2 },
-        { id: 'm3', title: 'Diseño Mezclas (ACI)', render: renderM3 },
-        { id: 'm4', title: 'Cuantificación', render: renderM4 },
         { id: 'm5', title: 'Resistencia Mecánica', render: renderM5 }
     ];
 
@@ -73,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `);
         container.appendChild(card);
 
-        // Cargar state previo
         const saved = JSON.parse(localStorage.getItem('lab_m1') || '[]');
         if (saved.length) card.querySelectorAll('.peso-ret').forEach((inp, i) => inp.value = saved[i] || '');
 
@@ -86,8 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pesoTotal === 0) return alert('Ingrese pesos retenidos válidos.');
 
             let pAcu = 0, sumaMF = 0;
-            // CORRECCIÓN: Se agrega el índice 9 (Tamiz No. 16) a la sumatoria estándar
-            const indicesMF = [12, 11, 10, 9, 8, 7, 6, 4, 2, 0]; // 100, 50, 30, 16, 8, 4, 3/8", 3/4", 1.5", 3"
+            const indicesMF = [12, 11, 10, 9, 8, 7, 6, 4, 2, 0];
 
             pesos.forEach((p, i) => {
                 let pRet = (p / pesoTotal) * 100;
@@ -136,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const humedad = ((ph - ps) / ps) * 100;
             const absorcion = ((psss - ps) / ps) * 100;
             const ge = va ? (ps / va) : 0;
-            const pu = vr ? ((ph - pr) / vr) * 1000 : 0; // gr/cm3 a kg/m3
+            const pu = vr ? ((ph - pr) / vr) * 1000 : 0;
             const vacios = (ge && pu) ? (1 - (pu / (ge * 1000))) * 100 : 0;
 
             document.getElementById('r-hum').textContent = humedad.toFixed(2);
@@ -148,120 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             localStorage.setItem('lab_fisicas', JSON.stringify({ ge, absorcion }));
         });
-    }
-
-    // --- MÓDULO 3: Diseño de Mezclas ACI ---
-    function renderM3(container) {
-        const fisicas = JSON.parse(localStorage.getItem('lab_fisicas') || '{}');
-        const defaultGE = fisicas.ge ? fisicas.ge.toFixed(2) : '2.65';
-
-        const card = createElement('div', 'card', `
-            <h2>Dosificación de Mezclas (Método ACI - 1m³)</h2>
-            <div class="grid-2">
-                ${createInputGroup('m3-fc', "Resistencia f'c (kg/cm²)", 'any', '210')}
-                <div class="form-group">
-                    <label>T.M.N Agregado</label>
-                    <select id="m3-tma">
-                        <option value="9.5">3/8"</option><option value="12.5">1/2"</option>
-                        <option value="19" selected>3/4"</option><option value="25">1"</option>
-                    </select>
-                </div>
-                ${createInputGroup('m3-mf', 'Módulo Finura Arena', 'any', '2.80')}
-                ${createInputGroup('m3-ge-cem', 'G.E. Cemento', 'any', '3.15')}
-                ${createInputGroup('m3-ge-gr', 'G.E. Grava', 'any', defaultGE)}
-                ${createInputGroup('m3-ge-ar', 'G.E. Arena', 'any', defaultGE)}
-            </div>
-            <button class="btn" id="m3-calc">Generar Diseño</button>
-            <div id="m3-res" style="display:none;">
-                <div class="result-box">Agua de Diseño <span id="r-agua"></span></div>
-                <div class="result-box">Cemento <span id="r-cem"></span></div>
-                <div class="result-box">Grava Seca <span id="r-grava"></span></div>
-                <div class="result-box">Arena Seca <span id="r-arena"></span></div>
-            </div>
-        `);
-        container.appendChild(card);
-
-        card.querySelector('#m3-calc').addEventListener('click', () => {
-            const fc = parseFloat(document.getElementById('m3-fc').value);
-            const ge_c = parseFloat(document.getElementById('m3-ge-cem').value);
-            const ge_g = parseFloat(document.getElementById('m3-ge-gr').value);
-            const ge_a = parseFloat(document.getElementById('m3-ge-ar').value);
-            
-            // Cálculos aproximados método ACI absoluto
-            const ac = Math.max(0.40, 0.82 - (fc * 0.0014));
-            const agua = document.getElementById('m3-tma').value === "19" ? 205 : 190; 
-            const cem = agua / ac;
-            
-            const volAgua = agua / 1000;
-            const volCem = cem / (ge_c * 1000);
-            const volAire = 0.02; // 2% atrapado
-            
-            const pesoGrava = 0.62 * 1600; // factor b/bo promedio * peso unit. comp.
-            const volGrava = pesoGrava / (ge_g * 1000);
-            
-            const volArena = 1 - (volAgua + volCem + volGrava + volAire);
-            const pesoArena = volArena * (ge_a * 1000);
-
-            document.getElementById('r-agua').textContent = agua.toFixed(1) + ' kg';
-            document.getElementById('r-cem').textContent = cem.toFixed(1) + ' kg';
-            document.getElementById('r-grava').textContent = pesoGrava.toFixed(1) + ' kg';
-            document.getElementById('r-arena').textContent = Math.max(0, pesoArena).toFixed(1) + ' kg';
-            document.getElementById('m3-res').style.display = 'block';
-        });
-    }
-
-    // --- MÓDULO 4: Cuantificación ---
-    function renderM4(container) {
-        const card = createElement('div', 'card', `
-            <h2>Cuantificación de Elementos</h2>
-            
-            <h3 style="margin-top:1rem;">Mampostería (Bloques)</h3>
-            <div class="grid-2">${createInputGroup('m4-area', 'Área de Muro (m²)')}</div>
-            <button class="btn btn-secondary" id="b-muro">Calcular Muro</button>
-            <div id="res-muro" style="display:none;" class="result-box">Bloques (uds) <span id="r-blk"></span></div>
-
-            <h3 style="margin-top:2rem;">Acero de Refuerzo</h3>
-            <div class="grid-2">
-                ${createInputGroup('m4-ml', 'Longitud Total (ml)')}
-                <div class="form-group">
-                    <label>Diámetro Varilla</label>
-                    <select id="m4-diam">
-                        <option value="9.53">3/8" (#3)</option>
-                        <option value="12.7">1/2" (#4)</option>
-                        <option value="15.88">5/8" (#5)</option>
-                    </select>
-                </div>
-            </div>
-            <button class="btn btn-secondary" id="b-acero">Calcular Acero</button>
-            <div id="res-acero" style="display:none;" class="result-box">Peso (kg) / Varillas <span id="r-ace"></span></div>
-
-            <h3 style="margin-top:2rem;">Hormigón</h3>
-            <div class="grid-2">${createInputGroup('m4-vol', 'Volumen de Vaciado (m³)')}</div>
-            <button class="btn btn-secondary" id="b-horm">Calcular Fundas</button>
-            <div id="res-horm" style="display:none;" class="result-box">Fundas (42.5kg) <span id="r-fun"></span></div>
-        `);
-        container.appendChild(card);
-
-        card.querySelector('#b-muro').onclick = () => {
-            const m2 = parseFloat(document.getElementById('m4-area').value) || 0;
-            document.getElementById('r-blk').textContent = Math.ceil(m2 * 12.5 * 1.05); // 5% desp
-            document.getElementById('res-muro').style.display = 'flex';
-        };
-
-        card.querySelector('#b-acero').onclick = () => {
-            const ml = parseFloat(document.getElementById('m4-ml').value) || 0;
-            const d = parseFloat(document.getElementById('m4-diam').value);
-            const pesoKg = ml * ((d * d) / 162);
-            const varillas = Math.ceil(ml / 6); // 6m estándar
-            document.getElementById('r-ace').textContent = `${pesoKg.toFixed(1)} kg / ${varillas} uds`;
-            document.getElementById('res-acero').style.display = 'flex';
-        };
-
-        card.querySelector('#b-horm').onclick = () => {
-            const vol = parseFloat(document.getElementById('m4-vol').value) || 0;
-            document.getElementById('r-fun').textContent = Math.ceil(vol * 8.24); // ~350kg/m3
-            document.getElementById('res-horm').style.display = 'flex';
-        };
     }
 
     // --- MÓDULO 5: Resistencia Mecánica ---
