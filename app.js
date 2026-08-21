@@ -86,7 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pesoTotal === 0) return alert('Ingrese pesos retenidos válidos.');
 
             let pAcu = 0, sumaMF = 0;
-            const indicesMF = [12, 11, 10, 8, 7, 6, 4, 2, 0]; // 100, 50, 30, 16, 8, 4, 3/8, 3/4, 1.5, 3... (estándar simplificado)
+            // CORRECCIÓN: Se agrega el índice 9 (Tamiz No. 16) a la sumatoria estándar
+            const indicesMF = [12, 11, 10, 9, 8, 7, 6, 4, 2, 0]; // 100, 50, 30, 16, 8, 4, 3/8", 3/4", 1.5", 3"
 
             pesos.forEach((p, i) => {
                 let pRet = (p / pesoTotal) * 100;
