@@ -538,12 +538,10 @@
             document.getElementById('navToggle').addEventListener('click', () => {
                 document.getElementById('sidebar').classList.toggle('open');
             });
-            // Manejo de botón atrás
             window.addEventListener('popstate', (e) => {
                 const moduleId = e.state?.module || 'modulo1';
                 navigateTo(moduleId, false);
             });
-            // Al cargar, verificar hash
             const initialHash = location.hash.substring(1);
             if (initialHash && document.getElementById(initialHash)) {
                 navigateTo(initialHash, false);
@@ -579,6 +577,7 @@
                 });
 
                 target.querySelectorAll('.clear-btn').forEach(btn => {
+                    btn.textContent = btn.textContent.replace('Prueba 1', 'Prueba ' + prefix);
                     btn.dataset.prueba = prefix;
                 });
             }
@@ -713,7 +712,8 @@
                 const pu_suelto = parseFloat(document.getElementById(`m2_pu_suelto_${idx}`).value) || 0;
                 const pu_comp = parseFloat(document.getElementById(`m2_pu_comp_${idx}`).value) || 0;
                 const g_base = parseFloat(document.getElementById(`m2_g_base_${idx}`).value) || 0;
-                const gamma_w = 1;
+                // CORRECCIÓN: densidad del agua = 1000 kg/m³
+                const gamma_w = 1000; // kg/m³
                 const vac_suelto = g_base > 0 ? ((g_base * gamma_w - pu_suelto) / (g_base * gamma_w)) * 100 : 0;
                 const vac_comp = g_base > 0 ? ((g_base * gamma_w - pu_comp) / (g_base * gamma_w)) * 100 : 0;
                 document.getElementById(`m2_vacios_result_${idx}`).textContent = `% Vacíos (suelto) = ${vac_suelto.toFixed(2)}%, (compactado) = ${vac_comp.toFixed(2)}%`;
