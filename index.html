@@ -99,6 +99,8 @@
         .hidden { display: none; }
         .fs-small { font-size: 0.85rem; }
         .mb-10 { margin-bottom: 10px; }
+        .global-actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+        .global-actions button { flex: 1; min-width: 120px; }
     </style>
 </head>
 <body>
@@ -113,6 +115,10 @@
             <li><button class="nav-link" data-module="modulo5">5. Mezclas Asfálticas</button></li>
             <li><button class="nav-link" data-module="modulo6">6. Control de Calidad</button></li>
         </ul>
+        <div class="global-actions" style="padding: 10px;">
+            <button onclick="exportData()" style="width:100%; margin-bottom:5px;">📤 Exportar</button>
+            <button onclick="importData()" style="width:100%;">📥 Importar</button>
+        </div>
     </nav>
 
     <main class="main-content" id="mainContent">
@@ -258,9 +264,7 @@
                     <div class="note">Siga el procedimiento estándar: tamizar, pesar retenidos y registrar. El módulo de finura se calcula con la serie ASTM designada.</div>
                     <div class="table-responsive">
                         <table id="m2_gran_table_1">
-                            <thead>
-                                <tr><th>Tamiz</th><th>Peso Retenido (g)</th><th>% Retenido</th><th>% Ret. Acumulado</th><th>% Pasa</th></tr>
-                            </thead>
+                            <thead><tr><th>Tamiz</th><th>Peso Retenido (g)</th><th>% Retenido</th><th>% Ret. Acumulado</th><th>% Pasa</th></tr></thead>
                             <tbody>
                                 <tr><td>3"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='3"' step="any" min="0"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
                                 <tr><td>2"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='2"' step="any" min="0"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
@@ -365,6 +369,9 @@
                     <h3>Bloques de Mampostería</h3>
                     <div class="form-group">
                         <label>Carga (P):</label><input type="number" id="m3_bloque_P_1" step="any" min="0">
+                        <select class="unit-select" id="m3_bloque_P_unit_1">
+                            <option value="kN">kN</option><option value="N">N</option><option value="kg">kg</option><option value="lb">lb</option>
+                        </select>
                         <label>Largo:</label><input type="number" id="m3_bloque_largo_1" step="any" min="0">
                         <label>Ancho:</label><input type="number" id="m3_bloque_ancho_1" step="any" min="0">
                         <label>Área de huecos:</label><input type="number" id="m3_bloque_huecos_1" step="any" min="0">
@@ -444,7 +451,7 @@
                         <label>Gsb (árido):</label><input type="number" id="m5_Gsb_1" step="any" min="0">
                         <label>%Ps (agregado):</label><input type="number" id="m5_Ps_1" step="any" min="0" value="95">
                     </div>
-                    <div class="result-box" id="m5_grav_result_1">Gmb = 0, Gse = 0</div>
+                    <div class="result-box" id="m5_grav_result_1">Gmb = 0, Gmm = 0</div>
 
                     <h3>Análisis Volumétrico</h3>
                     <div class="result-box" id="m5_vol_result_1">VTM = 0%, VMA = 0%, VFA = 0%</div>
@@ -513,18 +520,36 @@
             // ==================== NAVEGACIÓN ====================
             const navLinks = $$('.nav-link');
             const modules = $$('.module');
+            function navigateTo(moduleId, pushHistory = true) {
+                navLinks.forEach(b => b.classList.remove('active'));
+                modules.forEach(m => m.classList.remove('active'));
+                const btn = document.querySelector(`.nav-link[data-module="${moduleId}"]`);
+                if (btn) btn.classList.add('active');
+                const module = $(moduleId);
+                if (module) module.classList.add('active');
+                document.getElementById('sidebar').classList.remove('open');
+                if (pushHistory) {
+                    history.pushState({ module: moduleId }, '', `#${moduleId}`);
+                }
+            }
             navLinks.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    navLinks.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    modules.forEach(m => m.classList.remove('active'));
-                    $(btn.dataset.module).classList.add('active');
-                    document.getElementById('sidebar').classList.remove('open');
-                });
+                btn.addEventListener('click', () => navigateTo(btn.dataset.module));
             });
             document.getElementById('navToggle').addEventListener('click', () => {
                 document.getElementById('sidebar').classList.toggle('open');
             });
+            // Manejo de botón atrás
+            window.addEventListener('popstate', (e) => {
+                const moduleId = e.state?.module || 'modulo1';
+                navigateTo(moduleId, false);
+            });
+            // Al cargar, verificar hash
+            const initialHash = location.hash.substring(1);
+            if (initialHash && document.getElementById(initialHash)) {
+                navigateTo(initialHash, false);
+            } else {
+                navigateTo('modulo1', false);
+            }
 
             // ==================== SISTEMA DE PESTAÑAS ====================
             function initTabs(containerId) {
@@ -549,17 +574,13 @@
                 if (!source || !target) return;
                 target.innerHTML = source.innerHTML;
 
-                // Reemplazar IDs
                 target.querySelectorAll('[id]').forEach(el => {
-                    el.id = el.id.replace('_1', '_' + prefix);
+                    el.id = el.id.replace(/_1$/, '_' + prefix);
                 });
 
-                // Reemplazar atributos data-prueba en botones clear
                 target.querySelectorAll('.clear-btn').forEach(btn => {
                     btn.dataset.prueba = prefix;
                 });
-
-                // Para inputs de granulometría, no tienen id, se guardan por tabla
             }
 
             duplicateTabContent('m2_prueba1', 'm2_prueba2', '2');
@@ -627,7 +648,6 @@
                 $('m1_fs_result').textContent = `FS = ${FS.toFixed(2)}`;
             }
 
-            // Granulometría: ahora con manejo de eventos y persistencia
             function calcGranulometria(prueba) {
                 const idx = prueba.slice(-1);
                 const table = document.getElementById(`m2_gran_table_${idx}`);
@@ -653,17 +673,14 @@
                     row.cells[2].textContent = pctRet.toFixed(2);
                     row.cells[3].textContent = pctAcum.toFixed(2);
                     row.cells[4].textContent = pctPasa.toFixed(2);
-                    if (stdSeries.includes(tamiz)) {
-                        mfSum += pctAcum;
-                    }
+                    if (stdSeries.includes(tamiz)) mfSum += pctAcum;
                 });
                 const MF = mfSum / 100;
                 const mfResult = document.getElementById(`m2_mf_result_${idx}`);
                 if (mfResult) mfResult.textContent = `Módulo de Finura = ${MF.toFixed(2)}`;
 
-                // Guardar estado de pesos en localStorage
                 const estado = {};
-                rows.forEach((row, i) => {
+                rows.forEach((row) => {
                     const tamiz = row.cells[0].textContent.trim();
                     const peso = parseFloat(row.querySelector('.m2_peso_retenido').value) || 0;
                     estado[tamiz] = peso;
@@ -671,7 +688,6 @@
                 saveState(`m2_granulometria_${prueba}`, estado);
             }
 
-            // Función para cargar granulometría guardada
             function loadGranulometria(prueba) {
                 const idx = prueba.slice(-1);
                 const estado = loadState(`m2_granulometria_${prueba}`, {});
@@ -680,11 +696,7 @@
                 table.querySelectorAll('tbody tr').forEach(row => {
                     const tamiz = row.cells[0].textContent.trim();
                     const input = row.querySelector('.m2_peso_retenido');
-                    if (estado.hasOwnProperty(tamiz)) {
-                        input.value = estado[tamiz];
-                    } else {
-                        input.value = '';
-                    }
+                    input.value = estado.hasOwnProperty(tamiz) ? estado[tamiz] : '';
                 });
                 calcGranulometria(prueba);
             }
@@ -709,7 +721,6 @@
 
             function calcModulo3(prueba) {
                 const idx = prueba.slice(-1);
-                // Compresión
                 const P = parseFloat(document.getElementById(`m3_P_${idx}`).value) || 0;
                 const dim = parseFloat(document.getElementById(`m3_dim_${idx}`).value) || 0;
                 const shape = document.getElementById(`m3_shape_${idx}`).value;
@@ -721,7 +732,6 @@
                 const fc = safeDiv(P_N, area_mm2);
                 document.getElementById(`m3_fc_result_${idx}`).textContent = `f'c = ${fc.toFixed(2)} MPa`;
 
-                // Tracción indirecta
                 const Pt = parseFloat(document.getElementById(`m3_traccion_P_${idx}`).value) || 0;
                 const d = parseFloat(document.getElementById(`m3_traccion_d_${idx}`).value) || 0;
                 const L = parseFloat(document.getElementById(`m3_traccion_L_${idx}`).value) || 0;
@@ -729,7 +739,6 @@
                 const T = safeDiv(2 * Pt_N, Math.PI * L * d);
                 document.getElementById(`m3_traccion_result_${idx}`).textContent = `T = ${T.toFixed(2)} MPa`;
 
-                // Flexión (con unidad de carga)
                 const Pf = parseFloat(document.getElementById(`m3_flex_P_${idx}`).value) || 0;
                 const Pf_unit = document.getElementById(`m3_flex_P_unit_${idx}`).value;
                 const Pf_N = convertToBase(Pf, Pf_unit);
@@ -739,7 +748,6 @@
                 const R = safeDiv(Pf_N * Lf, bf * df * df);
                 document.getElementById(`m3_flex_result_${idx}`).textContent = `R = ${R.toFixed(2)} MPa`;
 
-                // f'cr ACI
                 const fc_espec = parseFloat(document.getElementById(`m3_fc_espec_${idx}`).value) || 0;
                 const s = parseFloat(document.getElementById(`m3_s_${idx}`).value) || 0;
                 let fcr1, fcr2, fcr;
@@ -753,15 +761,16 @@
                 fcr = Math.max(fcr1, fcr2);
                 document.getElementById(`m3_fcr_result_${idx}`).textContent = `f'cr = ${fcr.toFixed(2)} MPa`;
 
-                // Bloques
                 const Pb = parseFloat(document.getElementById(`m3_bloque_P_${idx}`).value) || 0;
+                const Pb_unit = document.getElementById(`m3_bloque_P_unit_${idx}`).value;
+                const Pb_N = convertToBase(Pb, Pb_unit);
                 const largo = parseFloat(document.getElementById(`m3_bloque_largo_${idx}`).value) || 0;
                 const ancho = parseFloat(document.getElementById(`m3_bloque_ancho_${idx}`).value) || 0;
                 const huecos = parseFloat(document.getElementById(`m3_bloque_huecos_${idx}`).value) || 0;
                 const areaBruta = largo * ancho;
                 const areaNeta = areaBruta - huecos;
-                const esfuerzoBruto = safeDiv(Pb, areaBruta);
-                const esfuerzoNeto = safeDiv(Pb, areaNeta);
+                const esfuerzoBruto = safeDiv(Pb_N, areaBruta);
+                const esfuerzoNeto = safeDiv(Pb_N, areaNeta);
                 document.getElementById(`m3_bloque_result_${idx}`).textContent = `Área bruta = ${areaBruta.toFixed(0)} mm², Área neta = ${areaNeta.toFixed(0)} mm², σ bruto = ${esfuerzoBruto.toFixed(2)} MPa, σ neto = ${esfuerzoNeto.toFixed(2)} MPa`;
             }
 
@@ -810,7 +819,7 @@
                 document.getElementById(`m5_vol_result_${idx}`).textContent = `VTM = ${VTM.toFixed(2)}%, VMA = ${VMA.toFixed(2)}%, VFA = ${VFA.toFixed(2)}%`;
             }
 
-            // Módulo 6
+            // ==================== ESTADÍSTICA ====================
             let statsValues = loadState('stats_values', []);
             function renderStats() {
                 const tbody = $('m6_stats_body');
@@ -826,10 +835,7 @@
                     const variance = n > 1 ? statsValues.reduce((a,b)=>a + (b-mean)**2,0) / (n-1) : 0;
                     const s = Math.sqrt(variance);
                     const cv = mean !== 0 ? (s / mean) * 100 : 0;
-                    let dispersion = '';
-                    if (cv < 10) dispersion = 'Excelente';
-                    else if (cv <= 15) dispersion = 'Bueno';
-                    else dispersion = 'Deficiente';
+                    let dispersion = cv < 10 ? 'Excelente' : cv <= 15 ? 'Bueno' : 'Deficiente';
                     $('m6_stats_result').textContent = `n = ${n}, Media = ${mean.toFixed(2)}, s = ${s.toFixed(2)}, CV = ${cv.toFixed(2)}% (${dispersion})`;
                 } else {
                     $('m6_stats_result').textContent = 'n = 0, Media = 0, s = 0, CV = 0%';
@@ -843,77 +849,56 @@
             window.deleteStat = function(index) { statsValues.splice(index, 1); renderStats(); };
             window.clearStats = function() { statsValues = []; renderStats(); };
 
-            // ==================== MANEJO DE LIMPIEZA (EVENT DELEGATION) ====================
+            // ==================== LIMPIEZA GLOBAL (delegación) ====================
             document.addEventListener('click', function(e) {
                 const clearBtn = e.target.closest('.clear-btn');
-                if (clearBtn) {
-                    const module = clearBtn.dataset.module;
-                    const prueba = clearBtn.dataset.prueba;
-                    const sub = clearBtn.dataset.sub; // opcional
-                    if (module === 'm2') {
-                        if (sub === 'vol') {
-                            // Limpiar volumétricas
-                            const idx = prueba;
-                            ['w_humedo','w_seco','w_sss','pu_suelto','pu_comp','g_base'].forEach(prefix => {
-                                const el = document.getElementById(`m2_${prefix}_${idx}`);
-                                if (el) el.value = '';
-                            });
-                            calcVolumetric('prueba' + idx);
-                            // Limpiar localStorage de volumétricas
-                            saveState(`m2_volumetric_prueba${idx}`, {});
-                        } else {
-                            // Limpiar granulometría
-                            const idx = prueba;
-                            const table = document.getElementById(`m2_gran_table_${idx}`);
-                            if (table) {
-                                table.querySelectorAll('.m2_peso_retenido').forEach(input => input.value = '');
-                                calcGranulometria('prueba' + idx);
-                                saveState(`m2_granulometria_prueba${idx}`, {});
-                            }
+                if (!clearBtn) return;
+                const module = clearBtn.dataset.module;
+                const prueba = clearBtn.dataset.prueba;
+                const sub = clearBtn.dataset.sub;
+                if (module === 'm2') {
+                    if (sub === 'vol') {
+                        const idx = prueba;
+                        ['w_humedo','w_seco','w_sss','pu_suelto','pu_comp','g_base'].forEach(prefix => {
+                            const el = document.getElementById(`m2_${prefix}_${idx}`);
+                            if (el) el.value = '';
+                        });
+                        calcVolumetric('prueba' + idx);
+                    } else {
+                        const idx = prueba;
+                        const table = document.getElementById(`m2_gran_table_${idx}`);
+                        if (table) {
+                            table.querySelectorAll('.m2_peso_retenido').forEach(input => input.value = '');
+                            calcGranulometria('prueba' + idx);
                         }
-                    } else if (module === 'm3') {
-                        const idx = prueba;
-                        document.querySelectorAll(`#m3_prueba${idx} input`).forEach(input => input.value = '');
-                        calcModulo3('prueba' + idx);
-                        saveState(`m3_prueba${idx}`, {});
-                    } else if (module === 'm4') {
-                        const idx = prueba;
-                        document.querySelectorAll(`#m4_prueba${idx} input`).forEach(input => input.value = '');
-                        calcModulo4('prueba' + idx);
-                        saveState(`m4_prueba${idx}`, {});
-                    } else if (module === 'm5') {
-                        const idx = prueba;
-                        document.querySelectorAll(`#m5_prueba${idx} input`).forEach(input => input.value = '');
-                        calcModulo5('prueba' + idx);
-                        saveState(`m5_prueba${idx}`, {});
                     }
+                } else {
+                    const prefix = module === 'm3' ? 'm3' : module === 'm4' ? 'm4' : 'm5';
+                    const idx = prueba;
+                    document.querySelectorAll(`#${prefix}_prueba${idx} input`).forEach(input => input.value = '');
+                    if (prefix === 'm3') calcModulo3('prueba' + idx);
+                    else if (prefix === 'm4') calcModulo4('prueba' + idx);
+                    else if (prefix === 'm5') calcModulo5('prueba' + idx);
                 }
             });
 
-            // ==================== PERSISTENCIA AUTOMÁTICA Y EVENTOS ====================
-            document.addEventListener('input', function(e) {
+            // ==================== PERSISTENCIA AUTOMÁTICA ====================
+            function handleInputOrChange(e) {
                 const target = e.target;
-                // Granulometría: clase .m2_peso_retenido
                 if (target.classList.contains('m2_peso_retenido')) {
-                    // Determinar prueba a partir de la tabla
                     const table = target.closest('table');
                     if (table) {
-                        const tableId = table.id; // m2_gran_table_X
-                        const idx = tableId.slice(-1);
-                        const prueba = 'prueba' + idx;
-                        calcGranulometria(prueba);
-                        // Ya se guarda dentro de calcGranulometria
+                        const idx = table.id.slice(-1);
+                        calcGranulometria('prueba' + idx);
                     }
                     return;
                 }
-                // Para inputs con id
                 if (target.id) {
                     saveState(target.id, target.value);
                     const id = target.id;
                     if (id.startsWith('m1_')) calcModulo1();
                     else if (id.startsWith('m2_')) {
                         const prueba = id.includes('_1') ? 'prueba1' : id.includes('_2') ? 'prueba2' : 'prueba3';
-                        // Los volumétricos ya se guardan por input id, pero recalculamos
                         calcVolumetric(prueba);
                     }
                     else if (id.startsWith('m3_')) {
@@ -929,29 +914,59 @@
                         calcModulo5(prueba);
                     }
                 }
-            });
+            }
+            ['input', 'change'].forEach(evt => document.addEventListener(evt, handleInputOrChange));
+
+            // ==================== EXPORTAR / IMPORTAR ====================
+            window.exportData = function() {
+                const allData = {};
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    allData[key] = localStorage.getItem(key);
+                }
+                const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `labmat_backup_${new Date().toISOString().slice(0,10)}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+            };
+            window.importData = function() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                input.onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = function(ev) {
+                        try {
+                            const data = JSON.parse(ev.target.result);
+                            for (const key in data) localStorage.setItem(key, data[key]);
+                            restoreState();
+                            alert('Datos importados correctamente');
+                        } catch(err) { alert('Archivo inválido'); }
+                    };
+                    reader.readAsText(file);
+                };
+                input.click();
+            };
 
             // ==================== RESTAURAR ESTADO ====================
             function restoreState() {
-                // Restaurar inputs con id guardado
                 for (let i = 0; i < localStorage.length; i++) {
                     const key = localStorage.key(i);
                     if (key && key.startsWith('m') && !key.includes('granulometria') && !key.includes('volumetric')) {
                         const el = document.getElementById(key);
-                        if (el) {
-                            const val = loadState(key);
-                            el.value = val;
-                        }
+                        if (el) el.value = loadState(key);
                     }
                 }
-                // Restaurar granulometría
                 ['prueba1','prueba2','prueba3'].forEach(p => {
                     loadGranulometria(p);
                 });
-                // Restaurar estadísticas
                 statsValues = loadState('stats_values', []);
                 renderStats();
-                // Calcular todo
                 calcModulo1();
                 ['prueba1','prueba2','prueba3'].forEach(p => {
                     calcVolumetric(p);
