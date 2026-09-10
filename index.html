@@ -93,11 +93,7 @@
             border-radius: var(--radius-sm);
         }
         .nav-list button:hover { background: rgba(255,255,255,0.08); color: #fff; }
-        .nav-list button.active {
-            background: var(--secondary);
-            color: #fff;
-            font-weight: 600;
-        }
+        .nav-list button.active { background: var(--secondary); color: #fff; font-weight: 600; }
         .sidebar-actions {
             padding: 12px;
             border-top: 1px solid rgba(255,255,255,0.08);
@@ -172,6 +168,97 @@
         .module.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* ==================== NAVEGACIÓN INTERNA: MENÚ + CALC-VIEW ==================== */
+        /* Regla base: dentro de un módulo se muestra el menú (nivel 1).
+           Cuando tiene la clase .view-calc, se muestra solo el calc-view activo (nivel 2). */
+        .module .module-menu { display: block; }
+        .module .calc-view { display: none; }
+        .module.view-calc .module-menu { display: none; }
+        .module.view-calc .calc-view.active { display: block; animation: fadeIn 0.22s ease; }
+
+        /* Cuadrícula del menú de cada módulo */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        /* Tarjeta táctil del menú (mínimo 72px de alto) */
+        .menu-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 18px;
+            min-height: 72px;
+            background: var(--card);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            text-align: left;
+            transition: transform 0.08s, border-color 0.15s, box-shadow 0.15s;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 1rem;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        .menu-card:hover { border-color: var(--secondary); box-shadow: var(--shadow-md); }
+        .menu-card:active { transform: scale(0.98); }
+        .menu-card .mc-icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            width: 46px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+        }
+        .menu-card .mc-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+        .menu-card .mc-title { font-weight: 600; font-size: 0.98rem; color: var(--text); line-height: 1.25; }
+        .menu-card .mc-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.3; }
+
+        /* Botón Volver (nivel 2 → nivel 1) */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            min-height: 44px;
+            background: transparent;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-size: 0.92rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: transform 0.08s, border-color 0.15s, background 0.15s;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        .back-btn:hover { border-color: var(--secondary); background: var(--bg); }
+        .back-btn:active { transform: scale(0.96); }
+
+        /* Filtrado de secciones dentro de un calc-view único (Módulos 2-5).
+           Solo se muestra la calc-section cuyo data-calc coincide con data-active-calc. */
+        .calc-view[data-active-calc] .calc-section { display: none; }
+        .calc-view[data-active-calc="m2_gran"] .calc-section[data-calc="m2_gran"] { display: block; }
+        .calc-view[data-active-calc="m2_vol"]  .calc-section[data-calc="m2_vol"]  { display: block; }
+        .calc-view[data-active-calc="m2_vac"]  .calc-section[data-calc="m2_vac"]  { display: block; }
+        .calc-view[data-active-calc="m3_comp"] .calc-section[data-calc="m3_comp"] { display: block; }
+        .calc-view[data-active-calc="m3_trac"] .calc-section[data-calc="m3_trac"] { display: block; }
+        .calc-view[data-active-calc="m3_flex"] .calc-section[data-calc="m3_flex"] { display: block; }
+        .calc-view[data-active-calc="m3_aci"]  .calc-section[data-calc="m3_aci"]  { display: block; }
+        .calc-view[data-active-calc="m3_bloq"] .calc-section[data-calc="m3_bloq"] { display: block; }
+        .calc-view[data-active-calc="m4_trac"] .calc-section[data-calc="m4_trac"] { display: block; }
+        .calc-view[data-active-calc="m4_tors"] .calc-section[data-calc="m4_tors"] { display: block; }
+        .calc-view[data-active-calc="m4_mad"]  .calc-section[data-calc="m4_mad"]  { display: block; }
+        .calc-view[data-active-calc="m5_grav"] .calc-section[data-calc="m5_grav"] { display: block; }
+        .calc-view[data-active-calc="m5_vol"]  .calc-section[data-calc="m5_vol"]  { display: block; }
+
         /* ==================== CARDS ==================== */
         .card {
             background: var(--card);
@@ -208,6 +295,8 @@
             background: var(--secondary);
             border-radius: 2px;
         }
+        /* En el menú del módulo, el h3 no lleva la barra decorativa */
+        .module-menu .card h3::before { display: none; }
 
         /* ==================== FORM ==================== */
         .form-group {
@@ -307,11 +396,7 @@
             -webkit-tap-highlight-color: transparent;
         }
         .tab-btn:active { transform: scale(0.96); }
-        .tab-btn.active {
-            background: var(--secondary);
-            color: #fff;
-            border-color: var(--secondary);
-        }
+        .tab-btn.active { background: var(--secondary); color: #fff; border-color: var(--secondary); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
@@ -323,17 +408,8 @@
             border-radius: var(--radius-sm);
             border: 1px solid var(--border);
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 640px;
-            font-size: 0.88rem;
-        }
-        th, td {
-            padding: 10px 8px;
-            border-bottom: 1px solid var(--border);
-            text-align: center;
-        }
+        table { width: 100%; border-collapse: collapse; min-width: 640px; font-size: 0.88rem; }
+        th, td { padding: 10px 8px; border-bottom: 1px solid var(--border); text-align: center; }
         th {
             background: var(--bg);
             color: var(--text);
@@ -345,7 +421,6 @@
             top: 0;
             z-index: 2;
         }
-        /* Primera columna sticky */
         .table-responsive table th:first-child,
         .table-responsive table td:first-child {
             position: sticky;
@@ -355,10 +430,7 @@
             font-weight: 600;
             border-right: 1px solid var(--border);
         }
-        .table-responsive table th:first-child {
-            background: var(--bg);
-            z-index: 3;
-        }
+        .table-responsive table th:first-child { background: var(--bg); z-index: 3; }
         input[type="number"] {
             height: 44px;
             min-width: 68px;
@@ -371,10 +443,7 @@
             font-size: 0.95rem;
             -webkit-tap-highlight-color: transparent;
         }
-        input[type="number"]:focus {
-            outline: none;
-            border-color: var(--secondary);
-        }
+        input[type="number"]:focus { outline: none; border-color: var(--secondary); }
 
         /* ==================== SAVE INDICATOR ==================== */
         .save-indicator {
@@ -412,22 +481,18 @@
         @media (max-width: 480px) {
             .card { padding: 16px; border-radius: var(--radius-sm); }
             .card h2 { font-size: 1.15rem; }
-            .form-group {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 6px;
-            }
+            .form-group { flex-direction: column; align-items: stretch; gap: 6px; }
             .form-group label { font-size: 0.88rem; }
             .form-group input,
             .form-group select,
             .form-group button { width: 100%; }
             .unit-select { width: 100% !important; }
             .tab-btn { padding: 9px 14px; font-size: 0.85rem; flex: 1; min-width: 0; }
+            .menu-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <!-- SIDEBAR (desktop) -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">LabMat Suite</div>
         <ul class="nav-list">
@@ -444,375 +509,619 @@
         </div>
     </nav>
 
-    <!-- BOTTOM NAV (móvil/tablet portrait) -->
     <nav class="bottom-nav" id="bottomNav">
         <div class="bottom-nav-inner">
-            <button class="bottom-nav-btn active" data-module="modulo1">
-                <span class="bn-icon">🔬</span><span class="bn-label">Físicos</span>
-            </button>
-            <button class="bottom-nav-btn" data-module="modulo2">
-                <span class="bn-icon">🏗️</span><span class="bn-label">Áridos</span>
-            </button>
-            <button class="bottom-nav-btn" data-module="modulo3">
-                <span class="bn-icon">🧱</span><span class="bn-label">Hormigón</span>
-            </button>
-            <button class="bottom-nav-btn" data-module="modulo4">
-                <span class="bn-icon">⚙️</span><span class="bn-label">Metales</span>
-            </button>
-            <button class="bottom-nav-btn" data-module="modulo5">
-                <span class="bn-icon">🛣️</span><span class="bn-label">Asfalto</span>
-            </button>
-            <button class="bottom-nav-btn" data-module="modulo6">
-                <span class="bn-icon">📊</span><span class="bn-label">Calidad</span>
-            </button>
+            <button class="bottom-nav-btn active" data-module="modulo1"><span class="bn-icon">🔬</span><span class="bn-label">Físicos</span></button>
+            <button class="bottom-nav-btn" data-module="modulo2"><span class="bn-icon">🏗️</span><span class="bn-label">Áridos</span></button>
+            <button class="bottom-nav-btn" data-module="modulo3"><span class="bn-icon">🧱</span><span class="bn-label">Hormigón</span></button>
+            <button class="bottom-nav-btn" data-module="modulo4"><span class="bn-icon">⚙️</span><span class="bn-label">Metales</span></button>
+            <button class="bottom-nav-btn" data-module="modulo5"><span class="bn-icon">🛣️</span><span class="bn-label">Asfalto</span></button>
+            <button class="bottom-nav-btn" data-module="modulo6"><span class="bn-icon">📊</span><span class="bn-label">Calidad</span></button>
         </div>
     </nav>
 
-    <!-- INDICADOR DE GUARDADO -->
     <div class="save-indicator" id="saveIndicator">Guardado ✓</div>
 
     <main class="main-content" id="mainContent">
-        <!-- Módulo 1 -->
+        <!-- ============================================================
+             MÓDULO 1 — Fundamentos Físicos
+             5 opciones de menú → 5 calc-views independientes
+             ============================================================ -->
         <section class="module active" id="modulo1">
-            <div class="card">
-                <h2>🔬 Fundamentos Físicos y Mecánica Básica</h2>
-                <p class="fs-small mb-10">Geometría, Esfuerzo, Ley de Hooke, Resiliencia y Factor de Seguridad.</p>
+            <!-- NIVEL 1: menú -->
+            <div class="module-menu">
+                <div class="card">
+                    <h2>🔬 Fundamentos Físicos y Mecánica Básica</h2>
+                    <p class="fs-small mb-10">Selecciona una calculadora:</p>
+                    <div class="menu-grid">
+                        <button class="menu-card" data-module="modulo1" data-calc="m1_geo">
+                            <span class="mc-icon">📐</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Geometría de Secciones</span>
+                                <span class="mc-desc">Área circular y rectangular</span>
+                            </div>
+                        </button>
+                        <button class="menu-card" data-module="modulo1" data-calc="m1_esf">
+                            <span class="mc-icon">📏</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Esfuerzo Normal y Deformación</span>
+                                <span class="mc-desc">σ = P/A · ε = ΔL / L₀</span>
+                            </div>
+                        </button>
+                        <button class="menu-card" data-module="modulo1" data-calc="m1_hooke">
+                            <span class="mc-icon">🧮</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Ley de Hooke y Elasticidad</span>
+                                <span class="mc-desc">Módulo E · Poisson · deformación 3D</span>
+                            </div>
+                        </button>
+                        <button class="menu-card" data-module="modulo1" data-calc="m1_res">
+                            <span class="mc-icon">🔄</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Módulo de Resiliencia</span>
+                                <span class="mc-desc">Ur = σy² / (2·E)</span>
+                            </div>
+                        </button>
+                        <button class="menu-card" data-module="modulo1" data-calc="m1_fs">
+                            <span class="mc-icon">🛡️</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Factor de Seguridad</span>
+                                <span class="mc-desc">FS = σ fallo / σ admisible</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-                <h3>Geometría de Secciones</h3>
-                <div class="form-group">
-                    <label for="m1_geo_shape">Forma:</label>
-                    <select id="m1_geo_shape">
-                        <option value="circular">Circular</option>
-                        <option value="rectangular">Rectangular / Prismática</option>
-                    </select>
+            <!-- NIVEL 2A: Geometría de Secciones -->
+            <div class="calc-view" data-calc="m1_geo">
+                <button class="back-btn" data-module="modulo1">← Volver</button>
+                <div class="card">
+                    <h3>Geometría de Secciones</h3>
+                    <div class="form-group">
+                        <label for="m1_geo_shape">Forma:</label>
+                        <select id="m1_geo_shape">
+                            <option value="circular">Circular</option>
+                            <option value="rectangular">Rectangular / Prismática</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="m1_geo_circular_inputs">
+                        <label for="m1_geo_d">Diámetro (d):</label>
+                        <input type="number" id="m1_geo_d" min="0" step="any" placeholder="0.0">
+                        <select class="unit-select" id="m1_geo_d_unit" aria-label="Unidad de diámetro">
+                            <option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option><option value="in">in</option>
+                        </select>
+                    </div>
+                    <div class="form-group hidden" id="m1_geo_rect_inputs" style="display:none;">
+                        <label for="m1_geo_b">Base (b):</label>
+                        <input type="number" id="m1_geo_b" min="0" step="any" placeholder="0.0">
+                        <select class="unit-select" id="m1_geo_b_unit" aria-label="Unidad de base">
+                            <option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option>
+                        </select>
+                        <label for="m1_geo_h">Altura (h):</label>
+                        <input type="number" id="m1_geo_h" min="0" step="any" placeholder="0.0">
+                        <select class="unit-select" id="m1_geo_h_unit" aria-label="Unidad de altura">
+                            <option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option>
+                        </select>
+                    </div>
+                    <div class="result-box" id="m1_geo_result">Área = 0 mm²</div>
                 </div>
-                <div class="form-group" id="m1_geo_circular_inputs">
-                    <label for="m1_geo_d">Diámetro (d):</label>
-                    <input type="number" id="m1_geo_d" min="0" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_geo_d_unit" aria-label="Unidad de diámetro">
-                        <option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option><option value="in">in</option>
-                    </select>
-                </div>
-                <div class="form-group hidden" id="m1_geo_rect_inputs" style="display:none;">
-                    <label for="m1_geo_b">Base (b):</label>
-                    <input type="number" id="m1_geo_b" min="0" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_geo_b_unit" aria-label="Unidad de base">
-                        <option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option>
-                    </select>
-                    <label for="m1_geo_h">Altura (h):</label>
-                    <input type="number" id="m1_geo_h" min="0" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_geo_h_unit" aria-label="Unidad de altura">
-                        <option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option>
-                    </select>
-                </div>
-                <div class="result-box" id="m1_geo_result">Área = 0 mm²</div>
+            </div>
 
-                <h3>Esfuerzo Normal y Deformación Unitaria</h3>
-                <div class="form-group">
-                    <label for="m1_P">Carga (P):</label>
-                    <input type="number" id="m1_P" min="0" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_P_unit" aria-label="Unidad de carga">
-                        <option value="kN">kN</option><option value="N">N</option><option value="kg">kg</option><option value="lb">lb</option>
-                    </select>
-                    <label for="m1_A">Área (A):</label>
-                    <input type="number" id="m1_A" min="0" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_A_unit" aria-label="Unidad de área">
-                        <option value="mm2">mm²</option><option value="cm2">cm²</option><option value="m2">m²</option>
-                    </select>
+            <!-- NIVEL 2B: Esfuerzo Normal -->
+            <div class="calc-view" data-calc="m1_esf">
+                <button class="back-btn" data-module="modulo1">← Volver</button>
+                <div class="card">
+                    <h3>Esfuerzo Normal y Deformación Unitaria</h3>
+                    <div class="form-group">
+                        <label for="m1_P">Carga (P):</label>
+                        <input type="number" id="m1_P" min="0" step="any" placeholder="0.0">
+                        <select class="unit-select" id="m1_P_unit" aria-label="Unidad de carga">
+                            <option value="kN">kN</option><option value="N">N</option><option value="kg">kg</option><option value="lb">lb</option>
+                        </select>
+                        <label for="m1_A">Área (A):</label>
+                        <input type="number" id="m1_A" min="0" step="any" placeholder="0.0">
+                        <select class="unit-select" id="m1_A_unit" aria-label="Unidad de área">
+                            <option value="mm2">mm²</option><option value="cm2">cm²</option><option value="m2">m²</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="m1_deltaL">ΔL (elongación):</label>
+                        <input type="number" id="m1_deltaL" min="0" step="any" placeholder="0.0">
+                        <select class="unit-select" id="m1_deltaL_unit" aria-label="Unidad de ΔL">
+                            <option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option>
+                        </select>
+                        <label for="m1_L0">Longitud L₀:</label>
+                        <input type="number" id="m1_L0" min="0" step="any" placeholder="0.0">
+                        <select class="unit-select" id="m1_L0_unit" aria-label="Unidad de L₀">
+                            <option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option>
+                        </select>
+                    </div>
+                    <div class="result-box" id="m1_sigma_epsilon_result">σ = 0 MPa, ε = 0</div>
                 </div>
-                <div class="form-group">
-                    <label for="m1_deltaL">ΔL (elongación):</label>
-                    <input type="number" id="m1_deltaL" min="0" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_deltaL_unit" aria-label="Unidad de ΔL">
-                        <option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option>
-                    </select>
-                    <label for="m1_L0">Longitud L₀:</label>
-                    <input type="number" id="m1_L0" min="0" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_L0_unit" aria-label="Unidad de L₀">
-                        <option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option>
-                    </select>
-                </div>
-                <div class="result-box" id="m1_sigma_epsilon_result">σ = 0 MPa, ε = 0</div>
+            </div>
 
-                <h3>Ley de Hooke y Elasticidad</h3>
-                <div class="form-group">
-                    <label for="m1_E">Módulo de Young (E):</label>
-                    <input type="number" id="m1_E" min="0" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_E_unit" aria-label="Unidad de E">
-                        <option value="GPa">GPa</option><option value="MPa">MPa</option><option value="Pa">Pa</option>
-                    </select>
+            <!-- NIVEL 2C: Ley de Hooke -->
+            <div class="calc-view" data-calc="m1_hooke">
+                <button class="back-btn" data-module="modulo1">← Volver</button>
+                <div class="card">
+                    <h3>Ley de Hooke y Elasticidad</h3>
+                    <div class="form-group">
+                        <label for="m1_E">Módulo de Young (E):</label>
+                        <input type="number" id="m1_E" min="0" step="any" placeholder="0.0">
+                        <select class="unit-select" id="m1_E_unit" aria-label="Unidad de E">
+                            <option value="GPa">GPa</option><option value="MPa">MPa</option><option value="Pa">Pa</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="m1_nu">Coeficiente de Poisson (ν):</label>
+                        <input type="number" id="m1_nu" min="0" max="0.5" step="0.01" value="0.3">
+                    </div>
+                    <div class="form-group">
+                        <label for="m1_sigmax">σx (axial):</label>
+                        <input type="number" id="m1_sigmax" step="any" placeholder="0.0">
+                        <select class="unit-select" id="m1_sigmax_unit" aria-label="Unidad de σx">
+                            <option value="MPa">MPa</option><option value="GPa">GPa</option><option value="kg/cm2">kg/cm²</option><option value="psi">psi</option>
+                        </select>
+                        <label for="m1_sigmay">σy:</label>
+                        <input type="number" id="m1_sigmay" step="any" placeholder="0.0">
+                        <select class="unit-select" id="m1_sigmay_unit" aria-label="Unidad de σy">
+                            <option value="MPa">MPa</option><option value="GPa">GPa</option><option value="kg/cm2">kg/cm²</option><option value="psi">psi</option>
+                        </select>
+                        <label for="m1_sigmaz">σz:</label>
+                        <input type="number" id="m1_sigmaz" step="any" placeholder="0.0">
+                        <select class="unit-select" id="m1_sigmaz_unit" aria-label="Unidad de σz">
+                            <option value="MPa">MPa</option><option value="GPa">GPa</option><option value="kg/cm2">kg/cm²</option><option value="psi">psi</option>
+                        </select>
+                    </div>
+                    <div class="result-box" id="m1_hooke_result">Deformación 3D X = 0, E = 0 MPa</div>
                 </div>
-                <div class="form-group">
-                    <label for="m1_nu">Coeficiente de Poisson (ν):</label>
-                    <input type="number" id="m1_nu" min="0" max="0.5" step="0.01" value="0.3">
-                </div>
-                <div class="form-group">
-                    <label for="m1_sigmax">σx (axial):</label>
-                    <input type="number" id="m1_sigmax" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_sigmax_unit" aria-label="Unidad de σx">
-                        <option value="MPa">MPa</option><option value="GPa">GPa</option><option value="kg/cm2">kg/cm²</option><option value="psi">psi</option>
-                    </select>
-                    <label for="m1_sigmay">σy:</label>
-                    <input type="number" id="m1_sigmay" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_sigmay_unit" aria-label="Unidad de σy">
-                        <option value="MPa">MPa</option><option value="GPa">GPa</option><option value="kg/cm2">kg/cm²</option><option value="psi">psi</option>
-                    </select>
-                    <label for="m1_sigmaz">σz:</label>
-                    <input type="number" id="m1_sigmaz" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_sigmaz_unit" aria-label="Unidad de σz">
-                        <option value="MPa">MPa</option><option value="GPa">GPa</option><option value="kg/cm2">kg/cm²</option><option value="psi">psi</option>
-                    </select>
-                </div>
-                <div class="result-box" id="m1_hooke_result">Deformación 3D X = 0, E = 0 MPa</div>
+            </div>
 
-                <h3>Módulo de Resiliencia (Ur)</h3>
-                <div class="form-group">
-                    <label for="m1_sigma_y_res">Límite elástico σy:</label>
-                    <input type="number" id="m1_sigma_y_res" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_sigma_y_res_unit" aria-label="Unidad de σy resiliencia">
-                        <option value="MPa">MPa</option><option value="GPa">GPa</option>
-                    </select>
-                    <label for="m1_E_res">Módulo E:</label>
-                    <input type="number" id="m1_E_res" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_E_res_unit" aria-label="Unidad de E resiliencia">
-                        <option value="GPa">GPa</option><option value="MPa">MPa</option>
-                    </select>
+            <!-- NIVEL 2D: Resiliencia -->
+            <div class="calc-view" data-calc="m1_res">
+                <button class="back-btn" data-module="modulo1">← Volver</button>
+                <div class="card">
+                    <h3>Módulo de Resiliencia (Ur)</h3>
+                    <div class="form-group">
+                        <label for="m1_sigma_y_res">Límite elástico σy:</label>
+                        <input type="number" id="m1_sigma_y_res" step="any" placeholder="0.0">
+                        <select class="unit-select" id="m1_sigma_y_res_unit" aria-label="Unidad de σy resiliencia">
+                            <option value="MPa">MPa</option><option value="GPa">GPa</option>
+                        </select>
+                        <label for="m1_E_res">Módulo E:</label>
+                        <input type="number" id="m1_E_res" step="any" placeholder="0.0">
+                        <select class="unit-select" id="m1_E_res_unit" aria-label="Unidad de E resiliencia">
+                            <option value="GPa">GPa</option><option value="MPa">MPa</option>
+                        </select>
+                    </div>
+                    <div class="result-box" id="m1_resilience_result">Ur = 0 MPa</div>
                 </div>
-                <div class="result-box" id="m1_resilience_result">Ur = 0 MPa</div>
+            </div>
 
-                <h3>Factor de Seguridad (FS)</h3>
-                <div class="form-group">
-                    <label for="m1_sigma_fallo">σ fallo:</label>
-                    <input type="number" id="m1_sigma_fallo" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_sigma_fallo_unit" aria-label="Unidad de σ fallo">
-                        <option value="MPa">MPa</option><option value="GPa">GPa</option><option value="kg/cm2">kg/cm²</option><option value="psi">psi</option>
-                    </select>
-                    <label for="m1_sigma_adm">σ admisible:</label>
-                    <input type="number" id="m1_sigma_adm" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_sigma_adm_unit" aria-label="Unidad de σ admisible">
-                        <option value="MPa">MPa</option><option value="GPa">GPa</option><option value="kg/cm2">kg/cm²</option><option value="psi">psi</option>
-                    </select>
+            <!-- NIVEL 2E: Factor de Seguridad -->
+            <div class="calc-view" data-calc="m1_fs">
+                <button class="back-btn" data-module="modulo1">← Volver</button>
+                <div class="card">
+                    <h3>Factor de Seguridad (FS)</h3>
+                    <div class="form-group">
+                        <label for="m1_sigma_fallo">σ fallo:</label>
+                        <input type="number" id="m1_sigma_fallo" step="any" placeholder="0.0">
+                        <select class="unit-select" id="m1_sigma_fallo_unit" aria-label="Unidad de σ fallo">
+                            <option value="MPa">MPa</option><option value="GPa">GPa</option><option value="kg/cm2">kg/cm²</option><option value="psi">psi</option>
+                        </select>
+                        <label for="m1_sigma_adm">σ admisible:</label>
+                        <input type="number" id="m1_sigma_adm" step="any" placeholder="0.0">
+                        <select class="unit-select" id="m1_sigma_adm_unit" aria-label="Unidad de σ admisible">
+                            <option value="MPa">MPa</option><option value="GPa">GPa</option><option value="kg/cm2">kg/cm²</option><option value="psi">psi</option>
+                        </select>
+                    </div>
+                    <div class="result-box" id="m1_fs_result">FS = 0</div>
                 </div>
-                <div class="result-box" id="m1_fs_result">FS = 0</div>
             </div>
         </section>
 
-        <!-- Módulo 2 -->
+        <!-- ============================================================
+             MÓDULO 2 — Análisis de Áridos
+             Menú con 3 opciones. Cada calc-view tiene tabs P1/P2/P3.
+             El contenido vive en un único tab-content por prueba,
+             con calc-sections internas que se filtran por data-active-calc.
+             ============================================================ -->
         <section class="module" id="modulo2">
-            <div class="card">
-                <h2>🏗️ Análisis de Áridos (Agregados Pétreos)</h2>
-                <p class="fs-small mb-10">Análisis Granulométrico ASTM C136, Propiedades Volumétricas y Diseño de Mezclas.</p>
-
-                <div class="tabs" id="m2_tabs">
-                    <button class="tab-btn active" data-tab="m2_prueba1">Prueba 1</button>
-                    <button class="tab-btn" data-tab="m2_prueba2">Prueba 2</button>
-                    <button class="tab-btn" data-tab="m2_prueba3">Prueba 3</button>
+            <!-- NIVEL 1: menú -->
+            <div class="module-menu">
+                <div class="card">
+                    <h2>🏗️ Análisis de Áridos (Agregados Pétreos)</h2>
+                    <p class="fs-small mb-10">Selecciona una calculadora:</p>
+                    <div class="menu-grid">
+                        <button class="menu-card" data-module="modulo2" data-calc="m2_gran">
+                            <span class="mc-icon">📊</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Análisis Granulométrico</span>
+                                <span class="mc-desc">ASTM C136 · Módulo de Finura</span>
+                            </div>
+                        </button>
+                        <button class="menu-card" data-module="modulo2" data-calc="m2_vol">
+                            <span class="mc-icon">💧</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Propiedades Volumétricas</span>
+                                <span class="mc-desc">Contenido de humedad y absorción</span>
+                            </div>
+                        </button>
+                        <button class="menu-card" data-module="modulo2" data-calc="m2_vac">
+                            <span class="mc-icon">📦</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Peso Unitario y Vacíos</span>
+                                <span class="mc-desc">PU suelto / compactado · % vacíos</span>
+                            </div>
+                        </button>
+                    </div>
                 </div>
+            </div>
 
-                <div class="tab-content active" id="m2_prueba1">
-                    <h3>Análisis Granulométrico (Norma ASTM C 136)</h3>
-                    <div class="note">Siga el procedimiento estándar: tamizar, pesar retenidos y registrar. El módulo de finura se calcula con la serie ASTM designada.</div>
-                    <div class="table-responsive">
-                        <table id="m2_gran_table_1">
-                            <thead><tr><th>Tamiz</th><th>Peso Ret. (g)</th><th>% Ret.</th><th>% Acum.</th><th>% Pasa</th></tr></thead>
-                            <tbody>
-                                <tr><td>3"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='3"' step="any" min="0" aria-label="Peso retenido tamiz 3 pulgadas"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>2"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='2"' step="any" min="0" aria-label="Peso retenido tamiz 2 pulgadas"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>1 1/2"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='1 1/2"' step="any" min="0" aria-label="Peso retenido tamiz 1 y media pulgadas"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>1"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='1"' step="any" min="0" aria-label="Peso retenido tamiz 1 pulgada"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>3/4"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='3/4"' step="any" min="0" aria-label="Peso retenido tamiz 3 cuartos"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>1/2"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='1/2"' step="any" min="0" aria-label="Peso retenido tamiz media pulgada"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>3/8"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='3/8"' step="any" min="0" aria-label="Peso retenido tamiz 3 octavos"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>No. 4</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 4' step="any" min="0" aria-label="Peso retenido tamiz 4"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>No. 8</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 8' step="any" min="0" aria-label="Peso retenido tamiz 8"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>No. 16</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 16' step="any" min="0" aria-label="Peso retenido tamiz 16"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>No. 30</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 30' step="any" min="0" aria-label="Peso retenido tamiz 30"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>No. 50</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 50' step="any" min="0" aria-label="Peso retenido tamiz 50"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>No. 100</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 100' step="any" min="0" aria-label="Peso retenido tamiz 100"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>No. 200</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 200' step="any" min="0" aria-label="Peso retenido tamiz 200"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>Fondo</td><td><input type="number" class="m2_peso_retenido" data-tamiz='Fondo' step="any" min="0" aria-label="Peso retenido fondo"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                            </tbody>
-                        </table>
+            <!-- NIVEL 2: calc-view única con tabs P1/P2/P3 -->
+            <div class="calc-view" data-module="modulo2">
+                <button class="back-btn" data-module="modulo2">← Volver</button>
+                <div class="card">
+                    <div class="tabs" id="m2_tabs">
+                        <button class="tab-btn active" data-tab="m2_prueba1">Prueba 1</button>
+                        <button class="tab-btn" data-tab="m2_prueba2">Prueba 2</button>
+                        <button class="tab-btn" data-tab="m2_prueba3">Prueba 3</button>
                     </div>
-                    <div class="result-box" id="m2_mf_result_1">Módulo de Finura = 0.00</div>
-                    <button class="success clear-btn" data-module="m2" data-prueba="1">Limpiar Granulometría Prueba 1</button>
 
-                    <h3>Propiedades Volumétricas</h3>
-                    <div class="form-group">
-                        <label for="m2_w_humedo_1">Peso húmedo:</label><input type="number" id="m2_w_humedo_1" step="any" min="0">
-                        <label for="m2_w_seco_1">Peso seco:</label><input type="number" id="m2_w_seco_1" step="any" min="0">
-                        <label for="m2_w_sss_1">Peso SSS:</label><input type="number" id="m2_w_sss_1" step="any" min="0">
-                    </div>
-                    <div class="result-box" id="m2_volumetric_result_1">Humedad = 0%, Absorción = 0%</div>
+                    <div class="tab-content active" id="m2_prueba1">
+                        <!-- Sección: Análisis Granulométrico -->
+                        <div class="calc-section" data-calc="m2_gran">
+                            <h3>Análisis Granulométrico (Norma ASTM C 136)</h3>
+                            <div class="note">Siga el procedimiento estándar: tamizar, pesar retenidos y registrar. El módulo de finura se calcula con la serie ASTM designada.</div>
+                            <div class="table-responsive">
+                                <table id="m2_gran_table_1">
+                                    <thead><tr><th>Tamiz</th><th>Peso Ret. (g)</th><th>% Ret.</th><th>% Acum.</th><th>% Pasa</th></tr></thead>
+                                    <tbody>
+                                        <tr><td>3"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='3"' step="any" min="0" aria-label="Peso retenido tamiz 3 pulgadas"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>2"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='2"' step="any" min="0" aria-label="Peso retenido tamiz 2 pulgadas"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>1 1/2"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='1 1/2"' step="any" min="0" aria-label="Peso retenido tamiz 1 y media pulgadas"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>1"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='1"' step="any" min="0" aria-label="Peso retenido tamiz 1 pulgada"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>3/4"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='3/4"' step="any" min="0" aria-label="Peso retenido tamiz 3 cuartos"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>1/2"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='1/2"' step="any" min="0" aria-label="Peso retenido tamiz media pulgada"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>3/8"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='3/8"' step="any" min="0" aria-label="Peso retenido tamiz 3 octavos"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>No. 4</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 4' step="any" min="0" aria-label="Peso retenido tamiz 4"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>No. 8</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 8' step="any" min="0" aria-label="Peso retenido tamiz 8"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>No. 16</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 16' step="any" min="0" aria-label="Peso retenido tamiz 16"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>No. 30</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 30' step="any" min="0" aria-label="Peso retenido tamiz 30"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>No. 50</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 50' step="any" min="0" aria-label="Peso retenido tamiz 50"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>No. 100</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 100' step="any" min="0" aria-label="Peso retenido tamiz 100"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>No. 200</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 200' step="any" min="0" aria-label="Peso retenido tamiz 200"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>Fondo</td><td><input type="number" class="m2_peso_retenido" data-tamiz='Fondo' step="any" min="0" aria-label="Peso retenido fondo"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="result-box" id="m2_mf_result_1">Módulo de Finura = 0.00</div>
+                            <button class="success clear-btn" data-module="m2" data-prueba="1">Limpiar Granulometría Prueba 1</button>
+                        </div>
 
-                    <h3>Peso Unitario y Vacíos</h3>
-                    <div class="form-group">
-                        <label for="m2_pu_suelto_1">PU Suelto:</label><input type="number" id="m2_pu_suelto_1" step="any" min="0">
-                        <label for="m2_pu_comp_1">PU Compactado:</label><input type="number" id="m2_pu_comp_1" step="any" min="0">
-                        <label for="m2_g_base_1">G base:</label><input type="number" id="m2_g_base_1" step="any" min="0">
+                        <!-- Sección: Propiedades Volumétricas -->
+                        <div class="calc-section" data-calc="m2_vol">
+                            <h3>Propiedades Volumétricas</h3>
+                            <div class="form-group">
+                                <label for="m2_w_humedo_1">Peso húmedo:</label><input type="number" id="m2_w_humedo_1" step="any" min="0">
+                                <label for="m2_w_seco_1">Peso seco:</label><input type="number" id="m2_w_seco_1" step="any" min="0">
+                                <label for="m2_w_sss_1">Peso SSS:</label><input type="number" id="m2_w_sss_1" step="any" min="0">
+                            </div>
+                            <div class="result-box" id="m2_volumetric_result_1">Humedad = 0%, Absorción = 0%</div>
+                            <button class="success clear-btn" data-module="m2" data-prueba="1" data-sub="vol">Limpiar Volumétricas Prueba 1</button>
+                        </div>
+
+                        <!-- Sección: Peso Unitario y Vacíos -->
+                        <div class="calc-section" data-calc="m2_vac">
+                            <h3>Peso Unitario y Vacíos</h3>
+                            <div class="form-group">
+                                <label for="m2_pu_suelto_1">PU Suelto:</label><input type="number" id="m2_pu_suelto_1" step="any" min="0">
+                                <label for="m2_pu_comp_1">PU Compactado:</label><input type="number" id="m2_pu_comp_1" step="any" min="0">
+                                <label for="m2_g_base_1">G base:</label><input type="number" id="m2_g_base_1" step="any" min="0">
+                            </div>
+                            <div class="result-box" id="m2_vacios_result_1">% Vacíos (suelto) = 0%, (compactado) = 0%</div>
+                        </div>
                     </div>
-                    <div class="result-box" id="m2_vacios_result_1">% Vacíos (suelto) = 0%, (compactado) = 0%</div>
-                    <button class="success clear-btn" data-module="m2" data-prueba="1" data-sub="vol">Limpiar Volumétricas Prueba 1</button>
+
+                    <div class="tab-content" id="m2_prueba2"></div>
+                    <div class="tab-content" id="m2_prueba3"></div>
                 </div>
-
-                <div class="tab-content" id="m2_prueba2"></div>
-                <div class="tab-content" id="m2_prueba3"></div>
             </div>
         </section>
 
-        <!-- Módulo 3 -->
+        <!-- ============================================================
+             MÓDULO 3 — Hormigón y Mampostería
+             Menú con 5 opciones, calc-view única con tabs P1/P2/P3.
+             ============================================================ -->
         <section class="module" id="modulo3">
-            <div class="card">
-                <h2>🧱 Hormigón (Concreto) y Mampostería</h2>
-                <p class="fs-small mb-10">Resistencia a compresión, tracción indirecta, flexión, ACI y bloques.</p>
-                <div class="tabs" id="m3_tabs">
-                    <button class="tab-btn active" data-tab="m3_prueba1">Prueba 1</button>
-                    <button class="tab-btn" data-tab="m3_prueba2">Prueba 2</button>
-                    <button class="tab-btn" data-tab="m3_prueba3">Prueba 3</button>
+            <!-- NIVEL 1: menú -->
+            <div class="module-menu">
+                <div class="card">
+                    <h2>🧱 Hormigón (Concreto) y Mampostería</h2>
+                    <p class="fs-small mb-10">Selecciona una calculadora:</p>
+                    <div class="menu-grid">
+                        <button class="menu-card" data-module="modulo3" data-calc="m3_comp">
+                            <span class="mc-icon">💪</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Resistencia a la Compresión</span>
+                                <span class="mc-desc">Probetas cilíndricas y cubos (f'c)</span>
+                            </div>
+                        </button>
+                        <button class="menu-card" data-module="modulo3" data-calc="m3_trac">
+                            <span class="mc-icon">🌉</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Tracción Indirecta</span>
+                                <span class="mc-desc">Ensayo brasileño</span>
+                            </div>
+                        </button>
+                        <button class="menu-card" data-module="modulo3" data-calc="m3_flex">
+                            <span class="mc-icon">📏</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Módulo de Ruptura a Flexión</span>
+                                <span class="mc-desc">Vigas con carga en los tercios</span>
+                            </div>
+                        </button>
+                        <button class="menu-card" data-module="modulo3" data-calc="m3_aci">
+                            <span class="mc-icon">📈</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Resistencia Media (ACI)</span>
+                                <span class="mc-desc">f'cr estadístico según ACI</span>
+                            </div>
+                        </button>
+                        <button class="menu-card" data-module="modulo3" data-calc="m3_bloq">
+                            <span class="mc-icon">🧱</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Bloques de Mampostería</span>
+                                <span class="mc-desc">Esfuerzo sobre área bruta y neta</span>
+                            </div>
+                        </button>
+                    </div>
                 </div>
-                <div class="tab-content active" id="m3_prueba1">
-                    <h3>Resistencia a la Compresión (f'c)</h3>
-                    <div class="form-group">
-                        <label for="m3_P_1">Carga (P):</label><input type="number" id="m3_P_1" step="any" min="0">
-                        <select class="unit-select" id="m3_P_unit_1" aria-label="Unidad de carga">
-                            <option value="kN">kN</option><option value="kg">kg</option><option value="lb">lb</option>
-                        </select>
-                        <label for="m3_dim_1">Dimensión:</label><input type="number" id="m3_dim_1" step="any" min="0">
-                        <select class="unit-select" id="m3_dim_unit_1" aria-label="Unidad de dimensión">
-                            <option value="mm">mm</option><option value="cm">cm</option>
-                        </select>
-                        <label for="m3_shape_1">Forma:</label>
-                        <select id="m3_shape_1"><option value="cilindro">Cilindro</option><option value="cubo">Cubo</option></select>
-                    </div>
-                    <div class="result-box" id="m3_fc_result_1">f'c = 0 MPa</div>
+            </div>
 
-                    <h3>Tracción Indirecta (Brasileño)</h3>
-                    <div class="form-group">
-                        <label for="m3_traccion_P_1">Carga (P):</label><input type="number" id="m3_traccion_P_1" step="any" min="0">
-                        <select class="unit-select" id="m3_traccion_P_unit_1" aria-label="Unidad de carga tracción">
-                            <option value="kN">kN</option><option value="kg">kg</option><option value="lb">lb</option>
-                        </select>
-                        <label for="m3_traccion_d_1">Diámetro:</label><input type="number" id="m3_traccion_d_1" step="any" min="0">
-                        <label for="m3_traccion_L_1">Longitud:</label><input type="number" id="m3_traccion_L_1" step="any" min="0">
+            <!-- NIVEL 2: calc-view única con tabs -->
+            <div class="calc-view" data-module="modulo3">
+                <button class="back-btn" data-module="modulo3">← Volver</button>
+                <div class="card">
+                    <div class="tabs" id="m3_tabs">
+                        <button class="tab-btn active" data-tab="m3_prueba1">Prueba 1</button>
+                        <button class="tab-btn" data-tab="m3_prueba2">Prueba 2</button>
+                        <button class="tab-btn" data-tab="m3_prueba3">Prueba 3</button>
                     </div>
-                    <div class="result-box" id="m3_traccion_result_1">T = 0 MPa</div>
 
-                    <h3>Módulo de Ruptura a Flexión</h3>
-                    <div class="form-group">
-                        <label for="m3_flex_P_1">Carga (P):</label><input type="number" id="m3_flex_P_1" step="any" min="0">
-                        <select class="unit-select" id="m3_flex_P_unit_1" aria-label="Unidad de carga flexión">
-                            <option value="kN">kN</option><option value="N">N</option><option value="kg">kg</option><option value="lb">lb</option>
-                        </select>
-                        <label for="m3_flex_L_1">Luz (L):</label><input type="number" id="m3_flex_L_1" step="any" min="0">
-                        <label for="m3_flex_b_1">Ancho (b):</label><input type="number" id="m3_flex_b_1" step="any" min="0">
-                        <label for="m3_flex_d_1">Altura (d):</label><input type="number" id="m3_flex_d_1" step="any" min="0">
-                    </div>
-                    <div class="result-box" id="m3_flex_result_1">R = 0 MPa</div>
+                    <div class="tab-content active" id="m3_prueba1">
+                        <div class="calc-section" data-calc="m3_comp">
+                            <h3>Resistencia a la Compresión (f'c)</h3>
+                            <div class="form-group">
+                                <label for="m3_P_1">Carga (P):</label><input type="number" id="m3_P_1" step="any" min="0">
+                                <select class="unit-select" id="m3_P_unit_1" aria-label="Unidad de carga">
+                                    <option value="kN">kN</option><option value="kg">kg</option><option value="lb">lb</option>
+                                </select>
+                                <label for="m3_dim_1">Dimensión:</label><input type="number" id="m3_dim_1" step="any" min="0">
+                                <select class="unit-select" id="m3_dim_unit_1" aria-label="Unidad de dimensión">
+                                    <option value="mm">mm</option><option value="cm">cm</option>
+                                </select>
+                                <label for="m3_shape_1">Forma:</label>
+                                <select id="m3_shape_1"><option value="cilindro">Cilindro</option><option value="cubo">Cubo</option></select>
+                            </div>
+                            <div class="result-box" id="m3_fc_result_1">f'c = 0 MPa</div>
+                        </div>
 
-                    <h3>Resistencia Media Requerida (ACI)</h3>
-                    <div class="form-group">
-                        <label for="m3_fc_espec_1">f'c especificado:</label><input type="number" id="m3_fc_espec_1" step="any" min="0">
-                        <label for="m3_s_1">Desv. estándar (s):</label><input type="number" id="m3_s_1" step="any" min="0">
-                    </div>
-                    <div class="result-box" id="m3_fcr_result_1">f'cr = 0 MPa</div>
+                        <div class="calc-section" data-calc="m3_trac">
+                            <h3>Tracción Indirecta (Brasileño)</h3>
+                            <div class="form-group">
+                                <label for="m3_traccion_P_1">Carga (P):</label><input type="number" id="m3_traccion_P_1" step="any" min="0">
+                                <select class="unit-select" id="m3_traccion_P_unit_1" aria-label="Unidad de carga tracción">
+                                    <option value="kN">kN</option><option value="kg">kg</option><option value="lb">lb</option>
+                                </select>
+                                <label for="m3_traccion_d_1">Diámetro:</label><input type="number" id="m3_traccion_d_1" step="any" min="0">
+                                <label for="m3_traccion_L_1">Longitud:</label><input type="number" id="m3_traccion_L_1" step="any" min="0">
+                            </div>
+                            <div class="result-box" id="m3_traccion_result_1">T = 0 MPa</div>
+                        </div>
 
-                    <h3>Bloques de Mampostería</h3>
-                    <div class="form-group">
-                        <label for="m3_bloque_P_1">Carga (P):</label><input type="number" id="m3_bloque_P_1" step="any" min="0">
-                        <select class="unit-select" id="m3_bloque_P_unit_1" aria-label="Unidad de carga bloque">
-                            <option value="kN">kN</option><option value="N">N</option><option value="kg">kg</option><option value="lb">lb</option>
-                        </select>
-                        <label for="m3_bloque_largo_1">Largo:</label><input type="number" id="m3_bloque_largo_1" step="any" min="0">
-                        <label for="m3_bloque_ancho_1">Ancho:</label><input type="number" id="m3_bloque_ancho_1" step="any" min="0">
-                        <label for="m3_bloque_huecos_1">Área huecos:</label><input type="number" id="m3_bloque_huecos_1" step="any" min="0">
+                        <div class="calc-section" data-calc="m3_flex">
+                            <h3>Módulo de Ruptura a Flexión</h3>
+                            <div class="form-group">
+                                <label for="m3_flex_P_1">Carga (P):</label><input type="number" id="m3_flex_P_1" step="any" min="0">
+                                <select class="unit-select" id="m3_flex_P_unit_1" aria-label="Unidad de carga flexión">
+                                    <option value="kN">kN</option><option value="N">N</option><option value="kg">kg</option><option value="lb">lb</option>
+                                </select>
+                                <label for="m3_flex_L_1">Luz (L):</label><input type="number" id="m3_flex_L_1" step="any" min="0">
+                                <label for="m3_flex_b_1">Ancho (b):</label><input type="number" id="m3_flex_b_1" step="any" min="0">
+                                <label for="m3_flex_d_1">Altura (d):</label><input type="number" id="m3_flex_d_1" step="any" min="0">
+                            </div>
+                            <div class="result-box" id="m3_flex_result_1">R = 0 MPa</div>
+                        </div>
+
+                        <div class="calc-section" data-calc="m3_aci">
+                            <h3>Resistencia Media Requerida (ACI)</h3>
+                            <div class="form-group">
+                                <label for="m3_fc_espec_1">f'c especificado:</label><input type="number" id="m3_fc_espec_1" step="any" min="0">
+                                <label for="m3_s_1">Desv. estándar (s):</label><input type="number" id="m3_s_1" step="any" min="0">
+                            </div>
+                            <div class="result-box" id="m3_fcr_result_1">f'cr = 0 MPa</div>
+                        </div>
+
+                        <div class="calc-section" data-calc="m3_bloq">
+                            <h3>Bloques de Mampostería</h3>
+                            <div class="form-group">
+                                <label for="m3_bloque_P_1">Carga (P):</label><input type="number" id="m3_bloque_P_1" step="any" min="0">
+                                <select class="unit-select" id="m3_bloque_P_unit_1" aria-label="Unidad de carga bloque">
+                                    <option value="kN">kN</option><option value="N">N</option><option value="kg">kg</option><option value="lb">lb</option>
+                                </select>
+                                <label for="m3_bloque_largo_1">Largo:</label><input type="number" id="m3_bloque_largo_1" step="any" min="0">
+                                <label for="m3_bloque_ancho_1">Ancho:</label><input type="number" id="m3_bloque_ancho_1" step="any" min="0">
+                                <label for="m3_bloque_huecos_1">Área huecos:</label><input type="number" id="m3_bloque_huecos_1" step="any" min="0">
+                            </div>
+                            <div class="result-box" id="m3_bloque_result_1">Área bruta = 0, Área neta = 0</div>
+                            <button class="success clear-btn" data-module="m3" data-prueba="1">Limpiar Módulo 3 Prueba 1</button>
+                        </div>
                     </div>
-                    <div class="result-box" id="m3_bloque_result_1">Área bruta = 0, Área neta = 0</div>
-                    <button class="success clear-btn" data-module="m3" data-prueba="1">Limpiar Módulo 3 Prueba 1</button>
+
+                    <div class="tab-content" id="m3_prueba2"></div>
+                    <div class="tab-content" id="m3_prueba3"></div>
                 </div>
-                <div class="tab-content" id="m3_prueba2"></div>
-                <div class="tab-content" id="m3_prueba3"></div>
             </div>
         </section>
 
-        <!-- Módulo 4 -->
+        <!-- ============================================================
+             MÓDULO 4 — Metales y Madera
+             Menú con 3 opciones, calc-view única con tabs P1/P2/P3.
+             ============================================================ -->
         <section class="module" id="modulo4">
-            <div class="card">
-                <h2>⚙️ Metales (Acero y Aluminio) y Madera</h2>
-                <p class="fs-small mb-10">Tracción, Torsión y Flexión en Madera.</p>
-                <div class="tabs" id="m4_tabs">
-                    <button class="tab-btn active" data-tab="m4_prueba1">Prueba 1</button>
-                    <button class="tab-btn" data-tab="m4_prueba2">Prueba 2</button>
-                    <button class="tab-btn" data-tab="m4_prueba3">Prueba 3</button>
+            <div class="module-menu">
+                <div class="card">
+                    <h2>⚙️ Metales (Acero y Aluminio) y Madera</h2>
+                    <p class="fs-small mb-10">Selecciona una calculadora:</p>
+                    <div class="menu-grid">
+                        <button class="menu-card" data-module="modulo4" data-calc="m4_trac">
+                            <span class="mc-icon">🔗</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Ensayo de Tracción en Metales</span>
+                                <span class="mc-desc">%Elongación y %Reducción</span>
+                            </div>
+                        </button>
+                        <button class="menu-card" data-module="modulo4" data-calc="m4_tors">
+                            <span class="mc-icon">🌀</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Ensayo de Torsión</span>
+                                <span class="mc-desc">τ_max · Momento polar J · Módulo G</span>
+                            </div>
+                        </button>
+                        <button class="menu-card" data-module="modulo4" data-calc="m4_mad">
+                            <span class="mc-icon">🪵</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Flexión en Madera</span>
+                                <span class="mc-desc">MOR · carga central puntual</span>
+                            </div>
+                        </button>
+                    </div>
                 </div>
-                <div class="tab-content active" id="m4_prueba1">
-                    <h3>Ensayo de Tracción en Metales</h3>
-                    <div class="form-group">
-                        <label for="m4_L0_1">Long. inicial L₀:</label><input type="number" id="m4_L0_1" step="any" min="0">
-                        <label for="m4_Lf_1">Long. final Lf:</label><input type="number" id="m4_Lf_1" step="any" min="0">
-                        <label for="m4_A0_1">Área inicial A₀:</label><input type="number" id="m4_A0_1" step="any" min="0">
-                        <label for="m4_Af_1">Área final Af:</label><input type="number" id="m4_Af_1" step="any" min="0">
-                    </div>
-                    <div class="result-box" id="m4_traccion_result_1">%Elongación = 0%, %Reducción = 0%</div>
+            </div>
 
-                    <h3>Ensayo de Torsión</h3>
-                    <div class="form-group">
-                        <label for="m4_T_1">Par torsor (T):</label><input type="number" id="m4_T_1" step="any" min="0">
-                        <select class="unit-select" id="m4_T_unit_1" aria-label="Unidad de par torsor">
-                            <option value="N.m">N·m</option><option value="kN.m">kN·m</option>
-                        </select>
-                        <label for="m4_d_1">Diámetro:</label><input type="number" id="m4_d_1" step="any" min="0">
-                        <label for="m4_L_1">Longitud:</label><input type="number" id="m4_L_1" step="any" min="0">
-                        <label for="m4_theta_1">Ángulo θ (rad):</label><input type="number" id="m4_theta_1" step="any" min="0">
+            <div class="calc-view" data-module="modulo4">
+                <button class="back-btn" data-module="modulo4">← Volver</button>
+                <div class="card">
+                    <div class="tabs" id="m4_tabs">
+                        <button class="tab-btn active" data-tab="m4_prueba1">Prueba 1</button>
+                        <button class="tab-btn" data-tab="m4_prueba2">Prueba 2</button>
+                        <button class="tab-btn" data-tab="m4_prueba3">Prueba 3</button>
                     </div>
-                    <div class="result-box" id="m4_torsion_result_1">τ_max = 0 MPa, G = 0 MPa</div>
 
-                    <h3>Flexión en Madera</h3>
-                    <div class="form-group">
-                        <label for="m4_mad_P_1">Carga P:</label><input type="number" id="m4_mad_P_1" step="any" min="0">
-                        <label for="m4_mad_L_1">Luz L:</label><input type="number" id="m4_mad_L_1" step="any" min="0">
-                        <label for="m4_mad_b_1">Ancho b:</label><input type="number" id="m4_mad_b_1" step="any" min="0">
-                        <label for="m4_mad_h_1">Altura h:</label><input type="number" id="m4_mad_h_1" step="any" min="0">
+                    <div class="tab-content active" id="m4_prueba1">
+                        <div class="calc-section" data-calc="m4_trac">
+                            <h3>Ensayo de Tracción en Metales</h3>
+                            <div class="form-group">
+                                <label for="m4_L0_1">Long. inicial L₀:</label><input type="number" id="m4_L0_1" step="any" min="0">
+                                <label for="m4_Lf_1">Long. final Lf:</label><input type="number" id="m4_Lf_1" step="any" min="0">
+                                <label for="m4_A0_1">Área inicial A₀:</label><input type="number" id="m4_A0_1" step="any" min="0">
+                                <label for="m4_Af_1">Área final Af:</label><input type="number" id="m4_Af_1" step="any" min="0">
+                            </div>
+                            <div class="result-box" id="m4_traccion_result_1">%Elongación = 0%, %Reducción = 0%</div>
+                        </div>
+
+                        <div class="calc-section" data-calc="m4_tors">
+                            <h3>Ensayo de Torsión</h3>
+                            <div class="form-group">
+                                <label for="m4_T_1">Par torsor (T):</label><input type="number" id="m4_T_1" step="any" min="0">
+                                <select class="unit-select" id="m4_T_unit_1" aria-label="Unidad de par torsor">
+                                    <option value="N.m">N·m</option><option value="kN.m">kN·m</option>
+                                </select>
+                                <label for="m4_d_1">Diámetro:</label><input type="number" id="m4_d_1" step="any" min="0">
+                                <label for="m4_L_1">Longitud:</label><input type="number" id="m4_L_1" step="any" min="0">
+                                <label for="m4_theta_1">Ángulo θ (rad):</label><input type="number" id="m4_theta_1" step="any" min="0">
+                            </div>
+                            <div class="result-box" id="m4_torsion_result_1">τ_max = 0 MPa, G = 0 MPa</div>
+                        </div>
+
+                        <div class="calc-section" data-calc="m4_mad">
+                            <h3>Flexión en Madera</h3>
+                            <div class="form-group">
+                                <label for="m4_mad_P_1">Carga P:</label><input type="number" id="m4_mad_P_1" step="any" min="0">
+                                <label for="m4_mad_L_1">Luz L:</label><input type="number" id="m4_mad_L_1" step="any" min="0">
+                                <label for="m4_mad_b_1">Ancho b:</label><input type="number" id="m4_mad_b_1" step="any" min="0">
+                                <label for="m4_mad_h_1">Altura h:</label><input type="number" id="m4_mad_h_1" step="any" min="0">
+                            </div>
+                            <div class="result-box" id="m4_madera_result_1">MOR = 0 MPa</div>
+                            <button class="success clear-btn" data-module="m4" data-prueba="1">Limpiar Módulo 4 Prueba 1</button>
+                        </div>
                     </div>
-                    <div class="result-box" id="m4_madera_result_1">MOR = 0 MPa</div>
-                    <button class="success clear-btn" data-module="m4" data-prueba="1">Limpiar Módulo 4 Prueba 1</button>
+
+                    <div class="tab-content" id="m4_prueba2"></div>
+                    <div class="tab-content" id="m4_prueba3"></div>
                 </div>
-                <div class="tab-content" id="m4_prueba2"></div>
-                <div class="tab-content" id="m4_prueba3"></div>
             </div>
         </section>
 
-        <!-- Módulo 5 -->
+        <!-- ============================================================
+             MÓDULO 5 — Mezclas Asfálticas
+             Menú con 2 opciones, calc-view única con tabs P1/P2/P3.
+             ============================================================ -->
         <section class="module" id="modulo5">
-            <div class="card">
-                <h2>🛣️ Mezclas Asfálticas (Método Marshall)</h2>
-                <p class="fs-small mb-10">Gravedades específicas y análisis volumétrico.</p>
-                <div class="tabs" id="m5_tabs">
-                    <button class="tab-btn active" data-tab="m5_prueba1">Prueba 1</button>
-                    <button class="tab-btn" data-tab="m5_prueba2">Prueba 2</button>
-                    <button class="tab-btn" data-tab="m5_prueba3">Prueba 3</button>
-                </div>
-                <div class="tab-content active" id="m5_prueba1">
-                    <h3>Gravedades Específicas</h3>
-                    <div class="form-group">
-                        <label for="m5_A_1">A (seca):</label><input type="number" id="m5_A_1" step="any" min="0">
-                        <label for="m5_B_1">B (SSS):</label><input type="number" id="m5_B_1" step="any" min="0">
-                        <label for="m5_C_1">C (sumergida):</label><input type="number" id="m5_C_1" step="any" min="0">
-                        <label for="m5_Gmm_1">Gmm:</label><input type="number" id="m5_Gmm_1" step="any" min="0">
-                        <label for="m5_Gsb_1">Gsb (árido):</label><input type="number" id="m5_Gsb_1" step="any" min="0">
-                        <label for="m5_Ps_1">%Ps:</label><input type="number" id="m5_Ps_1" step="any" min="0" value="95">
+            <div class="module-menu">
+                <div class="card">
+                    <h2>🛣️ Mezclas Asfálticas (Método Marshall)</h2>
+                    <p class="fs-small mb-10">Selecciona una calculadora:</p>
+                    <div class="menu-grid">
+                        <button class="menu-card" data-module="modulo5" data-calc="m5_grav">
+                            <span class="mc-icon">💠</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Gravedades Específicas</span>
+                                <span class="mc-desc">Gmb · Gmm · Gsb</span>
+                            </div>
+                        </button>
+                        <button class="menu-card" data-module="modulo5" data-calc="m5_vol">
+                            <span class="mc-icon">🧪</span>
+                            <div class="mc-text">
+                                <span class="mc-title">Análisis Volumétrico</span>
+                                <span class="mc-desc">VTM · VMA · VFA</span>
+                            </div>
+                        </button>
                     </div>
-                    <div class="result-box" id="m5_grav_result_1">Gmb = 0, Gmm = 0</div>
-
-                    <h3>Análisis Volumétrico</h3>
-                    <div class="result-box" id="m5_vol_result_1">VTM = 0%, VMA = 0%, VFA = 0%</div>
-                    <button class="success clear-btn" data-module="m5" data-prueba="1">Limpiar Módulo 5 Prueba 1</button>
                 </div>
-                <div class="tab-content" id="m5_prueba2"></div>
-                <div class="tab-content" id="m5_prueba3"></div>
+            </div>
+
+            <div class="calc-view" data-module="modulo5">
+                <button class="back-btn" data-module="modulo5">← Volver</button>
+                <div class="card">
+                    <div class="tabs" id="m5_tabs">
+                        <button class="tab-btn active" data-tab="m5_prueba1">Prueba 1</button>
+                        <button class="tab-btn" data-tab="m5_prueba2">Prueba 2</button>
+                        <button class="tab-btn" data-tab="m5_prueba3">Prueba 3</button>
+                    </div>
+
+                    <div class="tab-content active" id="m5_prueba1">
+                        <div class="calc-section" data-calc="m5_grav">
+                            <h3>Gravedades Específicas</h3>
+                            <div class="form-group">
+                                <label for="m5_A_1">A (seca):</label><input type="number" id="m5_A_1" step="any" min="0">
+                                <label for="m5_B_1">B (SSS):</label><input type="number" id="m5_B_1" step="any" min="0">
+                                <label for="m5_C_1">C (sumergida):</label><input type="number" id="m5_C_1" step="any" min="0">
+                                <label for="m5_Gmm_1">Gmm:</label><input type="number" id="m5_Gmm_1" step="any" min="0">
+                                <label for="m5_Gsb_1">Gsb (árido):</label><input type="number" id="m5_Gsb_1" step="any" min="0">
+                                <label for="m5_Ps_1">%Ps:</label><input type="number" id="m5_Ps_1" step="any" min="0" value="95">
+                            </div>
+                            <div class="result-box" id="m5_grav_result_1">Gmb = 0, Gmm = 0</div>
+                        </div>
+
+                        <div class="calc-section" data-calc="m5_vol">
+                            <h3>Análisis Volumétrico</h3>
+                            <div class="result-box" id="m5_vol_result_1">VTM = 0%, VMA = 0%, VFA = 0%</div>
+                            <button class="success clear-btn" data-module="m5" data-prueba="1">Limpiar Módulo 5 Prueba 1</button>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="m5_prueba2"></div>
+                    <div class="tab-content" id="m5_prueba3"></div>
+                </div>
             </div>
         </section>
 
-        <!-- Módulo 6 -->
+        <!-- ============================================================
+             MÓDULO 6 — Control de Calidad (sin sub-opciones)
+             ============================================================ -->
         <section class="module" id="modulo6">
             <div class="card">
                 <h2>📊 Control de Calidad y Estadística</h2>
@@ -846,7 +1155,6 @@
             const $ = (id) => document.getElementById(id);
             const $$ = (sel, ctx) => Array.from((ctx||document).querySelectorAll(sel));
 
-            // Feedback visual de guardado (con debounce para no spamear)
             let saveIndicatorTimeout = null;
             function showSaveIndicator(success = true) {
                 const el = $('saveIndicator');
@@ -858,19 +1166,12 @@
             }
 
             function saveState(key, value) {
-                try {
-                    localStorage.setItem(key, JSON.stringify(value));
-                    return true;
-                } catch(e) {
-                    console.error('Error guardando en localStorage:', e);
-                    return false;
-                }
+                try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+                catch(e) { console.error('Error guardando en localStorage:', e); return false; }
             }
             function loadState(key, defaultVal = null) {
-                try {
-                    const val = localStorage.getItem(key);
-                    return val !== null ? JSON.parse(val) : defaultVal;
-                } catch(e) { return defaultVal; }
+                try { const val = localStorage.getItem(key); return val !== null ? JSON.parse(val) : defaultVal; }
+                catch(e) { return defaultVal; }
             }
             function safeDiv(num, den) {
                 if (den === 0 || isNaN(num) || isNaN(den) || num === null || den === null) return 0;
@@ -898,31 +1199,117 @@
                 }
             }
 
-            // ==================== NAVEGACIÓN ====================
+            // ==================== NAVEGACIÓN ENTRE MÓDULOS (NIVEL 0) ====================
             const navLinks = $$('.nav-link');
             const bottomNavBtns = $$('.bottom-nav-btn');
             const modules = $$('.module');
 
+            /**
+             * navigateTo(moduleId): entra a un módulo mostrando su MENÚ interno (nivel 1).
+             * Si el módulo tiene la clase .view-calc, se quita para asegurar que se vea el menú.
+             */
             function navigateTo(moduleId, pushHistory = true) {
                 navLinks.forEach(b => b.classList.toggle('active', b.dataset.module === moduleId));
                 bottomNavBtns.forEach(b => b.classList.toggle('active', b.dataset.module === moduleId));
-                modules.forEach(m => m.classList.toggle('active', m.id === moduleId));
-                if (pushHistory) history.pushState({ module: moduleId }, '', `#${moduleId}`);
+                modules.forEach(m => {
+                    const isActive = m.id === moduleId;
+                    m.classList.toggle('active', isActive);
+                    if (isActive) {
+                        // Resetear siempre al menú del módulo (nivel 1)
+                        m.classList.remove('view-calc');
+                        m.querySelectorAll('.calc-view').forEach(v => {
+                            v.classList.remove('active');
+                            // No borramos data-active-calc para no perder el filtro si vuelve
+                        });
+                    }
+                });
+                if (pushHistory) {
+                    history.pushState({ module: moduleId, level: 'menu' }, '', `#${moduleId}`);
+                }
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
+
+            /**
+             * openCalculator(moduleId, calcId): entra a una calculadora individual (nivel 2).
+             * - Módulos 1: cada calc-view tiene su propio data-calc, se marca .active la que coincida.
+             * - Módulos 2-5: hay un único calc-view; se le setea data-active-calc para filtrar
+             *   las .calc-section internas por CSS.
+             */
+            function openCalculator(moduleId, calcId, pushHistory = true) {
+                const module = $(moduleId);
+                if (!module) return;
+
+                // Asegurar que el módulo esté visible y en el nav activo
+                navLinks.forEach(b => b.classList.toggle('active', b.dataset.module === moduleId));
+                bottomNavBtns.forEach(b => b.classList.toggle('active', b.dataset.module === moduleId));
+                modules.forEach(m => m.classList.toggle('active', m.id === moduleId));
+
+                module.classList.add('view-calc');
+
+                module.querySelectorAll('.calc-view').forEach(v => {
+                    if (v.dataset.calc) {
+                        // Modo A (Módulo 1): varios calc-views, uno por calculadora
+                        v.classList.toggle('active', v.dataset.calc === calcId);
+                    } else {
+                        // Modo B (Módulos 2-5): calc-view única con calc-sections filtradas
+                        v.classList.add('active');
+                        v.setAttribute('data-active-calc', calcId);
+                    }
+                });
+
+                if (pushHistory) {
+                    history.pushState(
+                        { module: moduleId, calc: calcId, level: 'calc' },
+                        '',
+                        `#${moduleId}/${calcId}`
+                    );
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // Handlers: menú superior (desktop) y bottom nav (móvil)
             navLinks.forEach(btn => btn.addEventListener('click', () => navigateTo(btn.dataset.module)));
             bottomNavBtns.forEach(btn => btn.addEventListener('click', () => navigateTo(btn.dataset.module)));
-            window.addEventListener('popstate', (e) => {
-                navigateTo(e.state?.module || 'modulo1', false);
+
+            // Handler: tarjetas del menú interno (entrar a calculadora)
+            document.addEventListener('click', function(e) {
+                const card = e.target.closest('.menu-card');
+                if (card) {
+                    openCalculator(card.dataset.module, card.dataset.calc);
+                    return;
+                }
+                // Handler: botón "← Volver" (regresa al menú del módulo, nivel 1)
+                const backBtn = e.target.closest('.back-btn');
+                if (backBtn) {
+                    navigateTo(backBtn.dataset.module);
+                }
             });
+
+            // popstate: el botón físico de Android / navegador retrocede correctamente
+            window.addEventListener('popstate', function(e) {
+                const state = e.state;
+                if (!state) { navigateTo('modulo1', false); return; }
+                if (state.calc) openCalculator(state.module, state.calc, false);
+                else navigateTo(state.module || 'modulo1', false);
+            });
+
+            // Ruta inicial a partir del hash: #modulo1  o  #modulo1/m1_geo
             const initialHash = location.hash.substring(1);
-            if (initialHash && document.getElementById(initialHash)) {
-                navigateTo(initialHash, false);
+            if (initialHash) {
+                const parts = initialHash.split('/');
+                const moduleId = parts[0];
+                const calcId = parts[1];
+                if (document.getElementById(moduleId)) {
+                    if (calcId) openCalculator(moduleId, calcId, false);
+                    else navigateTo(moduleId, false);
+                } else {
+                    navigateTo('modulo1', false);
+                }
             } else {
                 navigateTo('modulo1', false);
             }
 
-            // ==================== TABS ====================
+            // ==================== TABS INTERNAS (P1/P2/P3) ====================
             function initTabs(containerId) {
                 const container = $(containerId);
                 if (!container) return;
@@ -931,27 +1318,32 @@
                         container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                         btn.classList.add('active');
                         const tabId = btn.dataset.tab;
-                        container.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-                        $(tabId).classList.add('active');
+                        // Los tab-content son hermanos del contenedor de tabs
+                        const parentCard = container.closest('.card') || container.parentNode;
+                        parentCard.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+                        const target = $(tabId);
+                        if (target) target.classList.add('active');
                     });
                 });
             }
             initTabs('m2_tabs'); initTabs('m3_tabs'); initTabs('m4_tabs'); initTabs('m5_tabs');
 
             // ==================== DUPLICAR CONTENIDO PRUEBAS 2 Y 3 ====================
+            // NOTA: la lógica interna se mantiene tal cual (restricción técnica).
+            // Ahora los tab-content de origen incluyen .calc-section anidadas, que
+            // se duplican también y quedan listas para el filtrado por data-active-calc.
             function duplicateTabContent(sourceId, targetId, prefix) {
                 const source = $(sourceId);
                 const target = $(targetId);
                 if (!source || !target) return;
                 target.innerHTML = source.innerHTML;
+
                 target.querySelectorAll('[id]').forEach(el => {
                     el.id = el.id.replace(/_1$/, '_' + prefix);
                 });
-                // Actualizar atributos for de labels
                 target.querySelectorAll('label[for]').forEach(el => {
                     el.htmlFor = el.htmlFor.replace(/_1$/, '_' + prefix);
                 });
-                // Actualizar texto y dataset de botones
                 target.querySelectorAll('.clear-btn').forEach(btn => {
                     btn.textContent = btn.textContent.replace(/Prueba\s+1/, 'Prueba ' + prefix);
                     btn.dataset.prueba = prefix;
@@ -966,19 +1358,16 @@
             duplicateTabContent('m5_prueba1', 'm5_prueba2', '2');
             duplicateTabContent('m5_prueba1', 'm5_prueba3', '3');
 
-            // ==================== CÁLCULOS ====================
+            // ==================== CÁLCULOS (sin cambios) ====================
             function calcModulo1() {
                 const shape = $('m1_geo_shape').value;
                 let area_mm2 = 0;
                 if (shape === 'circular') {
-                    const d = parseFloat($('m1_geo_d').value) || 0;
-                    const d_mm = convertToBase(d, $('m1_geo_d_unit').value);
+                    const d_mm = convertToBase(parseFloat($('m1_geo_d').value) || 0, $('m1_geo_d_unit').value);
                     area_mm2 = Math.PI * d_mm * d_mm / 4;
                 } else {
-                    const b = parseFloat($('m1_geo_b').value) || 0;
-                    const h = parseFloat($('m1_geo_h').value) || 0;
-                    const b_mm = convertToBase(b, $('m1_geo_b_unit').value);
-                    const h_mm = convertToBase(h, $('m1_geo_h_unit').value);
+                    const b_mm = convertToBase(parseFloat($('m1_geo_b').value) || 0, $('m1_geo_b_unit').value);
+                    const h_mm = convertToBase(parseFloat($('m1_geo_h').value) || 0, $('m1_geo_h_unit').value);
                     area_mm2 = b_mm * h_mm;
                 }
                 $('m1_geo_result').textContent = `Área = ${area_mm2.toFixed(2)} mm²`;
@@ -1068,7 +1457,7 @@
                 const pu_suelto = parseFloat(document.getElementById(`m2_pu_suelto_${idx}`).value) || 0;
                 const pu_comp = parseFloat(document.getElementById(`m2_pu_comp_${idx}`).value) || 0;
                 const g_base = parseFloat(document.getElementById(`m2_g_base_${idx}`).value) || 0;
-                const gamma_w = 1000; // kg/m³ (densidad del agua) — corrección dimensional
+                const gamma_w = 1000; // kg/m³ (densidad del agua)
                 const vac_suelto = g_base > 0 ? ((g_base * gamma_w - pu_suelto) / (g_base * gamma_w)) * 100 : 0;
                 const vac_comp = g_base > 0 ? ((g_base * gamma_w - pu_comp) / (g_base * gamma_w)) * 100 : 0;
                 document.getElementById(`m2_vacios_result_${idx}`).textContent = `% Vacíos (suelto) = ${vac_suelto.toFixed(2)}%, (compactado) = ${vac_comp.toFixed(2)}%`;
@@ -1157,7 +1546,7 @@
                 document.getElementById(`m5_vol_result_${idx}`).textContent = `VTM = ${VTM.toFixed(2)}%, VMA = ${VMA.toFixed(2)}%, VFA = ${VFA.toFixed(2)}%`;
             }
 
-            // ==================== ESTADÍSTICA ====================
+            // ==================== ESTADÍSTICA (Módulo 6) ====================
             let statsValues = loadState('stats_values', []);
             function renderStats() {
                 const tbody = $('m6_stats_body');
@@ -1219,6 +1608,10 @@
 
             // ==================== PERSISTENCIA AUTOMÁTICA ====================
             let saveDebounce = null;
+            function scheduleSaveFeedback() {
+                clearTimeout(saveDebounce);
+                saveDebounce = setTimeout(() => showSaveIndicator(true), 400);
+            }
             function handleInputOrChange(e) {
                 const target = e.target;
                 if (target.classList.contains('m2_peso_retenido')) {
@@ -1233,11 +1626,7 @@
                 if (target.id) {
                     const ok = saveState(target.id, target.value);
                     if (!ok) showSaveIndicator(false);
-                    else {
-                        // Feedback agrupado (evita parpadeo al tipear)
-                        clearTimeout(saveDebounce);
-                        saveDebounce = setTimeout(() => showSaveIndicator(true), 400);
-                    }
+                    else scheduleSaveFeedback();
                     const id = target.id;
                     if (id.startsWith('m1_')) calcModulo1();
                     else if (id.startsWith('m2_')) {
@@ -1257,10 +1646,6 @@
                         calcModulo5(prueba);
                     }
                 }
-            }
-            function scheduleSaveFeedback() {
-                clearTimeout(saveDebounce);
-                saveDebounce = setTimeout(() => showSaveIndicator(true), 400);
             }
             ['input', 'change'].forEach(evt => document.addEventListener(evt, handleInputOrChange));
 
@@ -1329,7 +1714,7 @@
                 calcModulo1();
             });
 
-            // Inicializar
+            // ==================== INICIALIZAR ====================
             restoreState();
             $('m1_geo_shape').dispatchEvent(new Event('change'));
             ['m2_prueba1','m3_prueba1','m4_prueba1','m5_prueba1'].forEach(id => $(id).classList.add('active'));
