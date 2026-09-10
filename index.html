@@ -2,34 +2,67 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#1e3a5f">
     <title>LabMat Suite - Calculadora Integral para Laboratorio de Materiales</title>
     <style>
         :root {
-            --primary: #1a3c5e;
-            --secondary: #2a6496;
-            --accent: #f0a500;
-            --bg: #f4f7fc;
+            --primary: #1e3a5f;
+            --primary-hover: #2a5075;
+            --secondary: #2563eb;
+            --secondary-hover: #1d4ed8;
+            --accent: #f59e0b;
+            --bg: #f5f7fa;
             --card: #ffffff;
-            --text: #222;
-            --border: #ccc;
-            --danger: #d9534f;
-            --success: #5cb85c;
-            --sidebar-width: 220px;
-            --tab-height: 44px;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --border-strong: #cbd5e1;
+            --danger: #dc2626;
+            --success: #16a34a;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 1px 3px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.04);
+            --shadow-md: 0 4px 12px rgba(15,23,42,.08);
+            --sidebar-width: 240px;
+            --tab-height: 46px;
             --input-height: 46px;
-            --radius: 8px;
+            --touch-min: 44px;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #0f1e33;
+                --primary-hover: #1a3350;
+                --secondary: #3b82f6;
+                --secondary-hover: #60a5fa;
+                --accent: #fbbf24;
+                --bg: #0f1419;
+                --card: #1a2129;
+                --text: #e6edf5;
+                --text-muted: #94a3b8;
+                --border: #2d3744;
+                --border-strong: #3e4b5a;
+                --shadow-sm: 0 1px 3px rgba(0,0,0,.4);
+                --shadow-md: 0 4px 12px rgba(0,0,0,.5);
+            }
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { -webkit-text-size-adjust: 100%; }
         body {
-            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
             background: var(--bg);
             color: var(--text);
             display: flex;
             min-height: 100vh;
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
         }
+        button, input, select, label {
+            touch-action: manipulation;
+            font-family: inherit;
+        }
+        /* ==================== SIDEBAR (solo ≥1024px) ==================== */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--primary);
@@ -38,91 +71,408 @@
             flex-direction: column;
             position: fixed;
             top: 0; left: 0; height: 100vh; z-index: 100;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
-            transition: transform 0.3s;
+            box-shadow: var(--shadow-md);
+            padding-top: env(safe-area-inset-top);
+            padding-left: env(safe-area-inset-left);
         }
-        .sidebar-header { padding: 16px; font-size: 1.3rem; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.2); text-align: center; background: rgba(0,0,0,0.1); }
-        .nav-list { list-style: none; flex: 1; overflow-y: auto; }
-        .nav-list li { border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-header {
+            padding: 20px 16px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            text-align: center;
+        }
+        .nav-list { list-style: none; flex: 1; overflow-y: auto; padding: 8px 0; }
+        .nav-list li { margin: 2px 8px; }
         .nav-list button {
-            display: block; width: 100%; background: none; border: none; color: #fff;
-            padding: 14px 16px; text-align: left; font-size: 1rem; cursor: pointer;
-            transition: background 0.2s; min-height: 48px; line-height: 1.2;
+            display: block; width: 100%; background: none; border: none; color: rgba(255,255,255,.85);
+            padding: 13px 14px; text-align: left; font-size: 0.95rem; cursor: pointer;
+            transition: background 0.15s, color 0.15s;
+            min-height: 48px; line-height: 1.3;
+            border-radius: var(--radius-sm);
         }
-        .nav-list button:hover, .nav-list button.active { background: var(--secondary); font-weight: bold; border-left: 4px solid var(--accent); }
-        .main-content { margin-left: var(--sidebar-width); flex: 1; padding: 20px; width: calc(100% - var(--sidebar-width)); }
-        .module { display: none; animation: fadeIn 0.3s; }
+        .nav-list button:hover { background: rgba(255,255,255,0.08); color: #fff; }
+        .nav-list button.active {
+            background: var(--secondary);
+            color: #fff;
+            font-weight: 600;
+        }
+        .sidebar-actions {
+            padding: 12px;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .sidebar-actions button {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            cursor: pointer;
+            min-height: 44px;
+        }
+        .sidebar-actions button:hover { background: rgba(255,255,255,0.18); }
+
+        /* ==================== BOTTOM NAV (≤1024px) ==================== */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: var(--card);
+            border-top: 1px solid var(--border);
+            z-index: 150;
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+            box-shadow: 0 -2px 12px rgba(15,23,42,.06);
+        }
+        .bottom-nav-inner {
+            display: flex;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .bottom-nav-inner::-webkit-scrollbar { display: none; }
+        .bottom-nav-btn {
+            flex: 1 0 auto;
+            min-width: 68px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 8px 6px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            cursor: pointer;
+            min-height: 58px;
+            transition: color 0.2s, transform 0.08s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .bottom-nav-btn:active { transform: scale(0.94); }
+        .bottom-nav-btn.active { color: var(--secondary); font-weight: 600; }
+        .bn-icon { font-size: 1.35rem; line-height: 1; }
+        .bn-label { font-size: 0.66rem; line-height: 1.1; white-space: nowrap; }
+
+        /* ==================== MAIN CONTENT ==================== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 24px;
+            width: calc(100% - var(--sidebar-width));
+            padding-top: calc(24px + env(safe-area-inset-top));
+        }
+        .module { display: none; animation: fadeIn 0.25s ease; }
         .module.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .card { background: var(--card); border-radius: var(--radius); box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 20px; overflow: hidden; }
-        .card h2 { font-size: 1.5rem; margin-bottom: 15px; color: var(--primary); border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
-        .card h3 { font-size: 1.2rem; margin: 15px 0 10px; color: var(--secondary); }
-        .form-group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
-        .form-group label { min-width: 140px; font-weight: 500; font-size: 0.95rem; }
-        .form-group input, .form-group select {
-            height: var(--input-height); padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px;
-            font-size: 1rem; width: 140px; background: #fff; transition: border 0.2s;
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ==================== CARDS ==================== */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            padding: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border);
         }
-        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(42,100,150,0.2); }
+        .card h2 {
+            font-size: 1.35rem;
+            margin-bottom: 14px;
+            color: var(--text);
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+        }
+        .card h3 {
+            font-size: 1.05rem;
+            margin: 20px 0 10px;
+            color: var(--text);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .card h3::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background: var(--secondary);
+            border-radius: 2px;
+        }
+
+        /* ==================== FORM ==================== */
+        .form-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px 10px;
+            margin-bottom: 14px;
+        }
+        .form-group label {
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .form-group input,
+        .form-group select {
+            height: var(--input-height);
+            padding: 8px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            width: 140px;
+            background: var(--card);
+            color: var(--text);
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+        }
         .form-group button {
-            height: var(--input-height); padding: 0 18px; border: none; border-radius: 6px; font-size: 1rem;
-            background: var(--secondary); color: #fff; cursor: pointer; transition: background 0.2s; min-width: 100px;
+            height: var(--input-height);
+            padding: 0 18px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 500;
+            background: var(--secondary);
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.08s;
+            min-width: 100px;
+            -webkit-tap-highlight-color: transparent;
         }
+        .form-group button:active { transform: scale(0.96); }
+        .form-group button:hover { background: var(--secondary-hover); }
         .form-group button.danger { background: var(--danger); }
         .form-group button.success { background: var(--success); }
-        .form-group button:hover { filter: brightness(1.1); }
-        .result-box { background: #f0f4fa; border-left: 4px solid var(--secondary); padding: 10px 15px; margin-top: 10px; border-radius: 0 6px 6px 0; font-weight: 500; word-break: break-word; }
-        .unit-select { width: 90px !important; }
-        .tabs { display: flex; gap: 5px; margin-bottom: 15px; flex-wrap: wrap; }
-        .tab-btn {
-            padding: 10px 20px; border: 2px solid var(--secondary); background: #fff; border-radius: 6px 6px 0 0;
-            cursor: pointer; font-weight: 600; font-size: 1rem; min-height: var(--tab-height); transition: all 0.2s; color: var(--secondary);
+        .unit-select { width: 92px !important; }
+
+        .result-box {
+            background: var(--bg);
+            border-left: 4px solid var(--secondary);
+            padding: 12px 16px;
+            margin: 10px 0 14px;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: var(--text);
+            word-break: break-word;
+            line-height: 1.5;
         }
-        .tab-btn.active { background: var(--secondary); color: #fff; }
+        .note {
+            background: rgba(245,158,11,0.08);
+            border-left: 4px solid var(--accent);
+            padding: 10px 14px;
+            margin: 8px 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-radius: var(--radius-sm);
+        }
+        .fs-small { font-size: 0.85rem; color: var(--text-muted); }
+        .mb-10 { margin-bottom: 10px; }
+
+        /* ==================== TABS ==================== */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 10px 18px;
+            border: 1.5px solid var(--border);
+            background: var(--card);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            min-height: var(--tab-height);
+            transition: all 0.15s;
+            color: var(--text-muted);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .tab-btn:active { transform: scale(0.96); }
+        .tab-btn.active {
+            background: var(--secondary);
+            color: #fff;
+            border-color: var(--secondary);
+        }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 10px 0; border-radius: 6px; border: 1px solid var(--border); }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; font-size: 0.9rem; }
-        th, td { padding: 10px 8px; border: 1px solid var(--border); text-align: center; }
-        th { background: var(--primary); color: #fff; position: sticky; top: 0; z-index: 2; }
-        tr:nth-child(even) { background: #f9fbfd; }
-        input[type="number"] { width: 80px; height: 38px; text-align: center; border: 1px solid var(--border); border-radius: 4px; }
-        .small-input { width: 100px; }
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); position: fixed; width: 80%; max-width: 300px; }
-            .main-content { margin-left: 0; width: 100%; }
-            .sidebar.open { transform: translateX(0); }
-            .nav-toggle { display: block !important; position: fixed; top: 10px; left: 10px; z-index: 200; background: var(--primary); color: #fff; border: none; padding: 10px 15px; border-radius: 6px; font-size: 1.2rem; cursor: pointer; }
+
+        /* ==================== TABLES ==================== */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 12px 0;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
         }
-        .nav-toggle { display: none; }
-        .note { background: #fef9e7; border-left: 4px solid var(--accent); padding: 8px 12px; margin: 5px 0; font-size: 0.9rem; }
-        .hidden { display: none; }
-        .fs-small { font-size: 0.85rem; }
-        .mb-10 { margin-bottom: 10px; }
-        .global-actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
-        .global-actions button { flex: 1; min-width: 120px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 640px;
+            font-size: 0.88rem;
+        }
+        th, td {
+            padding: 10px 8px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+        th {
+            background: var(--bg);
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+        /* Primera columna sticky */
+        .table-responsive table th:first-child,
+        .table-responsive table td:first-child {
+            position: sticky;
+            left: 0;
+            background: var(--card);
+            z-index: 1;
+            font-weight: 600;
+            border-right: 1px solid var(--border);
+        }
+        .table-responsive table th:first-child {
+            background: var(--bg);
+            z-index: 3;
+        }
+        input[type="number"] {
+            height: 44px;
+            min-width: 68px;
+            width: 88px;
+            text-align: center;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--card);
+            color: var(--text);
+            font-size: 0.95rem;
+            -webkit-tap-highlight-color: transparent;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+
+        /* ==================== SAVE INDICATOR ==================== */
+        .save-indicator {
+            position: fixed;
+            bottom: calc(80px + env(safe-area-inset-bottom));
+            right: 16px;
+            background: var(--success);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 24px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity 0.25s, transform 0.25s;
+            pointer-events: none;
+            z-index: 300;
+            box-shadow: var(--shadow-md);
+        }
+        .save-indicator.show { opacity: 1; transform: translateY(0); }
+        .save-indicator.error { background: var(--danger); }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 1024px) {
+            .sidebar { display: none; }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 16px;
+                padding-top: calc(16px + env(safe-area-inset-top));
+                padding-bottom: calc(90px + env(safe-area-inset-bottom));
+            }
+            .bottom-nav { display: block; }
+        }
+        @media (max-width: 480px) {
+            .card { padding: 16px; border-radius: var(--radius-sm); }
+            .card h2 { font-size: 1.15rem; }
+            .form-group {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+            }
+            .form-group label { font-size: 0.88rem; }
+            .form-group input,
+            .form-group select,
+            .form-group button { width: 100%; }
+            .unit-select { width: 100% !important; }
+            .tab-btn { padding: 9px 14px; font-size: 0.85rem; flex: 1; min-width: 0; }
+        }
     </style>
 </head>
 <body>
-    <button class="nav-toggle" id="navToggle" aria-label="Abrir menú">☰</button>
+    <!-- SIDEBAR (desktop) -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">LabMat Suite</div>
         <ul class="nav-list">
-            <li><button class="nav-link active" data-module="modulo1">1. Fundamentos Físicos</button></li>
-            <li><button class="nav-link" data-module="modulo2">2. Análisis de Áridos</button></li>
-            <li><button class="nav-link" data-module="modulo3">3. Hormigón y Mampostería</button></li>
-            <li><button class="nav-link" data-module="modulo4">4. Metales y Madera</button></li>
-            <li><button class="nav-link" data-module="modulo5">5. Mezclas Asfálticas</button></li>
-            <li><button class="nav-link" data-module="modulo6">6. Control de Calidad</button></li>
+            <li><button class="nav-link active" data-module="modulo1">🔬 1. Fundamentos Físicos</button></li>
+            <li><button class="nav-link" data-module="modulo2">🏗️ 2. Análisis de Áridos</button></li>
+            <li><button class="nav-link" data-module="modulo3">🧱 3. Hormigón y Mampostería</button></li>
+            <li><button class="nav-link" data-module="modulo4">⚙️ 4. Metales y Madera</button></li>
+            <li><button class="nav-link" data-module="modulo5">🛣️ 5. Mezclas Asfálticas</button></li>
+            <li><button class="nav-link" data-module="modulo6">📊 6. Control de Calidad</button></li>
         </ul>
-        <div class="global-actions" style="padding: 10px;">
-            <button onclick="exportData()" style="width:100%; margin-bottom:5px;">📤 Exportar</button>
-            <button onclick="importData()" style="width:100%;">📥 Importar</button>
+        <div class="sidebar-actions">
+            <button onclick="exportData()">📤 Exportar datos</button>
+            <button onclick="importData()">📥 Importar datos</button>
         </div>
     </nav>
 
+    <!-- BOTTOM NAV (móvil/tablet portrait) -->
+    <nav class="bottom-nav" id="bottomNav">
+        <div class="bottom-nav-inner">
+            <button class="bottom-nav-btn active" data-module="modulo1">
+                <span class="bn-icon">🔬</span><span class="bn-label">Físicos</span>
+            </button>
+            <button class="bottom-nav-btn" data-module="modulo2">
+                <span class="bn-icon">🏗️</span><span class="bn-label">Áridos</span>
+            </button>
+            <button class="bottom-nav-btn" data-module="modulo3">
+                <span class="bn-icon">🧱</span><span class="bn-label">Hormigón</span>
+            </button>
+            <button class="bottom-nav-btn" data-module="modulo4">
+                <span class="bn-icon">⚙️</span><span class="bn-label">Metales</span>
+            </button>
+            <button class="bottom-nav-btn" data-module="modulo5">
+                <span class="bn-icon">🛣️</span><span class="bn-label">Asfalto</span>
+            </button>
+            <button class="bottom-nav-btn" data-module="modulo6">
+                <span class="bn-icon">📊</span><span class="bn-label">Calidad</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- INDICADOR DE GUARDADO -->
+    <div class="save-indicator" id="saveIndicator">Guardado ✓</div>
+
     <main class="main-content" id="mainContent">
-        <!-- Módulo 1: Fundamentos Físicos y Mecánica Básica -->
+        <!-- Módulo 1 -->
         <section class="module active" id="modulo1">
             <div class="card">
                 <h2>🔬 Fundamentos Físicos y Mecánica Básica</h2>
@@ -130,28 +480,28 @@
 
                 <h3>Geometría de Secciones</h3>
                 <div class="form-group">
-                    <label>Forma:</label>
+                    <label for="m1_geo_shape">Forma:</label>
                     <select id="m1_geo_shape">
                         <option value="circular">Circular</option>
                         <option value="rectangular">Rectangular / Prismática</option>
                     </select>
                 </div>
                 <div class="form-group" id="m1_geo_circular_inputs">
-                    <label>Diámetro (d):</label>
+                    <label for="m1_geo_d">Diámetro (d):</label>
                     <input type="number" id="m1_geo_d" min="0" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_geo_d_unit">
+                    <select class="unit-select" id="m1_geo_d_unit" aria-label="Unidad de diámetro">
                         <option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option><option value="in">in</option>
                     </select>
                 </div>
-                <div class="form-group hidden" id="m1_geo_rect_inputs">
-                    <label>Base (b):</label>
+                <div class="form-group hidden" id="m1_geo_rect_inputs" style="display:none;">
+                    <label for="m1_geo_b">Base (b):</label>
                     <input type="number" id="m1_geo_b" min="0" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_geo_b_unit">
+                    <select class="unit-select" id="m1_geo_b_unit" aria-label="Unidad de base">
                         <option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option>
                     </select>
-                    <label>Altura (h):</label>
+                    <label for="m1_geo_h">Altura (h):</label>
                     <input type="number" id="m1_geo_h" min="0" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_geo_h_unit">
+                    <select class="unit-select" id="m1_geo_h_unit" aria-label="Unidad de altura">
                         <option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option>
                     </select>
                 </div>
@@ -159,26 +509,26 @@
 
                 <h3>Esfuerzo Normal y Deformación Unitaria</h3>
                 <div class="form-group">
-                    <label>Carga (P):</label>
+                    <label for="m1_P">Carga (P):</label>
                     <input type="number" id="m1_P" min="0" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_P_unit">
+                    <select class="unit-select" id="m1_P_unit" aria-label="Unidad de carga">
                         <option value="kN">kN</option><option value="N">N</option><option value="kg">kg</option><option value="lb">lb</option>
                     </select>
-                    <label>Área (A):</label>
+                    <label for="m1_A">Área (A):</label>
                     <input type="number" id="m1_A" min="0" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_A_unit">
+                    <select class="unit-select" id="m1_A_unit" aria-label="Unidad de área">
                         <option value="mm2">mm²</option><option value="cm2">cm²</option><option value="m2">m²</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>ΔL (elongación):</label>
+                    <label for="m1_deltaL">ΔL (elongación):</label>
                     <input type="number" id="m1_deltaL" min="0" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_deltaL_unit">
+                    <select class="unit-select" id="m1_deltaL_unit" aria-label="Unidad de ΔL">
                         <option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option>
                     </select>
-                    <label>Longitud inicial (L₀):</label>
+                    <label for="m1_L0">Longitud L₀:</label>
                     <input type="number" id="m1_L0" min="0" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_L0_unit">
+                    <select class="unit-select" id="m1_L0_unit" aria-label="Unidad de L₀">
                         <option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option>
                     </select>
                 </div>
@@ -186,45 +536,45 @@
 
                 <h3>Ley de Hooke y Elasticidad</h3>
                 <div class="form-group">
-                    <label>Módulo de Young (E):</label>
+                    <label for="m1_E">Módulo de Young (E):</label>
                     <input type="number" id="m1_E" min="0" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_E_unit">
+                    <select class="unit-select" id="m1_E_unit" aria-label="Unidad de E">
                         <option value="GPa">GPa</option><option value="MPa">MPa</option><option value="Pa">Pa</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Coeficiente de Poisson (ν):</label>
+                    <label for="m1_nu">Coeficiente de Poisson (ν):</label>
                     <input type="number" id="m1_nu" min="0" max="0.5" step="0.01" value="0.3">
                 </div>
                 <div class="form-group">
-                    <label>σx (axial):</label>
+                    <label for="m1_sigmax">σx (axial):</label>
                     <input type="number" id="m1_sigmax" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_sigmax_unit">
+                    <select class="unit-select" id="m1_sigmax_unit" aria-label="Unidad de σx">
                         <option value="MPa">MPa</option><option value="GPa">GPa</option><option value="kg/cm2">kg/cm²</option><option value="psi">psi</option>
                     </select>
-                    <label>σy:</label>
+                    <label for="m1_sigmay">σy:</label>
                     <input type="number" id="m1_sigmay" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_sigmay_unit">
+                    <select class="unit-select" id="m1_sigmay_unit" aria-label="Unidad de σy">
                         <option value="MPa">MPa</option><option value="GPa">GPa</option><option value="kg/cm2">kg/cm²</option><option value="psi">psi</option>
                     </select>
-                    <label>σz:</label>
+                    <label for="m1_sigmaz">σz:</label>
                     <input type="number" id="m1_sigmaz" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_sigmaz_unit">
+                    <select class="unit-select" id="m1_sigmaz_unit" aria-label="Unidad de σz">
                         <option value="MPa">MPa</option><option value="GPa">GPa</option><option value="kg/cm2">kg/cm²</option><option value="psi">psi</option>
                     </select>
                 </div>
-                <div class="result-box" id="m1_hooke_result">Deformación 3D X = 0, E = 0 GPa</div>
+                <div class="result-box" id="m1_hooke_result">Deformación 3D X = 0, E = 0 MPa</div>
 
                 <h3>Módulo de Resiliencia (Ur)</h3>
                 <div class="form-group">
-                    <label>Límite elástico σy:</label>
+                    <label for="m1_sigma_y_res">Límite elástico σy:</label>
                     <input type="number" id="m1_sigma_y_res" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_sigma_y_res_unit">
+                    <select class="unit-select" id="m1_sigma_y_res_unit" aria-label="Unidad de σy resiliencia">
                         <option value="MPa">MPa</option><option value="GPa">GPa</option>
                     </select>
-                    <label>Módulo E:</label>
+                    <label for="m1_E_res">Módulo E:</label>
                     <input type="number" id="m1_E_res" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_E_res_unit">
+                    <select class="unit-select" id="m1_E_res_unit" aria-label="Unidad de E resiliencia">
                         <option value="GPa">GPa</option><option value="MPa">MPa</option>
                     </select>
                 </div>
@@ -232,14 +582,14 @@
 
                 <h3>Factor de Seguridad (FS)</h3>
                 <div class="form-group">
-                    <label>σ fallo:</label>
+                    <label for="m1_sigma_fallo">σ fallo:</label>
                     <input type="number" id="m1_sigma_fallo" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_sigma_fallo_unit">
+                    <select class="unit-select" id="m1_sigma_fallo_unit" aria-label="Unidad de σ fallo">
                         <option value="MPa">MPa</option><option value="GPa">GPa</option><option value="kg/cm2">kg/cm²</option><option value="psi">psi</option>
                     </select>
-                    <label>σ admisible:</label>
+                    <label for="m1_sigma_adm">σ admisible:</label>
                     <input type="number" id="m1_sigma_adm" step="any" placeholder="0.0">
-                    <select class="unit-select" id="m1_sigma_adm_unit">
+                    <select class="unit-select" id="m1_sigma_adm_unit" aria-label="Unidad de σ admisible">
                         <option value="MPa">MPa</option><option value="GPa">GPa</option><option value="kg/cm2">kg/cm²</option><option value="psi">psi</option>
                     </select>
                 </div>
@@ -247,11 +597,11 @@
             </div>
         </section>
 
-        <!-- Módulo 2: Análisis de Áridos -->
+        <!-- Módulo 2 -->
         <section class="module" id="modulo2">
             <div class="card">
                 <h2>🏗️ Análisis de Áridos (Agregados Pétreos)</h2>
-                <p class="fs-small mb-10">Incluye Análisis Granulométrico según ASTM C136, Propiedades Volumétricas y Diseño de Mezclas.</p>
+                <p class="fs-small mb-10">Análisis Granulométrico ASTM C136, Propiedades Volumétricas y Diseño de Mezclas.</p>
 
                 <div class="tabs" id="m2_tabs">
                     <button class="tab-btn active" data-tab="m2_prueba1">Prueba 1</button>
@@ -264,42 +614,42 @@
                     <div class="note">Siga el procedimiento estándar: tamizar, pesar retenidos y registrar. El módulo de finura se calcula con la serie ASTM designada.</div>
                     <div class="table-responsive">
                         <table id="m2_gran_table_1">
-                            <thead><tr><th>Tamiz</th><th>Peso Retenido (g)</th><th>% Retenido</th><th>% Ret. Acumulado</th><th>% Pasa</th></tr></thead>
+                            <thead><tr><th>Tamiz</th><th>Peso Ret. (g)</th><th>% Ret.</th><th>% Acum.</th><th>% Pasa</th></tr></thead>
                             <tbody>
-                                <tr><td>3"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='3"' step="any" min="0"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>2"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='2"' step="any" min="0"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>1 1/2"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='1 1/2"' step="any" min="0"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>1"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='1"' step="any" min="0"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>3/4"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='3/4"' step="any" min="0"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>1/2"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='1/2"' step="any" min="0"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>3/8"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='3/8"' step="any" min="0"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>No. 4</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 4' step="any" min="0"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>No. 8</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 8' step="any" min="0"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>No. 16</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 16' step="any" min="0"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>No. 30</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 30' step="any" min="0"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>No. 50</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 50' step="any" min="0"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>No. 100</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 100' step="any" min="0"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>No. 200</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 200' step="any" min="0"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                <tr><td>Fondo</td><td><input type="number" class="m2_peso_retenido" data-tamiz='Fondo' step="any" min="0"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                <tr><td>3"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='3"' step="any" min="0" aria-label="Peso retenido tamiz 3 pulgadas"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                <tr><td>2"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='2"' step="any" min="0" aria-label="Peso retenido tamiz 2 pulgadas"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                <tr><td>1 1/2"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='1 1/2"' step="any" min="0" aria-label="Peso retenido tamiz 1 y media pulgadas"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                <tr><td>1"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='1"' step="any" min="0" aria-label="Peso retenido tamiz 1 pulgada"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                <tr><td>3/4"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='3/4"' step="any" min="0" aria-label="Peso retenido tamiz 3 cuartos"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                <tr><td>1/2"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='1/2"' step="any" min="0" aria-label="Peso retenido tamiz media pulgada"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                <tr><td>3/8"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='3/8"' step="any" min="0" aria-label="Peso retenido tamiz 3 octavos"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                <tr><td>No. 4</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 4' step="any" min="0" aria-label="Peso retenido tamiz 4"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                <tr><td>No. 8</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 8' step="any" min="0" aria-label="Peso retenido tamiz 8"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                <tr><td>No. 16</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 16' step="any" min="0" aria-label="Peso retenido tamiz 16"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                <tr><td>No. 30</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 30' step="any" min="0" aria-label="Peso retenido tamiz 30"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                <tr><td>No. 50</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 50' step="any" min="0" aria-label="Peso retenido tamiz 50"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                <tr><td>No. 100</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 100' step="any" min="0" aria-label="Peso retenido tamiz 100"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                <tr><td>No. 200</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 200' step="any" min="0" aria-label="Peso retenido tamiz 200"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                <tr><td>Fondo</td><td><input type="number" class="m2_peso_retenido" data-tamiz='Fondo' step="any" min="0" aria-label="Peso retenido fondo"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="result-box" id="m2_mf_result_1">Módulo de Finura = 0.00</div>
                     <button class="success clear-btn" data-module="m2" data-prueba="1">Limpiar Granulometría Prueba 1</button>
 
-                    <h3>Propiedades Volumétricas de Áridos</h3>
+                    <h3>Propiedades Volumétricas</h3>
                     <div class="form-group">
-                        <label>Peso húmedo (W_humedo):</label><input type="number" id="m2_w_humedo_1" step="any" min="0">
-                        <label>Peso seco (W_seco):</label><input type="number" id="m2_w_seco_1" step="any" min="0">
-                        <label>Peso SSS (W_SSS):</label><input type="number" id="m2_w_sss_1" step="any" min="0">
+                        <label for="m2_w_humedo_1">Peso húmedo:</label><input type="number" id="m2_w_humedo_1" step="any" min="0">
+                        <label for="m2_w_seco_1">Peso seco:</label><input type="number" id="m2_w_seco_1" step="any" min="0">
+                        <label for="m2_w_sss_1">Peso SSS:</label><input type="number" id="m2_w_sss_1" step="any" min="0">
                     </div>
                     <div class="result-box" id="m2_volumetric_result_1">Humedad = 0%, Absorción = 0%</div>
 
                     <h3>Peso Unitario y Vacíos</h3>
                     <div class="form-group">
-                        <label>Peso Unitario Suelto (PU):</label><input type="number" id="m2_pu_suelto_1" step="any" min="0">
-                        <label>Peso Unitario Compactado (PUc):</label><input type="number" id="m2_pu_comp_1" step="any" min="0">
-                        <label>Gravedad específica base (G_base):</label><input type="number" id="m2_g_base_1" step="any" min="0">
+                        <label for="m2_pu_suelto_1">PU Suelto:</label><input type="number" id="m2_pu_suelto_1" step="any" min="0">
+                        <label for="m2_pu_comp_1">PU Compactado:</label><input type="number" id="m2_pu_comp_1" step="any" min="0">
+                        <label for="m2_g_base_1">G base:</label><input type="number" id="m2_g_base_1" step="any" min="0">
                     </div>
                     <div class="result-box" id="m2_vacios_result_1">% Vacíos (suelto) = 0%, (compactado) = 0%</div>
                     <button class="success clear-btn" data-module="m2" data-prueba="1" data-sub="vol">Limpiar Volumétricas Prueba 1</button>
@@ -310,7 +660,7 @@
             </div>
         </section>
 
-        <!-- Módulo 3: Hormigón y Mampostería -->
+        <!-- Módulo 3 -->
         <section class="module" id="modulo3">
             <div class="card">
                 <h2>🧱 Hormigón (Concreto) y Mampostería</h2>
@@ -323,58 +673,58 @@
                 <div class="tab-content active" id="m3_prueba1">
                     <h3>Resistencia a la Compresión (f'c)</h3>
                     <div class="form-group">
-                        <label>Carga (P):</label><input type="number" id="m3_P_1" step="any" min="0">
-                        <select class="unit-select" id="m3_P_unit_1">
+                        <label for="m3_P_1">Carga (P):</label><input type="number" id="m3_P_1" step="any" min="0">
+                        <select class="unit-select" id="m3_P_unit_1" aria-label="Unidad de carga">
                             <option value="kN">kN</option><option value="kg">kg</option><option value="lb">lb</option>
                         </select>
-                        <label>Diámetro (d) o lado:</label><input type="number" id="m3_dim_1" step="any" min="0">
-                        <select class="unit-select" id="m3_dim_unit_1">
+                        <label for="m3_dim_1">Dimensión:</label><input type="number" id="m3_dim_1" step="any" min="0">
+                        <select class="unit-select" id="m3_dim_unit_1" aria-label="Unidad de dimensión">
                             <option value="mm">mm</option><option value="cm">cm</option>
                         </select>
-                        <label>Forma:</label>
+                        <label for="m3_shape_1">Forma:</label>
                         <select id="m3_shape_1"><option value="cilindro">Cilindro</option><option value="cubo">Cubo</option></select>
                     </div>
                     <div class="result-box" id="m3_fc_result_1">f'c = 0 MPa</div>
 
                     <h3>Tracción Indirecta (Brasileño)</h3>
                     <div class="form-group">
-                        <label>Carga (P):</label><input type="number" id="m3_traccion_P_1" step="any" min="0">
-                        <select class="unit-select" id="m3_traccion_P_unit_1">
+                        <label for="m3_traccion_P_1">Carga (P):</label><input type="number" id="m3_traccion_P_1" step="any" min="0">
+                        <select class="unit-select" id="m3_traccion_P_unit_1" aria-label="Unidad de carga tracción">
                             <option value="kN">kN</option><option value="kg">kg</option><option value="lb">lb</option>
                         </select>
-                        <label>Diámetro (d):</label><input type="number" id="m3_traccion_d_1" step="any" min="0">
-                        <label>Longitud (L):</label><input type="number" id="m3_traccion_L_1" step="any" min="0">
+                        <label for="m3_traccion_d_1">Diámetro:</label><input type="number" id="m3_traccion_d_1" step="any" min="0">
+                        <label for="m3_traccion_L_1">Longitud:</label><input type="number" id="m3_traccion_L_1" step="any" min="0">
                     </div>
                     <div class="result-box" id="m3_traccion_result_1">T = 0 MPa</div>
 
-                    <h3>Módulo de Ruptura a Flexión (Viga con carga en tercios)</h3>
+                    <h3>Módulo de Ruptura a Flexión</h3>
                     <div class="form-group">
-                        <label>Carga (P):</label><input type="number" id="m3_flex_P_1" step="any" min="0">
-                        <select class="unit-select" id="m3_flex_P_unit_1">
+                        <label for="m3_flex_P_1">Carga (P):</label><input type="number" id="m3_flex_P_1" step="any" min="0">
+                        <select class="unit-select" id="m3_flex_P_unit_1" aria-label="Unidad de carga flexión">
                             <option value="kN">kN</option><option value="N">N</option><option value="kg">kg</option><option value="lb">lb</option>
                         </select>
-                        <label>Luz (L):</label><input type="number" id="m3_flex_L_1" step="any" min="0">
-                        <label>Ancho (b):</label><input type="number" id="m3_flex_b_1" step="any" min="0">
-                        <label>Altura (d):</label><input type="number" id="m3_flex_d_1" step="any" min="0">
+                        <label for="m3_flex_L_1">Luz (L):</label><input type="number" id="m3_flex_L_1" step="any" min="0">
+                        <label for="m3_flex_b_1">Ancho (b):</label><input type="number" id="m3_flex_b_1" step="any" min="0">
+                        <label for="m3_flex_d_1">Altura (d):</label><input type="number" id="m3_flex_d_1" step="any" min="0">
                     </div>
                     <div class="result-box" id="m3_flex_result_1">R = 0 MPa</div>
 
                     <h3>Resistencia Media Requerida (ACI)</h3>
                     <div class="form-group">
-                        <label>f'c especificado:</label><input type="number" id="m3_fc_espec_1" step="any" min="0">
-                        <label>Desviación estándar (s):</label><input type="number" id="m3_s_1" step="any" min="0">
+                        <label for="m3_fc_espec_1">f'c especificado:</label><input type="number" id="m3_fc_espec_1" step="any" min="0">
+                        <label for="m3_s_1">Desv. estándar (s):</label><input type="number" id="m3_s_1" step="any" min="0">
                     </div>
                     <div class="result-box" id="m3_fcr_result_1">f'cr = 0 MPa</div>
 
                     <h3>Bloques de Mampostería</h3>
                     <div class="form-group">
-                        <label>Carga (P):</label><input type="number" id="m3_bloque_P_1" step="any" min="0">
-                        <select class="unit-select" id="m3_bloque_P_unit_1">
+                        <label for="m3_bloque_P_1">Carga (P):</label><input type="number" id="m3_bloque_P_1" step="any" min="0">
+                        <select class="unit-select" id="m3_bloque_P_unit_1" aria-label="Unidad de carga bloque">
                             <option value="kN">kN</option><option value="N">N</option><option value="kg">kg</option><option value="lb">lb</option>
                         </select>
-                        <label>Largo:</label><input type="number" id="m3_bloque_largo_1" step="any" min="0">
-                        <label>Ancho:</label><input type="number" id="m3_bloque_ancho_1" step="any" min="0">
-                        <label>Área de huecos:</label><input type="number" id="m3_bloque_huecos_1" step="any" min="0">
+                        <label for="m3_bloque_largo_1">Largo:</label><input type="number" id="m3_bloque_largo_1" step="any" min="0">
+                        <label for="m3_bloque_ancho_1">Ancho:</label><input type="number" id="m3_bloque_ancho_1" step="any" min="0">
+                        <label for="m3_bloque_huecos_1">Área huecos:</label><input type="number" id="m3_bloque_huecos_1" step="any" min="0">
                     </div>
                     <div class="result-box" id="m3_bloque_result_1">Área bruta = 0, Área neta = 0</div>
                     <button class="success clear-btn" data-module="m3" data-prueba="1">Limpiar Módulo 3 Prueba 1</button>
@@ -384,7 +734,7 @@
             </div>
         </section>
 
-        <!-- Módulo 4: Metales y Madera -->
+        <!-- Módulo 4 -->
         <section class="module" id="modulo4">
             <div class="card">
                 <h2>⚙️ Metales (Acero y Aluminio) y Madera</h2>
@@ -397,31 +747,31 @@
                 <div class="tab-content active" id="m4_prueba1">
                     <h3>Ensayo de Tracción en Metales</h3>
                     <div class="form-group">
-                        <label>Longitud inicial L₀:</label><input type="number" id="m4_L0_1" step="any" min="0">
-                        <label>Longitud final Lf:</label><input type="number" id="m4_Lf_1" step="any" min="0">
-                        <label>Área inicial A₀:</label><input type="number" id="m4_A0_1" step="any" min="0">
-                        <label>Área final Af:</label><input type="number" id="m4_Af_1" step="any" min="0">
+                        <label for="m4_L0_1">Long. inicial L₀:</label><input type="number" id="m4_L0_1" step="any" min="0">
+                        <label for="m4_Lf_1">Long. final Lf:</label><input type="number" id="m4_Lf_1" step="any" min="0">
+                        <label for="m4_A0_1">Área inicial A₀:</label><input type="number" id="m4_A0_1" step="any" min="0">
+                        <label for="m4_Af_1">Área final Af:</label><input type="number" id="m4_Af_1" step="any" min="0">
                     </div>
                     <div class="result-box" id="m4_traccion_result_1">%Elongación = 0%, %Reducción = 0%</div>
 
                     <h3>Ensayo de Torsión</h3>
                     <div class="form-group">
-                        <label>Par torsor (T):</label><input type="number" id="m4_T_1" step="any" min="0">
-                        <select class="unit-select" id="m4_T_unit_1">
+                        <label for="m4_T_1">Par torsor (T):</label><input type="number" id="m4_T_1" step="any" min="0">
+                        <select class="unit-select" id="m4_T_unit_1" aria-label="Unidad de par torsor">
                             <option value="N.m">N·m</option><option value="kN.m">kN·m</option>
                         </select>
-                        <label>Diámetro (d):</label><input type="number" id="m4_d_1" step="any" min="0">
-                        <label>Longitud (L):</label><input type="number" id="m4_L_1" step="any" min="0">
-                        <label>Ángulo θ (rad):</label><input type="number" id="m4_theta_1" step="any" min="0">
+                        <label for="m4_d_1">Diámetro:</label><input type="number" id="m4_d_1" step="any" min="0">
+                        <label for="m4_L_1">Longitud:</label><input type="number" id="m4_L_1" step="any" min="0">
+                        <label for="m4_theta_1">Ángulo θ (rad):</label><input type="number" id="m4_theta_1" step="any" min="0">
                     </div>
-                    <div class="result-box" id="m4_torsion_result_1">τ_max = 0 MPa, G = 0 GPa</div>
+                    <div class="result-box" id="m4_torsion_result_1">τ_max = 0 MPa, G = 0 MPa</div>
 
-                    <h3>Flexión en Madera (Carga central puntual)</h3>
+                    <h3>Flexión en Madera</h3>
                     <div class="form-group">
-                        <label>Carga P:</label><input type="number" id="m4_mad_P_1" step="any" min="0">
-                        <label>Luz L:</label><input type="number" id="m4_mad_L_1" step="any" min="0">
-                        <label>Ancho b:</label><input type="number" id="m4_mad_b_1" step="any" min="0">
-                        <label>Altura h:</label><input type="number" id="m4_mad_h_1" step="any" min="0">
+                        <label for="m4_mad_P_1">Carga P:</label><input type="number" id="m4_mad_P_1" step="any" min="0">
+                        <label for="m4_mad_L_1">Luz L:</label><input type="number" id="m4_mad_L_1" step="any" min="0">
+                        <label for="m4_mad_b_1">Ancho b:</label><input type="number" id="m4_mad_b_1" step="any" min="0">
+                        <label for="m4_mad_h_1">Altura h:</label><input type="number" id="m4_mad_h_1" step="any" min="0">
                     </div>
                     <div class="result-box" id="m4_madera_result_1">MOR = 0 MPa</div>
                     <button class="success clear-btn" data-module="m4" data-prueba="1">Limpiar Módulo 4 Prueba 1</button>
@@ -431,7 +781,7 @@
             </div>
         </section>
 
-        <!-- Módulo 5: Mezclas Asfálticas -->
+        <!-- Módulo 5 -->
         <section class="module" id="modulo5">
             <div class="card">
                 <h2>🛣️ Mezclas Asfálticas (Método Marshall)</h2>
@@ -444,12 +794,12 @@
                 <div class="tab-content active" id="m5_prueba1">
                     <h3>Gravedades Específicas</h3>
                     <div class="form-group">
-                        <label>A (seca):</label><input type="number" id="m5_A_1" step="any" min="0">
-                        <label>B (SSS):</label><input type="number" id="m5_B_1" step="any" min="0">
-                        <label>C (sumergida):</label><input type="number" id="m5_C_1" step="any" min="0">
-                        <label>Gmm:</label><input type="number" id="m5_Gmm_1" step="any" min="0">
-                        <label>Gsb (árido):</label><input type="number" id="m5_Gsb_1" step="any" min="0">
-                        <label>%Ps (agregado):</label><input type="number" id="m5_Ps_1" step="any" min="0" value="95">
+                        <label for="m5_A_1">A (seca):</label><input type="number" id="m5_A_1" step="any" min="0">
+                        <label for="m5_B_1">B (SSS):</label><input type="number" id="m5_B_1" step="any" min="0">
+                        <label for="m5_C_1">C (sumergida):</label><input type="number" id="m5_C_1" step="any" min="0">
+                        <label for="m5_Gmm_1">Gmm:</label><input type="number" id="m5_Gmm_1" step="any" min="0">
+                        <label for="m5_Gsb_1">Gsb (árido):</label><input type="number" id="m5_Gsb_1" step="any" min="0">
+                        <label for="m5_Ps_1">%Ps:</label><input type="number" id="m5_Ps_1" step="any" min="0" value="95">
                     </div>
                     <div class="result-box" id="m5_grav_result_1">Gmb = 0, Gmm = 0</div>
 
@@ -462,13 +812,13 @@
             </div>
         </section>
 
-        <!-- Módulo 6: Control de Calidad y Estadística -->
+        <!-- Módulo 6 -->
         <section class="module" id="modulo6">
             <div class="card">
                 <h2>📊 Control de Calidad y Estadística</h2>
                 <p class="fs-small mb-10">Análisis de dispersión de resistencias o mediciones.</p>
                 <div class="form-group">
-                    <label>Agregar valor:</label>
+                    <label for="m6_nuevo_valor">Agregar valor:</label>
                     <input type="number" id="m6_nuevo_valor" step="any" placeholder="Ej: 25.4">
                     <button onclick="addStatValue()">Agregar</button>
                     <button class="danger" onclick="clearStats()">Limpiar Lista</button>
@@ -480,21 +830,52 @@
                     </table>
                 </div>
                 <div class="result-box" id="m6_stats_result">n = 0, Media = 0, s = 0, CV = 0%</div>
+
+                <h3>Respaldo de datos</h3>
+                <div class="form-group">
+                    <button onclick="exportData()">📤 Exportar JSON</button>
+                    <button onclick="importData()">📥 Importar JSON</button>
+                </div>
             </div>
         </section>
     </main>
 
     <script>
         (function() {
-            // ==================== UTILIDADES GENERALES ====================
+            // ==================== UTILIDADES ====================
             const $ = (id) => document.getElementById(id);
             const $$ = (sel, ctx) => Array.from((ctx||document).querySelectorAll(sel));
 
-            function saveState(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch(e) {} }
-            function loadState(key, defaultVal = null) { try { const val = localStorage.getItem(key); return val !== null ? JSON.parse(val) : defaultVal; } catch(e) { return defaultVal; } }
+            // Feedback visual de guardado (con debounce para no spamear)
+            let saveIndicatorTimeout = null;
+            function showSaveIndicator(success = true) {
+                const el = $('saveIndicator');
+                el.textContent = success ? 'Guardado ✓' : '⚠️ Error al guardar';
+                el.classList.toggle('error', !success);
+                el.classList.add('show');
+                clearTimeout(saveIndicatorTimeout);
+                saveIndicatorTimeout = setTimeout(() => el.classList.remove('show'), 1400);
+            }
 
-            function safeDiv(num, den) { if (den === 0 || isNaN(num) || isNaN(den) || num === null || den === null) return 0; return num / den; }
-
+            function saveState(key, value) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                    return true;
+                } catch(e) {
+                    console.error('Error guardando en localStorage:', e);
+                    return false;
+                }
+            }
+            function loadState(key, defaultVal = null) {
+                try {
+                    const val = localStorage.getItem(key);
+                    return val !== null ? JSON.parse(val) : defaultVal;
+                } catch(e) { return defaultVal; }
+            }
+            function safeDiv(num, den) {
+                if (den === 0 || isNaN(num) || isNaN(den) || num === null || den === null) return 0;
+                return num / den;
+            }
             function convertToBase(value, unit) {
                 if (value === '' || value === null || isNaN(value)) return 0;
                 value = parseFloat(value);
@@ -519,28 +900,20 @@
 
             // ==================== NAVEGACIÓN ====================
             const navLinks = $$('.nav-link');
+            const bottomNavBtns = $$('.bottom-nav-btn');
             const modules = $$('.module');
+
             function navigateTo(moduleId, pushHistory = true) {
-                navLinks.forEach(b => b.classList.remove('active'));
-                modules.forEach(m => m.classList.remove('active'));
-                const btn = document.querySelector(`.nav-link[data-module="${moduleId}"]`);
-                if (btn) btn.classList.add('active');
-                const module = $(moduleId);
-                if (module) module.classList.add('active');
-                document.getElementById('sidebar').classList.remove('open');
-                if (pushHistory) {
-                    history.pushState({ module: moduleId }, '', `#${moduleId}`);
-                }
+                navLinks.forEach(b => b.classList.toggle('active', b.dataset.module === moduleId));
+                bottomNavBtns.forEach(b => b.classList.toggle('active', b.dataset.module === moduleId));
+                modules.forEach(m => m.classList.toggle('active', m.id === moduleId));
+                if (pushHistory) history.pushState({ module: moduleId }, '', `#${moduleId}`);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
-            navLinks.forEach(btn => {
-                btn.addEventListener('click', () => navigateTo(btn.dataset.module));
-            });
-            document.getElementById('navToggle').addEventListener('click', () => {
-                document.getElementById('sidebar').classList.toggle('open');
-            });
+            navLinks.forEach(btn => btn.addEventListener('click', () => navigateTo(btn.dataset.module)));
+            bottomNavBtns.forEach(btn => btn.addEventListener('click', () => navigateTo(btn.dataset.module)));
             window.addEventListener('popstate', (e) => {
-                const moduleId = e.state?.module || 'modulo1';
-                navigateTo(moduleId, false);
+                navigateTo(e.state?.module || 'modulo1', false);
             });
             const initialHash = location.hash.substring(1);
             if (initialHash && document.getElementById(initialHash)) {
@@ -549,7 +922,7 @@
                 navigateTo('modulo1', false);
             }
 
-            // ==================== SISTEMA DE PESTAÑAS ====================
+            // ==================== TABS ====================
             function initTabs(containerId) {
                 const container = $(containerId);
                 if (!container) return;
@@ -565,23 +938,25 @@
             }
             initTabs('m2_tabs'); initTabs('m3_tabs'); initTabs('m4_tabs'); initTabs('m5_tabs');
 
-            // ==================== DUPLICAR CONTENIDO PARA PRUEBAS 2 Y 3 ====================
+            // ==================== DUPLICAR CONTENIDO PRUEBAS 2 Y 3 ====================
             function duplicateTabContent(sourceId, targetId, prefix) {
                 const source = $(sourceId);
                 const target = $(targetId);
                 if (!source || !target) return;
                 target.innerHTML = source.innerHTML;
-
                 target.querySelectorAll('[id]').forEach(el => {
                     el.id = el.id.replace(/_1$/, '_' + prefix);
                 });
-
+                // Actualizar atributos for de labels
+                target.querySelectorAll('label[for]').forEach(el => {
+                    el.htmlFor = el.htmlFor.replace(/_1$/, '_' + prefix);
+                });
+                // Actualizar texto y dataset de botones
                 target.querySelectorAll('.clear-btn').forEach(btn => {
-                    btn.textContent = btn.textContent.replace('Prueba 1', 'Prueba ' + prefix);
+                    btn.textContent = btn.textContent.replace(/Prueba\s+1/, 'Prueba ' + prefix);
                     btn.dataset.prueba = prefix;
                 });
             }
-
             duplicateTabContent('m2_prueba1', 'm2_prueba2', '2');
             duplicateTabContent('m2_prueba1', 'm2_prueba3', '3');
             duplicateTabContent('m3_prueba1', 'm3_prueba2', '2');
@@ -591,7 +966,7 @@
             duplicateTabContent('m5_prueba1', 'm5_prueba2', '2');
             duplicateTabContent('m5_prueba1', 'm5_prueba3', '3');
 
-            // ==================== FUNCIONES DE CÁLCULO ====================
+            // ==================== CÁLCULOS ====================
             function calcModulo1() {
                 const shape = $('m1_geo_shape').value;
                 let area_mm2 = 0;
@@ -608,41 +983,29 @@
                 }
                 $('m1_geo_result').textContent = `Área = ${area_mm2.toFixed(2)} mm²`;
 
-                const P = parseFloat($('m1_P').value) || 0;
-                const A_input = parseFloat($('m1_A').value) || 0;
-                const P_N = convertToBase(P, $('m1_P_unit').value);
-                const A_mm2 = convertToBase(A_input, $('m1_A_unit').value);
+                const P_N = convertToBase(parseFloat($('m1_P').value) || 0, $('m1_P_unit').value);
+                const A_mm2 = convertToBase(parseFloat($('m1_A').value) || 0, $('m1_A_unit').value);
                 const sigma_MPa = safeDiv(P_N, A_mm2);
-                const deltaL = parseFloat($('m1_deltaL').value) || 0;
-                const L0 = parseFloat($('m1_L0').value) || 0;
-                const deltaL_mm = convertToBase(deltaL, $('m1_deltaL_unit').value);
-                const L0_mm = convertToBase(L0, $('m1_L0_unit').value);
+                const deltaL_mm = convertToBase(parseFloat($('m1_deltaL').value) || 0, $('m1_deltaL_unit').value);
+                const L0_mm = convertToBase(parseFloat($('m1_L0').value) || 0, $('m1_L0_unit').value);
                 const epsilon = safeDiv(deltaL_mm, L0_mm);
                 $('m1_sigma_epsilon_result').textContent = `σ = ${sigma_MPa.toFixed(2)} MPa, ε = ${epsilon.toFixed(6)}`;
 
-                const E = parseFloat($('m1_E').value) || 0;
                 const nu = parseFloat($('m1_nu').value) || 0;
-                const sigmax = parseFloat($('m1_sigmax').value) || 0;
-                const sigmay = parseFloat($('m1_sigmay').value) || 0;
-                const sigmaz = parseFloat($('m1_sigmaz').value) || 0;
-                const sigmax_MPa = convertToBase(sigmax, $('m1_sigmax_unit').value);
-                const sigmay_MPa = convertToBase(sigmay, $('m1_sigmay_unit').value);
-                const sigmaz_MPa = convertToBase(sigmaz, $('m1_sigmaz_unit').value);
-                const E_MPa = convertToBase(E, $('m1_E_unit').value);
+                const sigmax_MPa = convertToBase(parseFloat($('m1_sigmax').value) || 0, $('m1_sigmax_unit').value);
+                const sigmay_MPa = convertToBase(parseFloat($('m1_sigmay').value) || 0, $('m1_sigmay_unit').value);
+                const sigmaz_MPa = convertToBase(parseFloat($('m1_sigmaz').value) || 0, $('m1_sigmaz_unit').value);
+                const E_MPa = convertToBase(parseFloat($('m1_E').value) || 0, $('m1_E_unit').value);
                 const def3d_x = safeDiv(sigmax_MPa - nu * (sigmay_MPa + sigmaz_MPa), E_MPa);
                 $('m1_hooke_result').textContent = `Deformación 3D X = ${def3d_x.toFixed(8)}, E = ${E_MPa.toFixed(2)} MPa`;
 
-                const sigma_y_res = parseFloat($('m1_sigma_y_res').value) || 0;
-                const E_res = parseFloat($('m1_E_res').value) || 0;
-                const sigma_y_MPa = convertToBase(sigma_y_res, $('m1_sigma_y_res_unit').value);
-                const E_res_MPa = convertToBase(E_res, $('m1_E_res_unit').value);
+                const sigma_y_MPa = convertToBase(parseFloat($('m1_sigma_y_res').value) || 0, $('m1_sigma_y_res_unit').value);
+                const E_res_MPa = convertToBase(parseFloat($('m1_E_res').value) || 0, $('m1_E_res_unit').value);
                 const Ur = safeDiv(sigma_y_MPa * sigma_y_MPa, 2 * E_res_MPa);
                 $('m1_resilience_result').textContent = `Ur = ${Ur.toFixed(4)} MPa`;
 
-                const sigma_fallo = parseFloat($('m1_sigma_fallo').value) || 0;
-                const sigma_adm = parseFloat($('m1_sigma_adm').value) || 0;
-                const sigma_fallo_MPa = convertToBase(sigma_fallo, $('m1_sigma_fallo_unit').value);
-                const sigma_adm_MPa = convertToBase(sigma_adm, $('m1_sigma_adm_unit').value);
+                const sigma_fallo_MPa = convertToBase(parseFloat($('m1_sigma_fallo').value) || 0, $('m1_sigma_fallo_unit').value);
+                const sigma_adm_MPa = convertToBase(parseFloat($('m1_sigma_adm').value) || 0, $('m1_sigma_adm_unit').value);
                 const FS = safeDiv(sigma_fallo_MPa, sigma_adm_MPa);
                 $('m1_fs_result').textContent = `FS = ${FS.toFixed(2)}`;
             }
@@ -654,9 +1017,7 @@
                 const rows = table.querySelectorAll('tbody tr');
                 const pesos = [];
                 rows.forEach(row => {
-                    const input = row.querySelector('.m2_peso_retenido');
-                    const peso = parseFloat(input.value) || 0;
-                    pesos.push(peso);
+                    pesos.push(parseFloat(row.querySelector('.m2_peso_retenido').value) || 0);
                 });
                 const total = pesos.reduce((a,b)=>a+b,0);
                 let acum = 0;
@@ -664,25 +1025,20 @@
                 let mfSum = 0;
                 rows.forEach((row, idxRow) => {
                     const tamiz = row.cells[0].textContent.trim();
-                    const peso = pesos[idxRow];
-                    const pctRet = total > 0 ? (peso / total) * 100 : 0;
+                    const pctRet = total > 0 ? (pesos[idxRow] / total) * 100 : 0;
                     acum += pctRet;
-                    const pctAcum = acum;
-                    const pctPasa = 100 - pctAcum;
                     row.cells[2].textContent = pctRet.toFixed(2);
-                    row.cells[3].textContent = pctAcum.toFixed(2);
-                    row.cells[4].textContent = pctPasa.toFixed(2);
-                    if (stdSeries.includes(tamiz)) mfSum += pctAcum;
+                    row.cells[3].textContent = acum.toFixed(2);
+                    row.cells[4].textContent = (100 - acum).toFixed(2);
+                    if (stdSeries.includes(tamiz)) mfSum += acum;
                 });
                 const MF = mfSum / 100;
                 const mfResult = document.getElementById(`m2_mf_result_${idx}`);
                 if (mfResult) mfResult.textContent = `Módulo de Finura = ${MF.toFixed(2)}`;
 
                 const estado = {};
-                rows.forEach((row) => {
-                    const tamiz = row.cells[0].textContent.trim();
-                    const peso = parseFloat(row.querySelector('.m2_peso_retenido').value) || 0;
-                    estado[tamiz] = peso;
+                rows.forEach(row => {
+                    estado[row.cells[0].textContent.trim()] = parseFloat(row.querySelector('.m2_peso_retenido').value) || 0;
                 });
                 saveState(`m2_granulometria_${prueba}`, estado);
             }
@@ -712,8 +1068,7 @@
                 const pu_suelto = parseFloat(document.getElementById(`m2_pu_suelto_${idx}`).value) || 0;
                 const pu_comp = parseFloat(document.getElementById(`m2_pu_comp_${idx}`).value) || 0;
                 const g_base = parseFloat(document.getElementById(`m2_g_base_${idx}`).value) || 0;
-                // CORRECCIÓN: densidad del agua = 1000 kg/m³
-                const gamma_w = 1000; // kg/m³
+                const gamma_w = 1000; // kg/m³ (densidad del agua) — corrección dimensional
                 const vac_suelto = g_base > 0 ? ((g_base * gamma_w - pu_suelto) / (g_base * gamma_w)) * 100 : 0;
                 const vac_comp = g_base > 0 ? ((g_base * gamma_w - pu_comp) / (g_base * gamma_w)) * 100 : 0;
                 document.getElementById(`m2_vacios_result_${idx}`).textContent = `% Vacíos (suelto) = ${vac_suelto.toFixed(2)}%, (compactado) = ${vac_comp.toFixed(2)}%`;
@@ -721,36 +1076,26 @@
 
             function calcModulo3(prueba) {
                 const idx = prueba.slice(-1);
-                const P = parseFloat(document.getElementById(`m3_P_${idx}`).value) || 0;
-                const dim = parseFloat(document.getElementById(`m3_dim_${idx}`).value) || 0;
+                const P_N = convertToBase(parseFloat(document.getElementById(`m3_P_${idx}`).value) || 0, document.getElementById(`m3_P_unit_${idx}`).value);
+                const dim_mm = convertToBase(parseFloat(document.getElementById(`m3_dim_${idx}`).value) || 0, document.getElementById(`m3_dim_unit_${idx}`).value);
                 const shape = document.getElementById(`m3_shape_${idx}`).value;
-                const P_N = convertToBase(P, document.getElementById(`m3_P_unit_${idx}`).value);
-                const dim_mm = convertToBase(dim, document.getElementById(`m3_dim_unit_${idx}`).value);
-                let area_mm2;
-                if (shape === 'cilindro') area_mm2 = Math.PI * dim_mm * dim_mm / 4;
-                else area_mm2 = dim_mm * dim_mm;
-                const fc = safeDiv(P_N, area_mm2);
-                document.getElementById(`m3_fc_result_${idx}`).textContent = `f'c = ${fc.toFixed(2)} MPa`;
+                const area_mm2 = shape === 'cilindro' ? Math.PI * dim_mm * dim_mm / 4 : dim_mm * dim_mm;
+                document.getElementById(`m3_fc_result_${idx}`).textContent = `f'c = ${safeDiv(P_N, area_mm2).toFixed(2)} MPa`;
 
-                const Pt = parseFloat(document.getElementById(`m3_traccion_P_${idx}`).value) || 0;
+                const Pt_N = convertToBase(parseFloat(document.getElementById(`m3_traccion_P_${idx}`).value) || 0, document.getElementById(`m3_traccion_P_unit_${idx}`).value);
                 const d = parseFloat(document.getElementById(`m3_traccion_d_${idx}`).value) || 0;
                 const L = parseFloat(document.getElementById(`m3_traccion_L_${idx}`).value) || 0;
-                const Pt_N = convertToBase(Pt, document.getElementById(`m3_traccion_P_unit_${idx}`).value);
-                const T = safeDiv(2 * Pt_N, Math.PI * L * d);
-                document.getElementById(`m3_traccion_result_${idx}`).textContent = `T = ${T.toFixed(2)} MPa`;
+                document.getElementById(`m3_traccion_result_${idx}`).textContent = `T = ${safeDiv(2 * Pt_N, Math.PI * L * d).toFixed(2)} MPa`;
 
-                const Pf = parseFloat(document.getElementById(`m3_flex_P_${idx}`).value) || 0;
-                const Pf_unit = document.getElementById(`m3_flex_P_unit_${idx}`).value;
-                const Pf_N = convertToBase(Pf, Pf_unit);
+                const Pf_N = convertToBase(parseFloat(document.getElementById(`m3_flex_P_${idx}`).value) || 0, document.getElementById(`m3_flex_P_unit_${idx}`).value);
                 const Lf = parseFloat(document.getElementById(`m3_flex_L_${idx}`).value) || 0;
                 const bf = parseFloat(document.getElementById(`m3_flex_b_${idx}`).value) || 0;
                 const df = parseFloat(document.getElementById(`m3_flex_d_${idx}`).value) || 0;
-                const R = safeDiv(Pf_N * Lf, bf * df * df);
-                document.getElementById(`m3_flex_result_${idx}`).textContent = `R = ${R.toFixed(2)} MPa`;
+                document.getElementById(`m3_flex_result_${idx}`).textContent = `R = ${safeDiv(Pf_N * Lf, bf * df * df).toFixed(2)} MPa`;
 
                 const fc_espec = parseFloat(document.getElementById(`m3_fc_espec_${idx}`).value) || 0;
                 const s = parseFloat(document.getElementById(`m3_s_${idx}`).value) || 0;
-                let fcr1, fcr2, fcr;
+                let fcr1, fcr2;
                 if (fc_espec <= 35) {
                     fcr1 = fc_espec + 1.34 * s;
                     fcr2 = fc_espec + 2.33 * s - 3.45;
@@ -758,20 +1103,17 @@
                     fcr1 = fc_espec + 1.34 * s;
                     fcr2 = 0.90 * fc_espec + 2.33 * s;
                 }
-                fcr = Math.max(fcr1, fcr2);
-                document.getElementById(`m3_fcr_result_${idx}`).textContent = `f'cr = ${fcr.toFixed(2)} MPa`;
+                document.getElementById(`m3_fcr_result_${idx}`).textContent = `f'cr = ${Math.max(fcr1, fcr2).toFixed(2)} MPa`;
 
-                const Pb = parseFloat(document.getElementById(`m3_bloque_P_${idx}`).value) || 0;
-                const Pb_unit = document.getElementById(`m3_bloque_P_unit_${idx}`).value;
-                const Pb_N = convertToBase(Pb, Pb_unit);
+                const Pb_N = convertToBase(parseFloat(document.getElementById(`m3_bloque_P_${idx}`).value) || 0, document.getElementById(`m3_bloque_P_unit_${idx}`).value);
                 const largo = parseFloat(document.getElementById(`m3_bloque_largo_${idx}`).value) || 0;
                 const ancho = parseFloat(document.getElementById(`m3_bloque_ancho_${idx}`).value) || 0;
                 const huecos = parseFloat(document.getElementById(`m3_bloque_huecos_${idx}`).value) || 0;
                 const areaBruta = largo * ancho;
                 const areaNeta = areaBruta - huecos;
-                const esfuerzoBruto = safeDiv(Pb_N, areaBruta);
-                const esfuerzoNeto = safeDiv(Pb_N, areaNeta);
-                document.getElementById(`m3_bloque_result_${idx}`).textContent = `Área bruta = ${areaBruta.toFixed(0)} mm², Área neta = ${areaNeta.toFixed(0)} mm², σ bruto = ${esfuerzoBruto.toFixed(2)} MPa, σ neto = ${esfuerzoNeto.toFixed(2)} MPa`;
+                const eB = safeDiv(Pb_N, areaBruta);
+                const eN = safeDiv(Pb_N, areaNeta);
+                document.getElementById(`m3_bloque_result_${idx}`).textContent = `Área bruta = ${areaBruta.toFixed(0)} mm², Área neta = ${areaNeta.toFixed(0)} mm², σ bruto = ${eB.toFixed(2)} MPa, σ neto = ${eN.toFixed(2)} MPa`;
             }
 
             function calcModulo4(prueba) {
@@ -780,15 +1122,12 @@
                 const Lf = parseFloat(document.getElementById(`m4_Lf_${idx}`).value) || 0;
                 const A0 = parseFloat(document.getElementById(`m4_A0_${idx}`).value) || 0;
                 const Af = parseFloat(document.getElementById(`m4_Af_${idx}`).value) || 0;
-                const elong = safeDiv(Lf - L0, L0) * 100;
-                const reduc = safeDiv(A0 - Af, A0) * 100;
-                document.getElementById(`m4_traccion_result_${idx}`).textContent = `%Elongación = ${elong.toFixed(2)}%, %Reducción = ${reduc.toFixed(2)}%`;
+                document.getElementById(`m4_traccion_result_${idx}`).textContent = `%Elongación = ${(safeDiv(Lf - L0, L0) * 100).toFixed(2)}%, %Reducción = ${(safeDiv(A0 - Af, A0) * 100).toFixed(2)}%`;
 
-                const T = parseFloat(document.getElementById(`m4_T_${idx}`).value) || 0;
+                const T_Nmm = convertToBase(parseFloat(document.getElementById(`m4_T_${idx}`).value) || 0, document.getElementById(`m4_T_unit_${idx}`).value);
                 const d = parseFloat(document.getElementById(`m4_d_${idx}`).value) || 0;
                 const L = parseFloat(document.getElementById(`m4_L_${idx}`).value) || 0;
                 const theta = parseFloat(document.getElementById(`m4_theta_${idx}`).value) || 0;
-                const T_Nmm = convertToBase(T, document.getElementById(`m4_T_unit_${idx}`).value);
                 const J = Math.PI * Math.pow(d, 4) / 32;
                 const tau_max = safeDiv(16 * T_Nmm, Math.PI * Math.pow(d, 3));
                 const G = safeDiv(T_Nmm * L, J * theta);
@@ -798,8 +1137,7 @@
                 const Lm = parseFloat(document.getElementById(`m4_mad_L_${idx}`).value) || 0;
                 const bm = parseFloat(document.getElementById(`m4_mad_b_${idx}`).value) || 0;
                 const hm = parseFloat(document.getElementById(`m4_mad_h_${idx}`).value) || 0;
-                const MOR = safeDiv(3 * Pm * Lm, 2 * bm * hm * hm);
-                document.getElementById(`m4_madera_result_${idx}`).textContent = `MOR = ${MOR.toFixed(2)} MPa`;
+                document.getElementById(`m4_madera_result_${idx}`).textContent = `MOR = ${safeDiv(3 * Pm * Lm, 2 * bm * hm * hm).toFixed(2)} MPa`;
             }
 
             function calcModulo5(prueba) {
@@ -835,7 +1173,7 @@
                     const variance = n > 1 ? statsValues.reduce((a,b)=>a + (b-mean)**2,0) / (n-1) : 0;
                     const s = Math.sqrt(variance);
                     const cv = mean !== 0 ? (s / mean) * 100 : 0;
-                    let dispersion = cv < 10 ? 'Excelente' : cv <= 15 ? 'Bueno' : 'Deficiente';
+                    const dispersion = cv < 10 ? 'Excelente' : cv <= 15 ? 'Bueno' : 'Deficiente';
                     $('m6_stats_result').textContent = `n = ${n}, Media = ${mean.toFixed(2)}, s = ${s.toFixed(2)}, CV = ${cv.toFixed(2)}% (${dispersion})`;
                 } else {
                     $('m6_stats_result').textContent = 'n = 0, Media = 0, s = 0, CV = 0%';
@@ -849,7 +1187,7 @@
             window.deleteStat = function(index) { statsValues.splice(index, 1); renderStats(); };
             window.clearStats = function() { statsValues = []; renderStats(); };
 
-            // ==================== LIMPIEZA GLOBAL (delegación) ====================
+            // ==================== LIMPIEZA (delegación) ====================
             document.addEventListener('click', function(e) {
                 const clearBtn = e.target.closest('.clear-btn');
                 if (!clearBtn) return;
@@ -858,31 +1196,29 @@
                 const sub = clearBtn.dataset.sub;
                 if (module === 'm2') {
                     if (sub === 'vol') {
-                        const idx = prueba;
                         ['w_humedo','w_seco','w_sss','pu_suelto','pu_comp','g_base'].forEach(prefix => {
-                            const el = document.getElementById(`m2_${prefix}_${idx}`);
+                            const el = document.getElementById(`m2_${prefix}_${prueba}`);
                             if (el) el.value = '';
                         });
-                        calcVolumetric('prueba' + idx);
+                        calcVolumetric('prueba' + prueba);
                     } else {
-                        const idx = prueba;
-                        const table = document.getElementById(`m2_gran_table_${idx}`);
+                        const table = document.getElementById(`m2_gran_table_${prueba}`);
                         if (table) {
                             table.querySelectorAll('.m2_peso_retenido').forEach(input => input.value = '');
-                            calcGranulometria('prueba' + idx);
+                            calcGranulometria('prueba' + prueba);
                         }
                     }
                 } else {
                     const prefix = module === 'm3' ? 'm3' : module === 'm4' ? 'm4' : 'm5';
-                    const idx = prueba;
-                    document.querySelectorAll(`#${prefix}_prueba${idx} input`).forEach(input => input.value = '');
-                    if (prefix === 'm3') calcModulo3('prueba' + idx);
-                    else if (prefix === 'm4') calcModulo4('prueba' + idx);
-                    else if (prefix === 'm5') calcModulo5('prueba' + idx);
+                    document.querySelectorAll(`#${prefix}_prueba${prueba} input`).forEach(input => input.value = '');
+                    if (prefix === 'm3') calcModulo3('prueba' + prueba);
+                    else if (prefix === 'm4') calcModulo4('prueba' + prueba);
+                    else if (prefix === 'm5') calcModulo5('prueba' + prueba);
                 }
             });
 
             // ==================== PERSISTENCIA AUTOMÁTICA ====================
+            let saveDebounce = null;
             function handleInputOrChange(e) {
                 const target = e.target;
                 if (target.classList.contains('m2_peso_retenido')) {
@@ -890,11 +1226,18 @@
                     if (table) {
                         const idx = table.id.slice(-1);
                         calcGranulometria('prueba' + idx);
+                        scheduleSaveFeedback();
                     }
                     return;
                 }
                 if (target.id) {
-                    saveState(target.id, target.value);
+                    const ok = saveState(target.id, target.value);
+                    if (!ok) showSaveIndicator(false);
+                    else {
+                        // Feedback agrupado (evita parpadeo al tipear)
+                        clearTimeout(saveDebounce);
+                        saveDebounce = setTimeout(() => showSaveIndicator(true), 400);
+                    }
                     const id = target.id;
                     if (id.startsWith('m1_')) calcModulo1();
                     else if (id.startsWith('m2_')) {
@@ -915,6 +1258,10 @@
                     }
                 }
             }
+            function scheduleSaveFeedback() {
+                clearTimeout(saveDebounce);
+                saveDebounce = setTimeout(() => showSaveIndicator(true), 400);
+            }
             ['input', 'change'].forEach(evt => document.addEventListener(evt, handleInputOrChange));
 
             // ==================== EXPORTAR / IMPORTAR ====================
@@ -931,6 +1278,7 @@
                 a.download = `labmat_backup_${new Date().toISOString().slice(0,10)}.json`;
                 a.click();
                 URL.revokeObjectURL(url);
+                showSaveIndicator(true);
             };
             window.importData = function() {
                 const input = document.createElement('input');
@@ -962,9 +1310,7 @@
                         if (el) el.value = loadState(key);
                     }
                 }
-                ['prueba1','prueba2','prueba3'].forEach(p => {
-                    loadGranulometria(p);
-                });
+                ['prueba1','prueba2','prueba3'].forEach(p => loadGranulometria(p));
                 statsValues = loadState('stats_values', []);
                 renderStats();
                 calcModulo1();
@@ -978,8 +1324,8 @@
 
             $('m1_geo_shape').addEventListener('change', function() {
                 const shape = this.value;
-                $('m1_geo_circular_inputs').classList.toggle('hidden', shape !== 'circular');
-                $('m1_geo_rect_inputs').classList.toggle('hidden', shape !== 'rectangular');
+                $('m1_geo_circular_inputs').style.display = shape === 'circular' ? 'flex' : 'none';
+                $('m1_geo_rect_inputs').style.display = shape === 'rectangular' ? 'flex' : 'none';
                 calcModulo1();
             });
 
