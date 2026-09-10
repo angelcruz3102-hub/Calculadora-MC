@@ -58,11 +58,9 @@
             -webkit-tap-highlight-color: transparent;
             -webkit-font-smoothing: antialiased;
         }
-        button, input, select, label {
-            touch-action: manipulation;
-            font-family: inherit;
-        }
-        /* ==================== SIDEBAR (solo ≥1024px) ==================== */
+        button, input, select, label { touch-action: manipulation; font-family: inherit; }
+
+        /* ==================== SIDEBAR ==================== */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--primary);
@@ -75,14 +73,7 @@
             padding-top: env(safe-area-inset-top);
             padding-left: env(safe-area-inset-left);
         }
-        .sidebar-header {
-            padding: 20px 16px;
-            font-size: 1.25rem;
-            font-weight: 700;
-            letter-spacing: -0.01em;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            text-align: center;
-        }
+        .sidebar-header { padding: 20px 16px; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; border-bottom: 1px solid rgba(255,255,255,0.08); text-align: center; }
         .nav-list { list-style: none; flex: 1; overflow-y: auto; padding: 8px 0; }
         .nav-list li { margin: 2px 8px; }
         .nav-list button {
@@ -94,30 +85,14 @@
         }
         .nav-list button:hover { background: rgba(255,255,255,0.08); color: #fff; }
         .nav-list button.active { background: var(--secondary); color: #fff; font-weight: 600; }
-        .sidebar-actions {
-            padding: 12px;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .sidebar-actions button {
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            border: none;
-            padding: 12px;
-            border-radius: var(--radius-sm);
-            font-size: 0.9rem;
-            cursor: pointer;
-            min-height: 44px;
-        }
+        .sidebar-actions { padding: 12px; border-top: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 8px; }
+        .sidebar-actions button { background: rgba(255,255,255,0.1); color: #fff; border: none; padding: 12px; border-radius: var(--radius-sm); font-size: 0.9rem; cursor: pointer; min-height: 44px; }
         .sidebar-actions button:hover { background: rgba(255,255,255,0.18); }
 
-        /* ==================== BOTTOM NAV (≤1024px) ==================== */
+        /* ==================== BOTTOM NAV ==================== */
         .bottom-nav {
             display: none;
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
+            position: fixed; bottom: 0; left: 0; right: 0;
             background: var(--card);
             border-top: 1px solid var(--border);
             z-index: 150;
@@ -126,29 +101,13 @@
             padding-right: env(safe-area-inset-right);
             box-shadow: 0 -2px 12px rgba(15,23,42,.06);
         }
-        .bottom-nav-inner {
-            display: flex;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-        }
+        .bottom-nav-inner { display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
         .bottom-nav-inner::-webkit-scrollbar { display: none; }
         .bottom-nav-btn {
-            flex: 1 0 auto;
-            min-width: 68px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            padding: 8px 6px;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 0.7rem;
-            cursor: pointer;
-            min-height: 58px;
-            transition: color 0.2s, transform 0.08s;
+            flex: 1 0 auto; min-width: 68px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+            padding: 8px 6px; background: none; border: none; color: var(--text-muted); font-size: 0.7rem;
+            cursor: pointer; min-height: 58px; transition: color 0.2s, transform 0.08s;
             -webkit-tap-highlight-color: transparent;
         }
         .bottom-nav-btn:active { transform: scale(0.94); }
@@ -156,7 +115,7 @@
         .bn-icon { font-size: 1.35rem; line-height: 1; }
         .bn-label { font-size: 0.66rem; line-height: 1.1; white-space: nowrap; }
 
-        /* ==================== MAIN CONTENT ==================== */
+        /* ==================== MAIN ==================== */
         .main-content {
             margin-left: var(--sidebar-width);
             flex: 1;
@@ -168,82 +127,41 @@
         .module.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ==================== NAVEGACIÓN INTERNA: MENÚ + CALC-VIEW ==================== */
-        /* Regla base: dentro de un módulo se muestra el menú (nivel 1).
-           Cuando tiene la clase .view-calc, se muestra solo el calc-view activo (nivel 2). */
+        /* ============ NAVEGACIÓN INTERNA ============ */
         .module .module-menu { display: block; }
         .module .calc-view { display: none; }
         .module.view-calc .module-menu { display: none; }
         .module.view-calc .calc-view.active { display: block; animation: fadeIn 0.22s ease; }
 
-        /* Cuadrícula del menú de cada módulo */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 12px;
-            margin-top: 12px;
-        }
-        /* Tarjeta táctil del menú (mínimo 72px de alto) */
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 12px; }
         .menu-card {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 16px 18px;
-            min-height: 72px;
-            background: var(--card);
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius);
-            cursor: pointer;
-            text-align: left;
-            transition: transform 0.08s, border-color 0.15s, box-shadow 0.15s;
-            color: var(--text);
-            font-family: inherit;
-            font-size: 1rem;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
+            display: flex; align-items: center; gap: 14px; padding: 16px 18px; min-height: 72px;
+            background: var(--card); border: 1.5px solid var(--border); border-radius: var(--radius);
+            cursor: pointer; text-align: left; transition: transform 0.08s, border-color 0.15s, box-shadow 0.15s;
+            color: var(--text); font-family: inherit; font-size: 1rem;
+            -webkit-tap-highlight-color: transparent; touch-action: manipulation;
         }
         .menu-card:hover { border-color: var(--secondary); box-shadow: var(--shadow-md); }
         .menu-card:active { transform: scale(0.98); }
         .menu-card .mc-icon {
-            font-size: 1.8rem;
-            flex-shrink: 0;
-            width: 46px;
-            height: 46px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg);
-            border-radius: var(--radius-sm);
+            font-size: 1.8rem; flex-shrink: 0; width: 46px; height: 46px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--bg); border-radius: var(--radius-sm);
         }
         .menu-card .mc-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
         .menu-card .mc-title { font-weight: 600; font-size: 0.98rem; color: var(--text); line-height: 1.25; }
         .menu-card .mc-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.3; }
 
-        /* Botón Volver (nivel 2 → nivel 1) */
         .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 10px 16px;
-            min-height: 44px;
-            background: transparent;
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius-sm);
-            color: var(--text);
-            font-size: 0.92rem;
-            font-weight: 500;
-            cursor: pointer;
-            margin-bottom: 12px;
+            display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; min-height: 44px;
+            background: transparent; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+            color: var(--text); font-size: 0.92rem; font-weight: 500; cursor: pointer; margin-bottom: 12px;
             transition: transform 0.08s, border-color 0.15s, background 0.15s;
-            font-family: inherit;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
+            font-family: inherit; -webkit-tap-highlight-color: transparent; touch-action: manipulation;
         }
         .back-btn:hover { border-color: var(--secondary); background: var(--bg); }
         .back-btn:active { transform: scale(0.96); }
 
-        /* Filtrado de secciones dentro de un calc-view único (Módulos 2-5).
-           Solo se muestra la calc-section cuyo data-calc coincide con data-active-calc. */
         .calc-view[data-active-calc] .calc-section { display: none; }
         .calc-view[data-active-calc="m2_gran"] .calc-section[data-calc="m2_gran"] { display: block; }
         .calc-view[data-active-calc="m2_vol"]  .calc-section[data-calc="m2_vol"]  { display: block; }
@@ -260,89 +178,25 @@
         .calc-view[data-active-calc="m5_vol"]  .calc-section[data-calc="m5_vol"]  { display: block; }
 
         /* ==================== CARDS ==================== */
-        .card {
-            background: var(--card);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-sm);
-            padding: 20px;
-            margin-bottom: 20px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
-        .card h2 {
-            font-size: 1.35rem;
-            margin-bottom: 14px;
-            color: var(--text);
-            font-weight: 700;
-            letter-spacing: -0.01em;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--accent);
-        }
-        .card h3 {
-            font-size: 1.05rem;
-            margin: 20px 0 10px;
-            color: var(--text);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .card h3::before {
-            content: '';
-            display: inline-block;
-            width: 4px;
-            height: 16px;
-            background: var(--secondary);
-            border-radius: 2px;
-        }
-        /* En el menú del módulo, el h3 no lleva la barra decorativa */
+        .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow-sm); padding: 20px; margin-bottom: 20px; overflow: hidden; border: 1px solid var(--border); }
+        .card h2 { font-size: 1.35rem; margin-bottom: 14px; color: var(--text); font-weight: 700; letter-spacing: -0.01em; padding-bottom: 10px; border-bottom: 2px solid var(--accent); }
+        .card h3 { font-size: 1.05rem; margin: 20px 0 10px; color: var(--text); font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .card h3::before { content: ''; display: inline-block; width: 4px; height: 16px; background: var(--secondary); border-radius: 2px; }
         .module-menu .card h3::before { display: none; }
 
         /* ==================== FORM ==================== */
-        .form-group {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 8px 10px;
-            margin-bottom: 14px;
+        .form-group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-bottom: 14px; }
+        .form-group label { font-weight: 500; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; white-space: nowrap; }
+        .form-group input, .form-group select {
+            height: var(--input-height); padding: 8px 12px; border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm); font-size: 1rem; width: 140px;
+            background: var(--card); color: var(--text); transition: border-color 0.15s, box-shadow 0.15s;
         }
-        .form-group label {
-            font-weight: 500;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        .form-group input,
-        .form-group select {
-            height: var(--input-height);
-            padding: 8px 12px;
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-size: 1rem;
-            width: 140px;
-            background: var(--card);
-            color: var(--text);
-            transition: border-color 0.15s, box-shadow 0.15s;
-        }
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--secondary);
-            box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
-        }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
         .form-group button {
-            height: var(--input-height);
-            padding: 0 18px;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-size: 0.95rem;
-            font-weight: 500;
-            background: var(--secondary);
-            color: #fff;
-            cursor: pointer;
-            transition: background 0.15s, transform 0.08s;
-            min-width: 100px;
+            height: var(--input-height); padding: 0 18px; border: none; border-radius: var(--radius-sm);
+            font-size: 0.95rem; font-weight: 500; background: var(--secondary); color: #fff;
+            cursor: pointer; transition: background 0.15s, transform 0.08s; min-width: 100px;
             -webkit-tap-highlight-color: transparent;
         }
         .form-group button:active { transform: scale(0.96); }
@@ -352,47 +206,20 @@
         .unit-select { width: 92px !important; }
 
         .result-box {
-            background: var(--bg);
-            border-left: 4px solid var(--secondary);
-            padding: 12px 16px;
-            margin: 10px 0 14px;
-            border-radius: var(--radius-sm);
-            font-weight: 500;
-            font-size: 0.95rem;
-            color: var(--text);
-            word-break: break-word;
-            line-height: 1.5;
+            background: var(--bg); border-left: 4px solid var(--secondary);
+            padding: 12px 16px; margin: 10px 0 14px; border-radius: var(--radius-sm);
+            font-weight: 500; font-size: 0.95rem; color: var(--text); word-break: break-word; line-height: 1.5;
         }
-        .note {
-            background: rgba(245,158,11,0.08);
-            border-left: 4px solid var(--accent);
-            padding: 10px 14px;
-            margin: 8px 0;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            border-radius: var(--radius-sm);
-        }
+        .note { background: rgba(245,158,11,0.08); border-left: 4px solid var(--accent); padding: 10px 14px; margin: 8px 0; font-size: 0.85rem; color: var(--text-muted); border-radius: var(--radius-sm); }
         .fs-small { font-size: 0.85rem; color: var(--text-muted); }
         .mb-10 { margin-bottom: 10px; }
 
         /* ==================== TABS ==================== */
-        .tabs {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-        }
+        .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
         .tab-btn {
-            padding: 10px 18px;
-            border: 1.5px solid var(--border);
-            background: var(--card);
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.9rem;
-            min-height: var(--tab-height);
-            transition: all 0.15s;
-            color: var(--text-muted);
+            padding: 10px 18px; border: 1.5px solid var(--border); background: var(--card);
+            border-radius: var(--radius-sm); cursor: pointer; font-weight: 500; font-size: 0.9rem;
+            min-height: var(--tab-height); transition: all 0.15s; color: var(--text-muted);
             -webkit-tap-highlight-color: transparent;
         }
         .tab-btn:active { transform: scale(0.96); }
@@ -401,78 +228,92 @@
         .tab-content.active { display: block; }
 
         /* ==================== TABLES ==================== */
-        .table-responsive {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            margin: 12px 0;
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
-        }
+        .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 12px 0; border-radius: var(--radius-sm); border: 1px solid var(--border); }
         table { width: 100%; border-collapse: collapse; min-width: 640px; font-size: 0.88rem; }
         th, td { padding: 10px 8px; border-bottom: 1px solid var(--border); text-align: center; }
-        th {
-            background: var(--bg);
-            color: var(--text);
-            font-weight: 600;
-            font-size: 0.82rem;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-            position: sticky;
-            top: 0;
-            z-index: 2;
-        }
-        .table-responsive table th:first-child,
-        .table-responsive table td:first-child {
-            position: sticky;
-            left: 0;
-            background: var(--card);
-            z-index: 1;
-            font-weight: 600;
-            border-right: 1px solid var(--border);
+        th { background: var(--bg); color: var(--text); font-weight: 600; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.02em; position: sticky; top: 0; z-index: 2; }
+        .table-responsive table th:first-child, .table-responsive table td:first-child {
+            position: sticky; left: 0; background: var(--card); z-index: 1; font-weight: 600; border-right: 1px solid var(--border);
         }
         .table-responsive table th:first-child { background: var(--bg); z-index: 3; }
         input[type="number"] {
-            height: 44px;
-            min-width: 68px;
-            width: 88px;
-            text-align: center;
-            border: 1.5px solid var(--border);
-            border-radius: var(--radius-sm);
-            background: var(--card);
-            color: var(--text);
-            font-size: 0.95rem;
+            height: 44px; min-width: 68px; width: 88px; text-align: center;
+            border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+            background: var(--card); color: var(--text); font-size: 0.95rem;
             -webkit-tap-highlight-color: transparent;
         }
         input[type="number"]:focus { outline: none; border-color: var(--secondary); }
 
         /* ==================== SAVE INDICATOR ==================== */
         .save-indicator {
-            position: fixed;
-            bottom: calc(80px + env(safe-area-inset-bottom));
-            right: 16px;
-            background: var(--success);
-            color: #fff;
-            padding: 10px 18px;
-            border-radius: 24px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            opacity: 0;
-            transform: translateY(8px);
-            transition: opacity 0.25s, transform 0.25s;
-            pointer-events: none;
-            z-index: 300;
+            position: fixed; bottom: calc(80px + env(safe-area-inset-bottom)); right: 16px;
+            background: var(--success); color: #fff; padding: 10px 18px; border-radius: 24px;
+            font-size: 0.85rem; font-weight: 500; opacity: 0; transform: translateY(8px);
+            transition: opacity 0.25s, transform 0.25s; pointer-events: none; z-index: 300;
             box-shadow: var(--shadow-md);
         }
         .save-indicator.show { opacity: 1; transform: translateY(0); }
         .save-indicator.error { background: var(--danger); }
 
+        /* ==================== VISUALIZACIONES ==================== */
+        .viz-container {
+            margin: 14px 0;
+            padding: 10px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            min-height: 60px;
+        }
+        .viz-container svg { display: block; }
+        .viz-empty {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding: 32px 10px;
+        }
+        /* --- Animación de Esfuerzo (M1) --- */
+        .esf-viz { padding: 8px 4px; }
+        .esf-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
+        .esf-lbl { min-width: 120px; font-size: 0.82rem; color: var(--text-muted); }
+        .esf-track { flex: 1; height: 26px; background: var(--card); border-radius: 4px; position: relative; overflow: hidden; border: 1px solid var(--border); }
+        .esf-bar { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+        .esf-bar-orig {
+            width: 60%;
+            background: repeating-linear-gradient(45deg, var(--border) 0 6px, transparent 6px 12px);
+            border-right: 1.5px dashed var(--border-strong);
+        }
+        .esf-bar-def { width: 60%; background: linear-gradient(90deg, var(--secondary), var(--accent)); }
+        .esf-info { text-align: center; font-size: 0.95rem; color: var(--text); margin-top: 10px; }
+        .esf-eps { color: var(--secondary); font-family: ui-monospace, monospace; }
+        /* --- Animación de Torsión (M4) --- */
+        .tor-viz { padding: 6px 0; }
+        .tor-circle {
+            width: 130px; height: 130px; border-radius: 50%;
+            border: 2px solid var(--border-strong); background: var(--card);
+            position: relative; margin: 12px auto;
+        }
+        .tor-needle {
+            position: absolute; width: 3px; height: 50%;
+            background: var(--secondary);
+            top: 0; left: calc(50% - 1.5px);
+            transform-origin: bottom center;
+            transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+            border-radius: 2px;
+        }
+        .tor-needle::before {
+            content: ''; position: absolute; bottom: -5px; left: 50%;
+            width: 10px; height: 10px; background: var(--secondary);
+            border-radius: 50%; transform: translateX(-50%);
+        }
+        .tor-info { text-align: center; font-size: 0.9rem; color: var(--text-muted); margin-top: 6px; }
+        .tor-theta { color: var(--secondary); font-family: ui-monospace, monospace; }
+        .tor-deg { color: var(--accent); font-weight: 600; }
+
         /* ==================== RESPONSIVE ==================== */
         @media (max-width: 1024px) {
             .sidebar { display: none; }
             .main-content {
-                margin-left: 0;
-                width: 100%;
-                padding: 16px;
+                margin-left: 0; width: 100%; padding: 16px;
                 padding-top: calc(16px + env(safe-area-inset-top));
                 padding-bottom: calc(90px + env(safe-area-inset-bottom));
             }
@@ -483,9 +324,7 @@
             .card h2 { font-size: 1.15rem; }
             .form-group { flex-direction: column; align-items: stretch; gap: 6px; }
             .form-group label { font-size: 0.88rem; }
-            .form-group input,
-            .form-group select,
-            .form-group button { width: 100%; }
+            .form-group input, .form-group select, .form-group button { width: 100%; }
             .unit-select { width: 100% !important; }
             .tab-btn { padding: 9px 14px; font-size: 0.85rem; flex: 1; min-width: 0; }
             .menu-grid { grid-template-columns: 1fr; }
@@ -523,12 +362,8 @@
     <div class="save-indicator" id="saveIndicator">Guardado ✓</div>
 
     <main class="main-content" id="mainContent">
-        <!-- ============================================================
-             MÓDULO 1 — Fundamentos Físicos
-             5 opciones de menú → 5 calc-views independientes
-             ============================================================ -->
+        <!-- ==================== MÓDULO 1 ==================== -->
         <section class="module active" id="modulo1">
-            <!-- NIVEL 1: menú -->
             <div class="module-menu">
                 <div class="card">
                     <h2>🔬 Fundamentos Físicos y Mecánica Básica</h2>
@@ -536,44 +371,29 @@
                     <div class="menu-grid">
                         <button class="menu-card" data-module="modulo1" data-calc="m1_geo">
                             <span class="mc-icon">📐</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Geometría de Secciones</span>
-                                <span class="mc-desc">Área circular y rectangular</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Geometría de Secciones</span><span class="mc-desc">Área circular y rectangular</span></div>
                         </button>
                         <button class="menu-card" data-module="modulo1" data-calc="m1_esf">
                             <span class="mc-icon">📏</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Esfuerzo Normal y Deformación</span>
-                                <span class="mc-desc">σ = P/A · ε = ΔL / L₀</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Esfuerzo Normal y Deformación</span><span class="mc-desc">σ = P/A · ε = ΔL / L₀</span></div>
                         </button>
                         <button class="menu-card" data-module="modulo1" data-calc="m1_hooke">
                             <span class="mc-icon">🧮</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Ley de Hooke y Elasticidad</span>
-                                <span class="mc-desc">Módulo E · Poisson · deformación 3D</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Ley de Hooke y Elasticidad</span><span class="mc-desc">Módulo E · Poisson · deformación 3D</span></div>
                         </button>
                         <button class="menu-card" data-module="modulo1" data-calc="m1_res">
                             <span class="mc-icon">🔄</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Módulo de Resiliencia</span>
-                                <span class="mc-desc">Ur = σy² / (2·E)</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Módulo de Resiliencia</span><span class="mc-desc">Ur = σy² / (2·E)</span></div>
                         </button>
                         <button class="menu-card" data-module="modulo1" data-calc="m1_fs">
                             <span class="mc-icon">🛡️</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Factor de Seguridad</span>
-                                <span class="mc-desc">FS = σ fallo / σ admisible</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Factor de Seguridad</span><span class="mc-desc">FS = σ fallo / σ admisible</span></div>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- NIVEL 2A: Geometría de Secciones -->
+            <!-- Geometría -->
             <div class="calc-view" data-calc="m1_geo">
                 <button class="back-btn" data-module="modulo1">← Volver</button>
                 <div class="card">
@@ -608,7 +428,7 @@
                 </div>
             </div>
 
-            <!-- NIVEL 2B: Esfuerzo Normal -->
+            <!-- Esfuerzo Normal (con animación) -->
             <div class="calc-view" data-calc="m1_esf">
                 <button class="back-btn" data-module="modulo1">← Volver</button>
                 <div class="card">
@@ -638,10 +458,12 @@
                         </select>
                     </div>
                     <div class="result-box" id="m1_sigma_epsilon_result">σ = 0 MPa, ε = 0</div>
+                    <!-- Animación de la barra deformándose (visualización exagerada de ε) -->
+                    <div class="viz-container" id="viz_m1_esf"></div>
                 </div>
             </div>
 
-            <!-- NIVEL 2C: Ley de Hooke -->
+            <!-- Hooke -->
             <div class="calc-view" data-calc="m1_hooke">
                 <button class="back-btn" data-module="modulo1">← Volver</button>
                 <div class="card">
@@ -678,7 +500,7 @@
                 </div>
             </div>
 
-            <!-- NIVEL 2D: Resiliencia -->
+            <!-- Resiliencia -->
             <div class="calc-view" data-calc="m1_res">
                 <button class="back-btn" data-module="modulo1">← Volver</button>
                 <div class="card">
@@ -699,7 +521,7 @@
                 </div>
             </div>
 
-            <!-- NIVEL 2E: Factor de Seguridad -->
+            <!-- Factor de Seguridad (con gauge) -->
             <div class="calc-view" data-calc="m1_fs">
                 <button class="back-btn" data-module="modulo1">← Volver</button>
                 <div class="card">
@@ -717,18 +539,14 @@
                         </select>
                     </div>
                     <div class="result-box" id="m1_fs_result">FS = 0</div>
+                    <!-- Gauge visual de zonas de seguridad -->
+                    <div class="viz-container" id="viz_m1_fs"></div>
                 </div>
             </div>
         </section>
 
-        <!-- ============================================================
-             MÓDULO 2 — Análisis de Áridos
-             Menú con 3 opciones. Cada calc-view tiene tabs P1/P2/P3.
-             El contenido vive en un único tab-content por prueba,
-             con calc-sections internas que se filtran por data-active-calc.
-             ============================================================ -->
+        <!-- ==================== MÓDULO 2 ==================== -->
         <section class="module" id="modulo2">
-            <!-- NIVEL 1: menú -->
             <div class="module-menu">
                 <div class="card">
                     <h2>🏗️ Análisis de Áridos (Agregados Pétreos)</h2>
@@ -736,30 +554,20 @@
                     <div class="menu-grid">
                         <button class="menu-card" data-module="modulo2" data-calc="m2_gran">
                             <span class="mc-icon">📊</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Análisis Granulométrico</span>
-                                <span class="mc-desc">ASTM C136 · Módulo de Finura</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Análisis Granulométrico</span><span class="mc-desc">ASTM C136 · Módulo de Finura</span></div>
                         </button>
                         <button class="menu-card" data-module="modulo2" data-calc="m2_vol">
                             <span class="mc-icon">💧</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Propiedades Volumétricas</span>
-                                <span class="mc-desc">Contenido de humedad y absorción</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Propiedades Volumétricas</span><span class="mc-desc">Contenido de humedad y absorción</span></div>
                         </button>
                         <button class="menu-card" data-module="modulo2" data-calc="m2_vac">
                             <span class="mc-icon">📦</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Peso Unitario y Vacíos</span>
-                                <span class="mc-desc">PU suelto / compactado · % vacíos</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Peso Unitario y Vacíos</span><span class="mc-desc">PU suelto / compactado · % vacíos</span></div>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- NIVEL 2: calc-view única con tabs P1/P2/P3 -->
             <div class="calc-view" data-module="modulo2">
                 <button class="back-btn" data-module="modulo2">← Volver</button>
                 <div class="card">
@@ -770,10 +578,11 @@
                     </div>
 
                     <div class="tab-content active" id="m2_prueba1">
-                        <!-- Sección: Análisis Granulométrico -->
                         <div class="calc-section" data-calc="m2_gran">
                             <h3>Análisis Granulométrico (Norma ASTM C 136)</h3>
                             <div class="note">Siga el procedimiento estándar: tamizar, pesar retenidos y registrar. El módulo de finura se calcula con la serie ASTM designada.</div>
+                            <!-- Curva granulométrica en escala log (ASTM C136) -->
+                            <div class="viz-container" id="viz_m2_gran_1"></div>
                             <div class="table-responsive">
                                 <table id="m2_gran_table_1">
                                     <thead><tr><th>Tamiz</th><th>Peso Ret. (g)</th><th>% Ret.</th><th>% Acum.</th><th>% Pasa</th></tr></thead>
@@ -800,7 +609,6 @@
                             <button class="success clear-btn" data-module="m2" data-prueba="1">Limpiar Granulometría Prueba 1</button>
                         </div>
 
-                        <!-- Sección: Propiedades Volumétricas -->
                         <div class="calc-section" data-calc="m2_vol">
                             <h3>Propiedades Volumétricas</h3>
                             <div class="form-group">
@@ -812,7 +620,6 @@
                             <button class="success clear-btn" data-module="m2" data-prueba="1" data-sub="vol">Limpiar Volumétricas Prueba 1</button>
                         </div>
 
-                        <!-- Sección: Peso Unitario y Vacíos -->
                         <div class="calc-section" data-calc="m2_vac">
                             <h3>Peso Unitario y Vacíos</h3>
                             <div class="form-group">
@@ -830,12 +637,8 @@
             </div>
         </section>
 
-        <!-- ============================================================
-             MÓDULO 3 — Hormigón y Mampostería
-             Menú con 5 opciones, calc-view única con tabs P1/P2/P3.
-             ============================================================ -->
+        <!-- ==================== MÓDULO 3 ==================== -->
         <section class="module" id="modulo3">
-            <!-- NIVEL 1: menú -->
             <div class="module-menu">
                 <div class="card">
                     <h2>🧱 Hormigón (Concreto) y Mampostería</h2>
@@ -843,44 +646,28 @@
                     <div class="menu-grid">
                         <button class="menu-card" data-module="modulo3" data-calc="m3_comp">
                             <span class="mc-icon">💪</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Resistencia a la Compresión</span>
-                                <span class="mc-desc">Probetas cilíndricas y cubos (f'c)</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Resistencia a la Compresión</span><span class="mc-desc">Probetas cilíndricas y cubos (f'c)</span></div>
                         </button>
                         <button class="menu-card" data-module="modulo3" data-calc="m3_trac">
                             <span class="mc-icon">🌉</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Tracción Indirecta</span>
-                                <span class="mc-desc">Ensayo brasileño</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Tracción Indirecta</span><span class="mc-desc">Ensayo brasileño</span></div>
                         </button>
                         <button class="menu-card" data-module="modulo3" data-calc="m3_flex">
                             <span class="mc-icon">📏</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Módulo de Ruptura a Flexión</span>
-                                <span class="mc-desc">Vigas con carga en los tercios</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Módulo de Ruptura a Flexión</span><span class="mc-desc">Vigas con carga en los tercios</span></div>
                         </button>
                         <button class="menu-card" data-module="modulo3" data-calc="m3_aci">
                             <span class="mc-icon">📈</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Resistencia Media (ACI)</span>
-                                <span class="mc-desc">f'cr estadístico según ACI</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Resistencia Media (ACI)</span><span class="mc-desc">f'cr estadístico según ACI</span></div>
                         </button>
                         <button class="menu-card" data-module="modulo3" data-calc="m3_bloq">
                             <span class="mc-icon">🧱</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Bloques de Mampostería</span>
-                                <span class="mc-desc">Esfuerzo sobre área bruta y neta</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Bloques de Mampostería</span><span class="mc-desc">Esfuerzo sobre área bruta y neta</span></div>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- NIVEL 2: calc-view única con tabs -->
             <div class="calc-view" data-module="modulo3">
                 <button class="back-btn" data-module="modulo3">← Volver</button>
                 <div class="card">
@@ -942,6 +729,8 @@
                                 <label for="m3_s_1">Desv. estándar (s):</label><input type="number" id="m3_s_1" step="any" min="0">
                             </div>
                             <div class="result-box" id="m3_fcr_result_1">f'cr = 0 MPa</div>
+                            <!-- Comparativa f'c vs f'cr (margen de sobrediseño ACI) -->
+                            <div class="viz-container" id="viz_m3_aci_1"></div>
                         </div>
 
                         <div class="calc-section" data-calc="m3_bloq">
@@ -966,10 +755,7 @@
             </div>
         </section>
 
-        <!-- ============================================================
-             MÓDULO 4 — Metales y Madera
-             Menú con 3 opciones, calc-view única con tabs P1/P2/P3.
-             ============================================================ -->
+        <!-- ==================== MÓDULO 4 ==================== -->
         <section class="module" id="modulo4">
             <div class="module-menu">
                 <div class="card">
@@ -978,24 +764,15 @@
                     <div class="menu-grid">
                         <button class="menu-card" data-module="modulo4" data-calc="m4_trac">
                             <span class="mc-icon">🔗</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Ensayo de Tracción en Metales</span>
-                                <span class="mc-desc">%Elongación y %Reducción</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Ensayo de Tracción en Metales</span><span class="mc-desc">%Elongación y %Reducción</span></div>
                         </button>
                         <button class="menu-card" data-module="modulo4" data-calc="m4_tors">
                             <span class="mc-icon">🌀</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Ensayo de Torsión</span>
-                                <span class="mc-desc">τ_max · Momento polar J · Módulo G</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Ensayo de Torsión</span><span class="mc-desc">τ_max · Momento polar J · Módulo G</span></div>
                         </button>
                         <button class="menu-card" data-module="modulo4" data-calc="m4_mad">
                             <span class="mc-icon">🪵</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Flexión en Madera</span>
-                                <span class="mc-desc">MOR · carga central puntual</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Flexión en Madera</span><span class="mc-desc">MOR · carga central puntual</span></div>
                         </button>
                     </div>
                 </div>
@@ -1034,6 +811,8 @@
                                 <label for="m4_theta_1">Ángulo θ (rad):</label><input type="number" id="m4_theta_1" step="any" min="0">
                             </div>
                             <div class="result-box" id="m4_torsion_result_1">τ_max = 0 MPa, G = 0 MPa</div>
+                            <!-- Animación visual del giro por torsión -->
+                            <div class="viz-container" id="viz_m4_tors_1"></div>
                         </div>
 
                         <div class="calc-section" data-calc="m4_mad">
@@ -1045,6 +824,8 @@
                                 <label for="m4_mad_h_1">Altura h:</label><input type="number" id="m4_mad_h_1" step="any" min="0">
                             </div>
                             <div class="result-box" id="m4_madera_result_1">MOR = 0 MPa</div>
+                            <!-- Diagrama de viga simplemente apoyada con deflexión -->
+                            <div class="viz-container" id="viz_m4_mad_1"></div>
                             <button class="success clear-btn" data-module="m4" data-prueba="1">Limpiar Módulo 4 Prueba 1</button>
                         </div>
                     </div>
@@ -1055,10 +836,7 @@
             </div>
         </section>
 
-        <!-- ============================================================
-             MÓDULO 5 — Mezclas Asfálticas
-             Menú con 2 opciones, calc-view única con tabs P1/P2/P3.
-             ============================================================ -->
+        <!-- ==================== MÓDULO 5 ==================== -->
         <section class="module" id="modulo5">
             <div class="module-menu">
                 <div class="card">
@@ -1067,17 +845,11 @@
                     <div class="menu-grid">
                         <button class="menu-card" data-module="modulo5" data-calc="m5_grav">
                             <span class="mc-icon">💠</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Gravedades Específicas</span>
-                                <span class="mc-desc">Gmb · Gmm · Gsb</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Gravedades Específicas</span><span class="mc-desc">Gmb · Gmm · Gsb</span></div>
                         </button>
                         <button class="menu-card" data-module="modulo5" data-calc="m5_vol">
                             <span class="mc-icon">🧪</span>
-                            <div class="mc-text">
-                                <span class="mc-title">Análisis Volumétrico</span>
-                                <span class="mc-desc">VTM · VMA · VFA</span>
-                            </div>
+                            <div class="mc-text"><span class="mc-title">Análisis Volumétrico</span><span class="mc-desc">VTM · VMA · VFA</span></div>
                         </button>
                     </div>
                 </div>
@@ -1109,6 +881,8 @@
                         <div class="calc-section" data-calc="m5_vol">
                             <h3>Análisis Volumétrico</h3>
                             <div class="result-box" id="m5_vol_result_1">VTM = 0%, VMA = 0%, VFA = 0%</div>
+                            <!-- Composición volumétrica apilada: agregado / asfalto / vacíos -->
+                            <div class="viz-container" id="viz_m5_vol_1"></div>
                             <button class="success clear-btn" data-module="m5" data-prueba="1">Limpiar Módulo 5 Prueba 1</button>
                         </div>
                     </div>
@@ -1119,9 +893,7 @@
             </div>
         </section>
 
-        <!-- ============================================================
-             MÓDULO 6 — Control de Calidad (sin sub-opciones)
-             ============================================================ -->
+        <!-- ==================== MÓDULO 6 ==================== -->
         <section class="module" id="modulo6">
             <div class="card">
                 <h2>📊 Control de Calidad y Estadística</h2>
@@ -1139,6 +911,8 @@
                     </table>
                 </div>
                 <div class="result-box" id="m6_stats_result">n = 0, Media = 0, s = 0, CV = 0%</div>
+                <!-- Carta de control (run chart) con bandas ±1s y ±2s -->
+                <div class="viz-container" id="viz_m6_chart"></div>
 
                 <h3>Respaldo de datos</h3>
                 <div class="form-group">
@@ -1199,15 +973,11 @@
                 }
             }
 
-            // ==================== NAVEGACIÓN ENTRE MÓDULOS (NIVEL 0) ====================
+            // ==================== NAVEGACIÓN ====================
             const navLinks = $$('.nav-link');
             const bottomNavBtns = $$('.bottom-nav-btn');
             const modules = $$('.module');
 
-            /**
-             * navigateTo(moduleId): entra a un módulo mostrando su MENÚ interno (nivel 1).
-             * Si el módulo tiene la clase .view-calc, se quita para asegurar que se vea el menú.
-             */
             function navigateTo(moduleId, pushHistory = true) {
                 navLinks.forEach(b => b.classList.toggle('active', b.dataset.module === moduleId));
                 bottomNavBtns.forEach(b => b.classList.toggle('active', b.dataset.module === moduleId));
@@ -1215,77 +985,43 @@
                     const isActive = m.id === moduleId;
                     m.classList.toggle('active', isActive);
                     if (isActive) {
-                        // Resetear siempre al menú del módulo (nivel 1)
                         m.classList.remove('view-calc');
-                        m.querySelectorAll('.calc-view').forEach(v => {
-                            v.classList.remove('active');
-                            // No borramos data-active-calc para no perder el filtro si vuelve
-                        });
+                        m.querySelectorAll('.calc-view').forEach(v => v.classList.remove('active'));
                     }
                 });
-                if (pushHistory) {
-                    history.pushState({ module: moduleId, level: 'menu' }, '', `#${moduleId}`);
-                }
+                if (pushHistory) history.pushState({ module: moduleId, level: 'menu' }, '', `#${moduleId}`);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
-            /**
-             * openCalculator(moduleId, calcId): entra a una calculadora individual (nivel 2).
-             * - Módulos 1: cada calc-view tiene su propio data-calc, se marca .active la que coincida.
-             * - Módulos 2-5: hay un único calc-view; se le setea data-active-calc para filtrar
-             *   las .calc-section internas por CSS.
-             */
             function openCalculator(moduleId, calcId, pushHistory = true) {
                 const module = $(moduleId);
                 if (!module) return;
-
-                // Asegurar que el módulo esté visible y en el nav activo
                 navLinks.forEach(b => b.classList.toggle('active', b.dataset.module === moduleId));
                 bottomNavBtns.forEach(b => b.classList.toggle('active', b.dataset.module === moduleId));
                 modules.forEach(m => m.classList.toggle('active', m.id === moduleId));
-
                 module.classList.add('view-calc');
-
                 module.querySelectorAll('.calc-view').forEach(v => {
                     if (v.dataset.calc) {
-                        // Modo A (Módulo 1): varios calc-views, uno por calculadora
                         v.classList.toggle('active', v.dataset.calc === calcId);
                     } else {
-                        // Modo B (Módulos 2-5): calc-view única con calc-sections filtradas
                         v.classList.add('active');
                         v.setAttribute('data-active-calc', calcId);
                     }
                 });
-
-                if (pushHistory) {
-                    history.pushState(
-                        { module: moduleId, calc: calcId, level: 'calc' },
-                        '',
-                        `#${moduleId}/${calcId}`
-                    );
-                }
+                if (pushHistory) history.pushState({ module: moduleId, calc: calcId, level: 'calc' }, '', `#${moduleId}/${calcId}`);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
-            // Handlers: menú superior (desktop) y bottom nav (móvil)
             navLinks.forEach(btn => btn.addEventListener('click', () => navigateTo(btn.dataset.module)));
             bottomNavBtns.forEach(btn => btn.addEventListener('click', () => navigateTo(btn.dataset.module)));
 
-            // Handler: tarjetas del menú interno (entrar a calculadora)
             document.addEventListener('click', function(e) {
                 const card = e.target.closest('.menu-card');
-                if (card) {
-                    openCalculator(card.dataset.module, card.dataset.calc);
-                    return;
-                }
-                // Handler: botón "← Volver" (regresa al menú del módulo, nivel 1)
+                if (card) { openCalculator(card.dataset.module, card.dataset.calc); return; }
                 const backBtn = e.target.closest('.back-btn');
-                if (backBtn) {
-                    navigateTo(backBtn.dataset.module);
-                }
+                if (backBtn) navigateTo(backBtn.dataset.module);
             });
 
-            // popstate: el botón físico de Android / navegador retrocede correctamente
             window.addEventListener('popstate', function(e) {
                 const state = e.state;
                 if (!state) { navigateTo('modulo1', false); return; }
@@ -1293,23 +1029,17 @@
                 else navigateTo(state.module || 'modulo1', false);
             });
 
-            // Ruta inicial a partir del hash: #modulo1  o  #modulo1/m1_geo
             const initialHash = location.hash.substring(1);
             if (initialHash) {
                 const parts = initialHash.split('/');
-                const moduleId = parts[0];
-                const calcId = parts[1];
+                const moduleId = parts[0], calcId = parts[1];
                 if (document.getElementById(moduleId)) {
                     if (calcId) openCalculator(moduleId, calcId, false);
                     else navigateTo(moduleId, false);
-                } else {
-                    navigateTo('modulo1', false);
-                }
-            } else {
-                navigateTo('modulo1', false);
-            }
+                } else navigateTo('modulo1', false);
+            } else navigateTo('modulo1', false);
 
-            // ==================== TABS INTERNAS (P1/P2/P3) ====================
+            // ==================== TABS ====================
             function initTabs(containerId) {
                 const container = $(containerId);
                 if (!container) return;
@@ -1318,7 +1048,6 @@
                         container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                         btn.classList.add('active');
                         const tabId = btn.dataset.tab;
-                        // Los tab-content son hermanos del contenedor de tabs
                         const parentCard = container.closest('.card') || container.parentNode;
                         parentCard.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
                         const target = $(tabId);
@@ -1329,15 +1058,10 @@
             initTabs('m2_tabs'); initTabs('m3_tabs'); initTabs('m4_tabs'); initTabs('m5_tabs');
 
             // ==================== DUPLICAR CONTENIDO PRUEBAS 2 Y 3 ====================
-            // NOTA: la lógica interna se mantiene tal cual (restricción técnica).
-            // Ahora los tab-content de origen incluyen .calc-section anidadas, que
-            // se duplican también y quedan listas para el filtrado por data-active-calc.
             function duplicateTabContent(sourceId, targetId, prefix) {
-                const source = $(sourceId);
-                const target = $(targetId);
+                const source = $(sourceId), target = $(targetId);
                 if (!source || !target) return;
                 target.innerHTML = source.innerHTML;
-
                 target.querySelectorAll('[id]').forEach(el => {
                     el.id = el.id.replace(/_1$/, '_' + prefix);
                 });
@@ -1358,7 +1082,570 @@
             duplicateTabContent('m5_prueba1', 'm5_prueba2', '2');
             duplicateTabContent('m5_prueba1', 'm5_prueba3', '3');
 
-            // ==================== CÁLCULOS (sin cambios) ====================
+            // ==================================================================
+            // ==================== VISUALIZACIONES SVG / CSS ====================
+            // ==================================================================
+            // Todas las funciones de dibujo son "puras" en el sentido de que
+            // leen el estado actual (inputs o valores ya calculados) y renderizan
+            // un SVG o actualizan un elemento del DOM. Se llaman al final de las
+            // funciones de cálculo correspondientes y NO modifican dichas funciones.
+
+            // --- Helper: leer una variable CSS del :root ---
+            function cssVar(name, fallback) {
+                const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+                return v || fallback;
+            }
+
+            // --- Helper: inyectar un SVG completo en un contenedor ---
+            function setSvg(containerId, viewBox, body, maxH) {
+                const el = document.getElementById(containerId);
+                if (!el) return false;
+                el.innerHTML = `<svg viewBox="${viewBox}" preserveAspectRatio="xMidYMid meet" role="img" style="width:100%;height:auto;display:block;max-height:${maxH || 320}px;">${body}</svg>`;
+                return true;
+            }
+
+            // Aberturas reales de tamiz ASTM en mm (para la curva granulométrica)
+            const SIEVE_MM = {
+                '3"': 75, '2"': 50, '1 1/2"': 37.5, '1"': 25, '3/4"': 19,
+                '1/2"': 12.5, '3/8"': 9.5, 'No. 4': 4.75, 'No. 8': 2.36,
+                'No. 16': 1.18, 'No. 30': 0.6, 'No. 50': 0.3, 'No. 100': 0.15,
+                'No. 200': 0.075, 'Fondo': 0.01
+            };
+
+            // ------------------------------------------------------------------
+            // MÓDULO 1 — Gauge del Factor de Seguridad
+            // Muestra una barra horizontal con zonas rojo/amarillo/verde/gris
+            // y un marcador vertical en la posición del FS calculado.
+            // ------------------------------------------------------------------
+            function drawFSGauge() {
+                const container = document.getElementById('viz_m1_fs');
+                if (!container) return;
+                const sigma_fallo = convertToBase(parseFloat($('m1_sigma_fallo').value) || 0, $('m1_sigma_fallo_unit').value);
+                const sigma_adm = convertToBase(parseFloat($('m1_sigma_adm').value) || 0, $('m1_sigma_adm_unit').value);
+                const FS = safeDiv(sigma_fallo, sigma_adm);
+
+                const maxFS = 5;
+                const clampedFS = Math.max(0, Math.min(FS, maxFS));
+                const W = 560, H = 150;
+                const barX = 40, barY = 60, barW = 480, barH = 34;
+
+                const cDanger = cssVar('--danger', '#dc2626');
+                const cSuccess = cssVar('--success', '#16a34a');
+                const cMuted = cssVar('--text-muted', '#94a3b8');
+                const cPrimary = cssVar('--primary', '#1e3a5f');
+                const cBorder = cssVar('--border-strong', '#cbd5e1');
+
+                const zones = [
+                    { from: 0,    to: 1,   color: cDanger,  label: 'Falla' },
+                    { from: 1,    to: 1.5, color: '#f59e0b', label: 'Riesgo' },
+                    { from: 1.5,  to: 3,   color: cSuccess, label: 'Seguro' },
+                    { from: 3,    to: 5,   color: cMuted,   label: 'Sobredim.' }
+                ];
+
+                let body = '';
+                zones.forEach(z => {
+                    const x = barX + (z.from / maxFS) * barW;
+                    const w = ((z.to - z.from) / maxFS) * barW;
+                    body += `<rect x="${x}" y="${barY}" width="${w}" height="${barH}" fill="${z.color}" opacity="0.85"/>`;
+                    body += `<text x="${x + w/2}" y="${barY + barH/2 + 4}" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">${z.label}</text>`;
+                });
+                body += `<rect x="${barX}" y="${barY}" width="${barW}" height="${barH}" fill="none" stroke="${cBorder}" stroke-width="1" rx="4"/>`;
+
+                const markerX = barX + (clampedFS / maxFS) * barW;
+                body += `<polygon points="${markerX-9},${barY-10} ${markerX+9},${barY-10} ${markerX},${barY-2}" fill="${cPrimary}"/>`;
+                body += `<line x1="${markerX}" y1="${barY-10}" x2="${markerX}" y2="${barY+barH+4}" stroke="${cPrimary}" stroke-width="2"/>`;
+
+                const txtColor = FS === 0 ? cMuted : (FS < 1 ? cDanger : FS < 1.5 ? '#f59e0b' : cSuccess);
+                body += `<text x="${W/2}" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="${txtColor}">FS = ${FS.toFixed(2)}</text>`;
+
+                body += `<text x="${barX}" y="${barY+barH+22}" text-anchor="middle" font-size="10" fill="${cMuted}">0</text>`;
+                body += `<text x="${barX + barW}" y="${barY+barH+22}" text-anchor="middle" font-size="10" fill="${cMuted}">${maxFS}</text>`;
+
+                let estado = '';
+                if (FS === 0) estado = 'Ingresa σ de fallo y σ admisible';
+                else if (FS < 1) estado = '⚠ Diseño inseguro (FS < 1)';
+                else if (FS < 1.5) estado = 'Margen bajo (1 ≤ FS < 1.5)';
+                else if (FS < 3) estado = '✓ Diseño seguro (1.5 ≤ FS < 3)';
+                else estado = 'Sobredimensionado (FS ≥ 3)';
+                body += `<text x="${W/2}" y="${H-6}" text-anchor="middle" font-size="12" fill="${cMuted}">${estado}</text>`;
+
+                setSvg('viz_m1_fs', `0 0 ${W} ${H}`, body, 170);
+            }
+
+            // ------------------------------------------------------------------
+            // MÓDULO 1 — Animación de barra deformada (ε exagerado)
+            // Se construye una sola vez y luego se actualiza el ancho del elemento
+            // "deformed" con transición CSS, para dar sensación de elongación.
+            // ------------------------------------------------------------------
+            function drawEsfuerzoAnimation() {
+                const container = document.getElementById('viz_m1_esf');
+                if (!container) return;
+                const deltaL_mm = convertToBase(parseFloat($('m1_deltaL').value) || 0, $('m1_deltaL_unit').value);
+                const L0_mm = convertToBase(parseFloat($('m1_L0').value) || 0, $('m1_L0_unit').value);
+                const epsilon = safeDiv(deltaL_mm, L0_mm);
+
+                // Exageración visual: ε real suele ser 0.001-0.01 → multiplicamos x 40, tope 35%
+                const visualDelta = Math.min(Math.abs(epsilon) * 40, 0.35);
+
+                if (!container.dataset.init) {
+                    container.innerHTML = `
+                        <div class="esf-viz">
+                            <div class="esf-row">
+                                <span class="esf-lbl">Original (L₀)</span>
+                                <div class="esf-track"><div class="esf-bar esf-bar-orig"></div></div>
+                            </div>
+                            <div class="esf-row">
+                                <span class="esf-lbl">Deformado (ΔL)</span>
+                                <div class="esf-track"><div class="esf-bar esf-bar-def"></div></div>
+                            </div>
+                            <div class="esf-info">ε = <strong class="esf-eps">0</strong>  ·  ΔL/L₀</div>
+                        </div>`;
+                    container.dataset.init = '1';
+                }
+                const defBar = container.querySelector('.esf-bar-def');
+                const epsLabel = container.querySelector('.esf-eps');
+                const basePct = 60;
+                defBar.style.width = (basePct * (1 + visualDelta)) + '%';
+                epsLabel.textContent = epsilon === 0 ? '0' : epsilon.toExponential(4);
+            }
+
+            // ------------------------------------------------------------------
+            // MÓDULO 2 — Curva granulométrica ASTM C136 (escala log en X)
+            // Reconstruye los puntos leyendo los % pasa de cada fila de la tabla
+            // y los conecta con una polilínea sobre un eje X logarítmico.
+            // ------------------------------------------------------------------
+            function drawGranulometriaChart(prueba) {
+                const idx = prueba.slice(-1);
+                const container = document.getElementById(`viz_m2_gran_${idx}`);
+                if (!container) return;
+                const table = document.getElementById(`m2_gran_table_${idx}`);
+                if (!table) return;
+
+                const rows = table.querySelectorAll('tbody tr');
+                const points = [];
+                let hasData = false;
+                rows.forEach(row => {
+                    const tamiz = row.cells[0].textContent.trim();
+                    const peso = parseFloat(row.querySelector('.m2_peso_retenido').value) || 0;
+                    if (peso > 0) hasData = true;
+                    const pasa = parseFloat(row.cells[4].textContent) || 0;
+                    const mm = SIEVE_MM[tamiz];
+                    if (mm !== undefined) points.push({ mm, pasa, tamiz });
+                });
+
+                if (!hasData) {
+                    container.innerHTML = '<div class="viz-empty">Ingresa pesos retenidos para ver la curva granulométrica (ASTM C136)</div>';
+                    return;
+                }
+
+                // Ordenar por abertura descendente (izq = grueso, der = fino)
+                points.sort((a,b) => b.mm - a.mm);
+
+                const W = 600, H = 340;
+                const mL = 55, mR = 20, mT = 22, mB = 60;
+                const plotW = W - mL - mR;
+                const plotH = H - mT - mB;
+
+                const logMin = Math.log10(0.01), logMax = Math.log10(100);
+                const xPos = mm => mL + ((Math.log10(mm) - logMin) / (logMax - logMin)) * plotW;
+                const yPos = p => mT + (1 - p/100) * plotH;
+
+                const cGrid = cssVar('--border', '#e2e8f0');
+                const cText = cssVar('--text-muted', '#64748b');
+                const cLine = cssVar('--secondary', '#2563eb');
+                const cPrimary = cssVar('--primary', '#1e3a5f');
+                const cCard = cssVar('--card', '#ffffff');
+
+                let body = '';
+
+                // Grid horizontal cada 10%
+                for (let p = 0; p <= 100; p += 10) {
+                    const y = yPos(p);
+                    body += `<line x1="${mL}" y1="${y}" x2="${mL+plotW}" y2="${y}" stroke="${cGrid}" stroke-width="${p === 0 || p === 100 ? 1.5 : 0.5}"/>`;
+                    body += `<text x="${mL-6}" y="${y+4}" text-anchor="end" font-size="10" fill="${cText}">${p}</text>`;
+                }
+
+                // Grid vertical en cada tamiz + etiqueta rotada
+                points.forEach(pt => {
+                    const x = xPos(pt.mm);
+                    body += `<line x1="${x}" y1="${mT}" x2="${x}" y2="${mT+plotH}" stroke="${cGrid}" stroke-width="0.5"/>`;
+                    body += `<text x="${x}" y="${mT+plotH+14}" text-anchor="end" font-size="9" fill="${cText}" transform="rotate(-50 ${x} ${mT+plotH+14})">${pt.tamiz}</text>`;
+                });
+
+                // Ejes
+                body += `<line x1="${mL}" y1="${mT}" x2="${mL}" y2="${mT+plotH}" stroke="${cPrimary}" stroke-width="1.5"/>`;
+                body += `<line x1="${mL}" y1="${mT+plotH}" x2="${mL+plotW}" y2="${mT+plotH}" stroke="${cPrimary}" stroke-width="1.5"/>`;
+
+                // Etiquetas de ejes
+                body += `<text x="${mL+plotW/2}" y="${H-8}" text-anchor="middle" font-size="11" fill="${cText}">Abertura del tamiz (mm) — escala logarítmica</text>`;
+                body += `<text x="14" y="${mT+plotH/2}" text-anchor="middle" font-size="11" fill="${cText}" transform="rotate(-90 14 ${mT+plotH/2})">% que pasa</text>`;
+
+                // Polyline
+                const linePoints = points.map(pt => `${xPos(pt.mm)},${yPos(pt.pasa)}`).join(' ');
+                body += `<polyline points="${linePoints}" fill="none" stroke="${cLine}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+
+                // Puntos
+                points.forEach(pt => {
+                    body += `<circle cx="${xPos(pt.mm)}" cy="${yPos(pt.pasa)}" r="4" fill="${cCard}" stroke="${cLine}" stroke-width="2"/>`;
+                });
+
+                setSvg(`viz_m2_gran_${idx}`, `0 0 ${W} ${H}`, body, 360);
+            }
+
+            // ------------------------------------------------------------------
+            // MÓDULO 3 — Comparativa f'c vs f'cr (ACI)
+            // Dos barras horizontales: valor especificado y valor requerido.
+            // ------------------------------------------------------------------
+            function drawACIComparison(prueba) {
+                const idx = prueba.slice(-1);
+                const container = document.getElementById(`viz_m3_aci_${idx}`);
+                if (!container) return;
+                const fc = parseFloat(document.getElementById(`m3_fc_espec_${idx}`).value) || 0;
+                const s = parseFloat(document.getElementById(`m3_s_${idx}`).value) || 0;
+
+                if (fc === 0) {
+                    container.innerHTML = '<div class="viz-empty">Ingresa f\'c especificado y desviación estándar para ver el margen ACI</div>';
+                    return;
+                }
+
+                let fcr;
+                if (fc <= 35) fcr = Math.max(fc + 1.34*s, fc + 2.33*s - 3.45);
+                else fcr = Math.max(fc + 1.34*s, 0.90*fc + 2.33*s);
+
+                const maxV = Math.max(fc, fcr) * 1.15;
+                const W = 600, H = 180;
+                const barX = 160, barW = 360;
+                const bar1Y = 46, bar2Y = 106, barH = 34;
+
+                const cFc = cssVar('--text-muted', '#94a3b8');
+                const cFcr = cssVar('--secondary', '#2563eb');
+                const cText = cssVar('--text', '#0f172a');
+                const cTextMuted = cssVar('--text-muted', '#64748b');
+                const cAccent = cssVar('--accent', '#f59e0b');
+
+                let body = '';
+                body += `<text x="${barX-10}" y="${bar1Y+barH/2+5}" text-anchor="end" font-size="12" fill="${cText}" font-weight="500">f'c especificado</text>`;
+                body += `<text x="${barX-10}" y="${bar2Y+barH/2+5}" text-anchor="end" font-size="12" fill="${cText}" font-weight="500">f'cr requerido</text>`;
+
+                const w1 = (fc / maxV) * barW;
+                body += `<rect x="${barX}" y="${bar1Y}" width="${w1}" height="${barH}" fill="${cFc}" opacity="0.85" rx="4"/>`;
+                body += `<text x="${barX + w1 + 8}" y="${bar1Y+barH/2+5}" font-size="12" fill="${cText}" font-weight="600">${fc.toFixed(1)} MPa</text>`;
+
+                const w2 = (fcr / maxV) * barW;
+                body += `<rect x="${barX}" y="${bar2Y}" width="${w2}" height="${barH}" fill="${cFcr}" opacity="0.85" rx="4"/>`;
+                body += `<text x="${barX + w2 + 8}" y="${bar2Y+barH/2+5}" font-size="12" fill="${cText}" font-weight="600">${fcr.toFixed(1)} MPa</text>`;
+
+                const margin = fcr - fc;
+                body += `<text x="${W/2}" y="${H-8}" text-anchor="middle" font-size="12" fill="${cTextMuted}">Margen de sobrediseño ACI: <tspan font-weight="700" fill="${cAccent}">+${margin.toFixed(1)} MPa</tspan> (${((margin/fc)*100).toFixed(1)}%)</text>`;
+
+                setSvg(`viz_m3_aci_${idx}`, `0 0 ${W} ${H}`, body, 200);
+            }
+
+            // ------------------------------------------------------------------
+            // MÓDULO 4 — Diagrama de viga simplemente apoyada con deflexión
+            // Esquema clásico: dos apoyos triangulares, carga central hacia abajo
+            // y curva de deflexión exagerada debajo de la viga.
+            // ------------------------------------------------------------------
+            function drawMaderaBeam(prueba) {
+                const idx = prueba.slice(-1);
+                const container = document.getElementById(`viz_m4_mad_${idx}`);
+                if (!container) return;
+                const P = parseFloat(document.getElementById(`m4_mad_P_${idx}`).value) || 0;
+                const L = parseFloat(document.getElementById(`m4_mad_L_${idx}`).value) || 0;
+                const b = parseFloat(document.getElementById(`m4_mad_b_${idx}`).value) || 0;
+                const h = parseFloat(document.getElementById(`m4_mad_h_${idx}`).value) || 0;
+                const hasData = P > 0 && L > 0 && b > 0 && h > 0;
+                const MOR = hasData ? safeDiv(3*P*L, 2*b*h*h) : 0;
+
+                const W = 600, H = 230;
+                const beamX = 70, beamW = 460, beamY = 95, beamH = 18;
+                const sup1X = beamX + 20, sup2X = beamX + beamW - 20;
+                const centerX = beamX + beamW / 2;
+
+                const cBeam = cssVar('--primary', '#1e3a5f');
+                const cLoad = cssVar('--danger', '#dc2626');
+                const cDefl = cssVar('--accent', '#f59e0b');
+                const cText = cssVar('--text-muted', '#64748b');
+                const cCard = cssVar('--card', '#ffffff');
+
+                let body = '';
+                // Viga
+                body += `<rect x="${beamX}" y="${beamY}" width="${beamW}" height="${beamH}" fill="${cBeam}" opacity="0.9" rx="2"/>`;
+
+                // Apoyos
+                const triH = 22, triW = 26;
+                body += `<polygon points="${sup1X-triW/2},${beamY+beamH} ${sup1X+triW/2},${beamY+beamH} ${sup1X},${beamY+beamH+triH}" fill="${cBeam}" opacity="0.65"/>`;
+                body += `<polygon points="${sup2X-triW/2},${beamY+beamH} ${sup2X+triW/2},${beamY+beamH} ${sup2X},${beamY+beamH+triH}" fill="${cBeam}" opacity="0.65"/>`;
+                // Rayado bajo apoyos
+                body += `<line x1="${sup1X-16}" y1="${beamY+beamH+triH+4}" x2="${sup1X+16}" y2="${beamY+beamH+triH+4}" stroke="${cText}" stroke-width="1"/>`;
+                body += `<line x1="${sup2X-16}" y1="${beamY+beamH+triH+4}" x2="${sup2X+16}" y2="${beamY+beamH+triH+4}" stroke="${cText}" stroke-width="1"/>`;
+
+                // Flecha de carga
+                const arrowTop = 26, arrowBot = beamY - 4;
+                body += `<line x1="${centerX}" y1="${arrowTop}" x2="${centerX}" y2="${arrowBot}" stroke="${cLoad}" stroke-width="2.5"/>`;
+                body += `<polygon points="${centerX-7},${arrowBot-9} ${centerX+7},${arrowBot-9} ${centerX},${arrowBot}" fill="${cLoad}"/>`;
+                body += `<text x="${centerX}" y="${arrowTop-8}" text-anchor="middle" font-size="13" fill="${cLoad}" font-weight="600">P = ${hasData ? P.toFixed(1) : '?'}</text>`;
+
+                // Curva de deflexión (parábola exagerada)
+                const deflMax = 30;
+                const curveY = beamY + beamH + 12;
+                let pts = [];
+                for (let i = 0; i <= 20; i++) {
+                    const t = i / 20;
+                    const x = sup1X + t * (sup2X - sup1X);
+                    const u = (x - centerX) / ((sup2X - sup1X)/2);
+                    const y = curveY + deflMax * (1 - u*u);
+                    pts.push(`${x},${y}`);
+                }
+                body += `<polyline points="${pts.join(' ')}" fill="none" stroke="${cDefl}" stroke-width="2" stroke-dasharray="5 3"/>`;
+                body += `<text x="${centerX}" y="${curveY + deflMax + 16}" text-anchor="middle" font-size="10" fill="${cDefl}" font-style="italic">deformación exagerada</text>`;
+
+                // Cota L
+                const dimY = beamY + beamH + triH + 16;
+                body += `<line x1="${sup1X}" y1="${dimY}" x2="${sup2X}" y2="${dimY}" stroke="${cText}" stroke-width="0.8"/>`;
+                body += `<line x1="${sup1X}" y1="${dimY-4}" x2="${sup1X}" y2="${dimY+4}" stroke="${cText}" stroke-width="0.8"/>`;
+                body += `<line x1="${sup2X}" y1="${dimY-4}" x2="${sup2X}" y2="${dimY+4}" stroke="${cText}" stroke-width="0.8"/>`;
+                body += `<text x="${centerX}" y="${dimY + 16}" text-anchor="middle" font-size="12" fill="${cText}">L = ${hasData ? L.toFixed(0) : '?'} mm</text>`;
+
+                // Valor MOR
+                if (hasData) {
+                    body += `<text x="${W/2}" y="${H-6}" text-anchor="middle" font-size="13" font-weight="600" fill="${cBeam}">MOR = ${MOR.toFixed(2)} MPa</text>`;
+                } else {
+                    body += `<text x="${W/2}" y="${H-6}" text-anchor="middle" font-size="12" fill="${cText}">Ingresa P, L, b y h para calcular el MOR</text>`;
+                }
+
+                setSvg(`viz_m4_mad_${idx}`, `0 0 ${W} ${H}`, body, 250);
+            }
+
+            // ------------------------------------------------------------------
+            // MÓDULO 4 — Animación de torsión (aguja rotando θ)
+            // Se construye una sola vez y luego se actualiza transform:rotate
+            // con transición CSS para dar sensación de giro progresivo.
+            // ------------------------------------------------------------------
+            function drawTorsionAnimation(prueba) {
+                const idx = prueba.slice(-1);
+                const container = document.getElementById(`viz_m4_tors_${idx}`);
+                if (!container) return;
+                const theta = parseFloat(document.getElementById(`m4_theta_${idx}`).value) || 0;
+
+                // Exageración visual: θ * 8, con límite ±60° para no dar un giro poco intuitivo
+                let degVisual = theta === 0 ? 0 : Math.max(-60, Math.min(60, theta * 8 * 180 / Math.PI));
+
+                if (!container.dataset.init) {
+                    container.innerHTML = `
+                        <div class="tor-viz">
+                            <div class="tor-circle"><div class="tor-needle"></div></div>
+                            <div class="tor-info">θ = <strong class="tor-theta">0</strong> rad · <span class="tor-deg">0°</span> real</div>
+                        </div>`;
+                    container.dataset.init = '1';
+                }
+                const needle = container.querySelector('.tor-needle');
+                const thetaLabel = container.querySelector('.tor-theta');
+                const degLabel = container.querySelector('.tor-deg');
+                needle.style.transform = `rotate(${degVisual}deg)`;
+                thetaLabel.textContent = theta.toFixed(3);
+                degLabel.textContent = ((theta * 180 / Math.PI)).toFixed(1) + '°';
+            }
+
+            // ------------------------------------------------------------------
+            // MÓDULO 5 — Barra apilada: composición volumétrica de la mezcla
+            // Agregado + Asfalto efectivo + Vacíos de aire = 100% del volumen.
+            // ------------------------------------------------------------------
+            function drawMarshallStackedBar(prueba) {
+                const idx = prueba.slice(-1);
+                const container = document.getElementById(`viz_m5_vol_${idx}`);
+                if (!container) return;
+
+                const A = parseFloat(document.getElementById(`m5_A_${idx}`).value) || 0;
+                const B = parseFloat(document.getElementById(`m5_B_${idx}`).value) || 0;
+                const C = parseFloat(document.getElementById(`m5_C_${idx}`).value) || 0;
+                const Gmm = parseFloat(document.getElementById(`m5_Gmm_${idx}`).value) || 0;
+                const Gsb = parseFloat(document.getElementById(`m5_Gsb_${idx}`).value) || 0;
+                const Ps = parseFloat(document.getElementById(`m5_Ps_${idx}`).value) || 0;
+                const Gmb = safeDiv(A, B - C);
+
+                if (Gmm === 0 || Gsb === 0 || Gmb === 0) {
+                    container.innerHTML = '<div class="viz-empty">Completa A, B, C, Gmm y Gsb para ver la composición volumétrica</div>';
+                    return;
+                }
+
+                const VTM = Math.max(0, safeDiv(Gmm - Gmb, Gmm) * 100);
+                const VMA = Math.max(0, 100 - safeDiv(Gmb * Ps, Gsb));
+                const VFA = safeDiv(VMA - VTM, VMA) * 100;
+
+                const pctAgregado = Math.max(0, 100 - VMA);
+                const pctAsfalto = Math.max(0, VMA - VTM);
+                const pctVacios = VTM;
+
+                const W = 600, H = 210;
+                const barX = 30, barY = 58, barW = 540, barH = 62;
+
+                const cAgregado = cssVar('--text-muted', '#94a3b8');
+                const cAsfalto = cssVar('--primary', '#1e3a5f');
+                const cVacios = cssVar('--accent', '#f59e0b');
+                const cText = cssVar('--text', '#0f172a');
+                const cTextMuted = cssVar('--text-muted', '#64748b');
+                const cBorder = cssVar('--border-strong', '#cbd5e1');
+
+                let body = '';
+                let x = barX;
+                const segs = [
+                    { pct: pctAgregado, color: cAgregado, label: 'Agregado' },
+                    { pct: pctAsfalto, color: cAsfalto, label: 'Asfalto' },
+                    { pct: pctVacios, color: cVacios, label: 'Aire' }
+                ];
+                segs.forEach(s => {
+                    const w = (s.pct / 100) * barW;
+                    if (w > 0.5) {
+                        body += `<rect x="${x}" y="${barY}" width="${w}" height="${barH}" fill="${s.color}" opacity="0.88"/>`;
+                        if (w > 44) {
+                            body += `<text x="${x + w/2}" y="${barY + barH/2 + 5}" text-anchor="middle" font-size="13" fill="#fff" font-weight="600">${s.pct.toFixed(1)}%</text>`;
+                        }
+                        x += w;
+                    }
+                });
+                body += `<rect x="${barX}" y="${barY}" width="${barW}" height="${barH}" fill="none" stroke="${cBorder}" stroke-width="1" rx="4"/>`;
+
+                body += `<text x="${W/2}" y="32" text-anchor="middle" font-size="14" font-weight="600" fill="${cText}">Composición volumétrica de la mezcla</text>`;
+
+                // Leyenda
+                const legendY = barY + barH + 26;
+                const legItems = [
+                    { color: cAgregado, label: `Agregado (${pctAgregado.toFixed(1)}%)` },
+                    { color: cAsfalto, label: `Asfalto efectivo (${pctAsfalto.toFixed(1)}%)` },
+                    { color: cVacios, label: `Vacíos de aire VTM (${pctVacios.toFixed(1)}%)` }
+                ];
+                legItems.forEach((item, i) => {
+                    const lx = barX + i * (barW / 3);
+                    body += `<rect x="${lx}" y="${legendY}" width="14" height="14" fill="${item.color}" rx="2"/>`;
+                    body += `<text x="${lx+20}" y="${legendY+11}" font-size="11" fill="${cTextMuted}">${item.label}</text>`;
+                });
+
+                // Detalle VTM/VMA/VFA
+                const detailY = legendY + 32;
+                body += `<text x="${barX}" y="${detailY}" font-size="11" fill="${cTextMuted}">VTM = <tspan font-weight="600" fill="${cVacios}">${VTM.toFixed(2)}%</tspan></text>`;
+                body += `<text x="${barX+150}" y="${detailY}" font-size="11" fill="${cTextMuted}">VMA = <tspan font-weight="600" fill="${cAsfalto}">${VMA.toFixed(2)}%</tspan></text>`;
+                body += `<text x="${barX+300}" y="${detailY}" font-size="11" fill="${cTextMuted}">VFA = <tspan font-weight="600" fill="${cText}">${VFA.toFixed(2)}%</tspan></text>`;
+
+                setSvg(`viz_m5_vol_${idx}`, `0 0 ${W} ${H}`, body, 230);
+            }
+
+            // ------------------------------------------------------------------
+            // MÓDULO 6 — Carta de control (run chart)
+            // Eje X = índice de muestra, eje Y = valor. Línea media y bandas
+            // sombreadas en ±1s y ±2s para detectar valores fuera de control.
+            // ------------------------------------------------------------------
+            function drawControlChart() {
+                const container = document.getElementById('viz_m6_chart');
+                if (!container) return;
+
+                const n = statsValues.length;
+                if (n === 0) {
+                    container.innerHTML = '<div class="viz-empty">Agrega valores para ver la carta de control</div>';
+                    return;
+                }
+
+                const mean = statsValues.reduce((a,b)=>a+b,0) / n;
+                const variance = n > 1 ? statsValues.reduce((a,b)=>a + (b-mean)**2,0) / (n - 1) : 0;
+                const s = Math.sqrt(variance);
+
+                // Rango del eje Y
+                const dataMin = Math.min(...statsValues);
+                const dataMax = Math.max(...statsValues);
+                let yMin = Math.min(dataMin, mean - 2*s);
+                let yMax = Math.max(dataMax, mean + 2*s);
+                if (!isFinite(yMin)) yMin = mean - 1;
+                if (!isFinite(yMax)) yMax = mean + 1;
+                if (yMax === yMin) { yMin -= 1; yMax += 1; }
+                const rng = yMax - yMin;
+                yMin -= rng * 0.12;
+                yMax += rng * 0.12;
+
+                const W = 600, H = 300;
+                const mL = 58, mR = 30, mT = 30, mB = 42;
+                const plotW = W - mL - mR;
+                const plotH = H - mT - mB;
+
+                const xPos = i => n === 1 ? mL + plotW/2 : mL + (i / (n-1)) * plotW;
+                const yPos = v => mT + (1 - (v - yMin) / (yMax - yMin)) * plotH;
+
+                const cGrid = cssVar('--border', '#e2e8f0');
+                const cText = cssVar('--text-muted', '#64748b');
+                const cMean = cssVar('--secondary', '#2563eb');
+                const cBand1 = cssVar('--success', '#16a34a');
+                const cBand2 = cssVar('--danger', '#dc2626');
+                const cCard = cssVar('--card', '#ffffff');
+                const cTextStrong = cssVar('--text', '#0f172a');
+
+                let body = '';
+
+                // Bandas ±2s (exterior) y ±1s (interior)
+                if (s > 0) {
+                    const y2t = yPos(mean + 2*s), y2b = yPos(mean - 2*s);
+                    body += `<rect x="${mL}" y="${y2t}" width="${plotW}" height="${y2b-y2t}" fill="${cBand2}" opacity="0.08"/>`;
+                    const y1t = yPos(mean + s), y1b = yPos(mean - s);
+                    body += `<rect x="${mL}" y="${y1t}" width="${plotW}" height="${y1b-y1t}" fill="${cBand1}" opacity="0.14"/>`;
+                    // Líneas de referencia ±1s y ±2s
+                    [1, 2].forEach(k => {
+                        const yt = yPos(mean + k*s), yb = yPos(mean - k*s);
+                        body += `<line x1="${mL}" y1="${yt}" x2="${mL+plotW}" y2="${yt}" stroke="${cGrid}" stroke-width="0.8"/>`;
+                        body += `<line x1="${mL}" y1="${yb}" x2="${mL+plotW}" y2="${yb}" stroke="${cGrid}" stroke-width="0.8"/>`;
+                        body += `<text x="${mL-6}" y="${yt+4}" text-anchor="end" font-size="9" fill="${cText}">+${k}s</text>`;
+                        body += `<text x="${mL-6}" y="${yb+4}" text-anchor="end" font-size="9" fill="${cText}">-${k}s</text>`;
+                    });
+                }
+
+                // Línea de la media
+                const yMean = yPos(mean);
+                body += `<line x1="${mL}" y1="${yMean}" x2="${mL+plotW}" y2="${yMean}" stroke="${cMean}" stroke-width="1.6" stroke-dasharray="6 4"/>`;
+                body += `<text x="${mL+plotW+4}" y="${yMean+4}" font-size="10" fill="${cMean}" font-weight="600">x̄</text>`;
+
+                // Ejes
+                const cAxis = cssVar('--border-strong', '#cbd5e1');
+                body += `<line x1="${mL}" y1="${mT}" x2="${mL}" y2="${mT+plotH}" stroke="${cAxis}" stroke-width="1"/>`;
+                body += `<line x1="${mL}" y1="${mT+plotH}" x2="${mL+plotW}" y2="${mT+plotH}" stroke="${cAxis}" stroke-width="1"/>`;
+
+                // Etiquetas Y
+                body += `<text x="${mL-6}" y="${mT+4}" text-anchor="end" font-size="9" fill="${cText}">${yMax.toFixed(1)}</text>`;
+                body += `<text x="${mL-6}" y="${mT+plotH+4}" text-anchor="end" font-size="9" fill="${cText}">${yMin.toFixed(1)}</text>`;
+
+                // Etiquetas X
+                body += `<text x="${xPos(0)}" y="${mT+plotH+20}" text-anchor="middle" font-size="10" fill="${cText}">1</text>`;
+                if (n > 1) {
+                    body += `<text x="${xPos(n-1)}" y="${mT+plotH+20}" text-anchor="middle" font-size="10" fill="${cText}">${n}</text>`;
+                    body += `<text x="${mL + plotW/2}" y="${mT+plotH+34}" text-anchor="middle" font-size="10" fill="${cText}"># muestra</text>`;
+                }
+
+                // Polyline
+                if (n >= 2) {
+                    const linePts = statsValues.map((v, i) => `${xPos(i)},${yPos(v)}`).join(' ');
+                    body += `<polyline points="${linePts}" fill="none" stroke="${cMean}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+                }
+
+                // Puntos coloreados según desviación
+                statsValues.forEach((v, i) => {
+                    let color = cssVar('--success', '#16a34a');
+                    if (s > 0) {
+                        const dev = Math.abs(v - mean) / s;
+                        if (dev > 2) color = cssVar('--danger', '#dc2626');
+                        else if (dev > 1) color = '#f59e0b';
+                    }
+                    body += `<circle cx="${xPos(i)}" cy="${yPos(v)}" r="4.5" fill="${color}" stroke="${cCard}" stroke-width="1.5"/>`;
+                });
+
+                // Título con CV
+                const cv = mean !== 0 ? (s / mean) * 100 : 0;
+                body += `<text x="${W/2}" y="16" text-anchor="middle" font-size="12" font-weight="600" fill="${cTextStrong}">Carta de control · n=${n} · x̄=${mean.toFixed(2)} · s=${s.toFixed(2)} · CV=${cv.toFixed(2)}%</text>`;
+
+                setSvg('viz_m6_chart', `0 0 ${W} ${H}`, body, 320);
+            }
+
+            // ==================================================================
+            // ==================== FUNCIONES DE CÁLCULO ====================
+            // ==================================================================
+            // Nota: no se modifica su lógica. Solo se añaden llamadas al final
+            // a las funciones de dibujo correspondientes.
+
             function calcModulo1() {
                 const shape = $('m1_geo_shape').value;
                 let area_mm2 = 0;
@@ -1397,6 +1684,10 @@
                 const sigma_adm_MPa = convertToBase(parseFloat($('m1_sigma_adm').value) || 0, $('m1_sigma_adm_unit').value);
                 const FS = safeDiv(sigma_fallo_MPa, sigma_adm_MPa);
                 $('m1_fs_result').textContent = `FS = ${FS.toFixed(2)}`;
+
+                // --- Visualizaciones del Módulo 1 ---
+                drawFSGauge();
+                drawEsfuerzoAnimation();
             }
 
             function calcGranulometria(prueba) {
@@ -1405,9 +1696,7 @@
                 if (!table) return;
                 const rows = table.querySelectorAll('tbody tr');
                 const pesos = [];
-                rows.forEach(row => {
-                    pesos.push(parseFloat(row.querySelector('.m2_peso_retenido').value) || 0);
-                });
+                rows.forEach(row => { pesos.push(parseFloat(row.querySelector('.m2_peso_retenido').value) || 0); });
                 const total = pesos.reduce((a,b)=>a+b,0);
                 let acum = 0;
                 const stdSeries = ['3"', '1 1/2"', '3/4"', '3/8"', 'No. 4', 'No. 8', 'No. 16', 'No. 30', 'No. 50', 'No. 100'];
@@ -1424,12 +1713,12 @@
                 const MF = mfSum / 100;
                 const mfResult = document.getElementById(`m2_mf_result_${idx}`);
                 if (mfResult) mfResult.textContent = `Módulo de Finura = ${MF.toFixed(2)}`;
-
                 const estado = {};
-                rows.forEach(row => {
-                    estado[row.cells[0].textContent.trim()] = parseFloat(row.querySelector('.m2_peso_retenido').value) || 0;
-                });
+                rows.forEach(row => { estado[row.cells[0].textContent.trim()] = parseFloat(row.querySelector('.m2_peso_retenido').value) || 0; });
                 saveState(`m2_granulometria_${prueba}`, estado);
+
+                // --- Visualización: curva granulométrica ASTM C136 ---
+                drawGranulometriaChart(prueba);
             }
 
             function loadGranulometria(prueba) {
@@ -1457,10 +1746,11 @@
                 const pu_suelto = parseFloat(document.getElementById(`m2_pu_suelto_${idx}`).value) || 0;
                 const pu_comp = parseFloat(document.getElementById(`m2_pu_comp_${idx}`).value) || 0;
                 const g_base = parseFloat(document.getElementById(`m2_g_base_${idx}`).value) || 0;
-                const gamma_w = 1000; // kg/m³ (densidad del agua)
+                const gamma_w = 1000; // kg/m³ (densidad del agua) — corrección dimensional
                 const vac_suelto = g_base > 0 ? ((g_base * gamma_w - pu_suelto) / (g_base * gamma_w)) * 100 : 0;
                 const vac_comp = g_base > 0 ? ((g_base * gamma_w - pu_comp) / (g_base * gamma_w)) * 100 : 0;
                 document.getElementById(`m2_vacios_result_${idx}`).textContent = `% Vacíos (suelto) = ${vac_suelto.toFixed(2)}%, (compactado) = ${vac_comp.toFixed(2)}%`;
+                // (Sin visualización: son valores aislados sin nada que comparar)
             }
 
             function calcModulo3(prueba) {
@@ -1503,6 +1793,9 @@
                 const eB = safeDiv(Pb_N, areaBruta);
                 const eN = safeDiv(Pb_N, areaNeta);
                 document.getElementById(`m3_bloque_result_${idx}`).textContent = `Área bruta = ${areaBruta.toFixed(0)} mm², Área neta = ${areaNeta.toFixed(0)} mm², σ bruto = ${eB.toFixed(2)} MPa, σ neto = ${eN.toFixed(2)} MPa`;
+
+                // --- Visualización: comparativa f'c vs f'cr (ACI) ---
+                drawACIComparison(prueba);
             }
 
             function calcModulo4(prueba) {
@@ -1527,6 +1820,10 @@
                 const bm = parseFloat(document.getElementById(`m4_mad_b_${idx}`).value) || 0;
                 const hm = parseFloat(document.getElementById(`m4_mad_h_${idx}`).value) || 0;
                 document.getElementById(`m4_madera_result_${idx}`).textContent = `MOR = ${safeDiv(3 * Pm * Lm, 2 * bm * hm * hm).toFixed(2)} MPa`;
+
+                // --- Visualizaciones del Módulo 4 ---
+                drawTorsionAnimation(prueba);
+                drawMaderaBeam(prueba);
             }
 
             function calcModulo5(prueba) {
@@ -1544,6 +1841,9 @@
                 const VMA = 100 - safeDiv(Gmb * Ps, Gsb);
                 const VFA = safeDiv(VMA - VTM, VMA) * 100;
                 document.getElementById(`m5_vol_result_${idx}`).textContent = `VTM = ${VTM.toFixed(2)}%, VMA = ${VMA.toFixed(2)}%, VFA = ${VFA.toFixed(2)}%`;
+
+                // --- Visualización: composición volumétrica apilada ---
+                drawMarshallStackedBar(prueba);
             }
 
             // ==================== ESTADÍSTICA (Módulo 6) ====================
@@ -1568,6 +1868,9 @@
                     $('m6_stats_result').textContent = 'n = 0, Media = 0, s = 0, CV = 0%';
                 }
                 saveState('stats_values', statsValues);
+
+                // --- Visualización: carta de control ---
+                drawControlChart();
             }
             window.addStatValue = function() {
                 const val = parseFloat($('m6_nuevo_valor').value);
