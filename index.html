@@ -244,67 +244,83 @@
         }
         input[type="number"]:focus { outline: none; border-color: var(--secondary); }
 
-        /* ==================== SAVE INDICATOR ==================== */
+        /* ============ TABLA GRANULOMÉTRICA (8 columnas) ============ */
+        #m2_gran_table_1, #m2_gran_table_2, #m2_gran_table_3 { min-width: 900px; }
+        #m2_gran_table_1 th:nth-child(2), #m2_gran_table_2 th:nth-child(2), #m2_gran_table_3 th:nth-child(2) {
+            min-width: 78px; color: var(--text-muted); font-variant-numeric: tabular-nums;
+        }
+        #m2_gran_table_1 th:nth-child(3), #m2_gran_table_1 th:nth-child(4),
+        #m2_gran_table_2 th:nth-child(3), #m2_gran_table_2 th:nth-child(4),
+        #m2_gran_table_3 th:nth-child(3), #m2_gran_table_3 th:nth-child(4) {
+            min-width: 100px; font-size: 0.72rem;
+        }
+        .m2_peso_vacio, .m2_peso_muestra { width: 82px; min-width: 62px; }
+
+        /* Panel de resultados granulométricos */
+        .gran-results { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin: 10px 0 14px; }
+        .gran-results-item {
+            background: var(--bg); padding: 10px 14px; border-radius: var(--radius-sm);
+            border-left: 3px solid var(--accent);
+            display: flex; flex-direction: column; gap: 3px;
+        }
+        .gran-results-item span { color: var(--text-muted); font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 500; }
+        .gran-results-item strong { font-size: 1rem; color: var(--text); font-weight: 600; }
+
+        /* ==================== SAVE INDICATOR / TOAST ==================== */
         .save-indicator {
             position: fixed; bottom: calc(80px + env(safe-area-inset-bottom)); right: 16px;
             background: var(--success); color: #fff; padding: 10px 18px; border-radius: 24px;
             font-size: 0.85rem; font-weight: 500; opacity: 0; transform: translateY(8px);
             transition: opacity 0.25s, transform 0.25s; pointer-events: none; z-index: 300;
             box-shadow: var(--shadow-md);
+            max-width: calc(100vw - 32px);
+            text-align: center;
+            line-height: 1.35;
         }
         .save-indicator.show { opacity: 1; transform: translateY(0); }
         .save-indicator.error { background: var(--danger); }
 
-        /* ==================== VISUALIZACIONES ==================== */
-        .viz-container {
-            margin: 14px 0;
-            padding: 10px;
-            background: var(--bg);
+        /* ==================== BOTÓN "ENVIAR A INFORME" ==================== */
+        .send-report-btn {
+            margin-top: 6px;
+            background: linear-gradient(135deg, var(--success), #22c55e);
+            color: #fff;
+            border: none;
+            padding: 12px 22px;
             border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
-            min-height: 60px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.08s, box-shadow 0.15s, filter 0.15s;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            box-shadow: var(--shadow-sm);
         }
+        .send-report-btn:hover { filter: brightness(1.08); box-shadow: var(--shadow-md); }
+        .send-report-btn:active { transform: scale(0.97); }
+
+        /* ==================== VISUALIZACIONES ==================== */
+        .viz-container { margin: 14px 0; padding: 10px; background: var(--bg); border-radius: var(--radius-sm); border: 1px solid var(--border); min-height: 60px; }
         .viz-container svg { display: block; }
-        .viz-empty {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            padding: 32px 10px;
-        }
-        /* --- Animación de Esfuerzo (M1) --- */
+        .viz-empty { text-align: center; color: var(--text-muted); font-size: 0.85rem; padding: 32px 10px; }
         .esf-viz { padding: 8px 4px; }
         .esf-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
         .esf-lbl { min-width: 120px; font-size: 0.82rem; color: var(--text-muted); }
         .esf-track { flex: 1; height: 26px; background: var(--card); border-radius: 4px; position: relative; overflow: hidden; border: 1px solid var(--border); }
         .esf-bar { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
-        .esf-bar-orig {
-            width: 60%;
-            background: repeating-linear-gradient(45deg, var(--border) 0 6px, transparent 6px 12px);
-            border-right: 1.5px dashed var(--border-strong);
-        }
+        .esf-bar-orig { width: 60%; background: repeating-linear-gradient(45deg, var(--border) 0 6px, transparent 6px 12px); border-right: 1.5px dashed var(--border-strong); }
         .esf-bar-def { width: 60%; background: linear-gradient(90deg, var(--secondary), var(--accent)); }
         .esf-info { text-align: center; font-size: 0.95rem; color: var(--text); margin-top: 10px; }
         .esf-eps { color: var(--secondary); font-family: ui-monospace, monospace; }
-        /* --- Animación de Torsión (M4) --- */
         .tor-viz { padding: 6px 0; }
-        .tor-circle {
-            width: 130px; height: 130px; border-radius: 50%;
-            border: 2px solid var(--border-strong); background: var(--card);
-            position: relative; margin: 12px auto;
-        }
-        .tor-needle {
-            position: absolute; width: 3px; height: 50%;
-            background: var(--secondary);
-            top: 0; left: calc(50% - 1.5px);
-            transform-origin: bottom center;
-            transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
-            border-radius: 2px;
-        }
-        .tor-needle::before {
-            content: ''; position: absolute; bottom: -5px; left: 50%;
-            width: 10px; height: 10px; background: var(--secondary);
-            border-radius: 50%; transform: translateX(-50%);
-        }
+        .tor-circle { width: 130px; height: 130px; border-radius: 50%; border: 2px solid var(--border-strong); background: var(--card); position: relative; margin: 12px auto; }
+        .tor-needle { position: absolute; width: 3px; height: 50%; background: var(--secondary); top: 0; left: calc(50% - 1.5px); transform-origin: bottom center; transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1); border-radius: 2px; }
+        .tor-needle::before { content: ''; position: absolute; bottom: -5px; left: 50%; width: 10px; height: 10px; background: var(--secondary); border-radius: 50%; transform: translateX(-50%); }
         .tor-info { text-align: center; font-size: 0.9rem; color: var(--text-muted); margin-top: 6px; }
         .tor-theta { color: var(--secondary); font-family: ui-monospace, monospace; }
         .tor-deg { color: var(--accent); font-weight: 600; }
@@ -393,7 +409,6 @@
                 </div>
             </div>
 
-            <!-- Geometría -->
             <div class="calc-view" data-calc="m1_geo">
                 <button class="back-btn" data-module="modulo1">← Volver</button>
                 <div class="card">
@@ -428,7 +443,6 @@
                 </div>
             </div>
 
-            <!-- Esfuerzo Normal (con animación) -->
             <div class="calc-view" data-calc="m1_esf">
                 <button class="back-btn" data-module="modulo1">← Volver</button>
                 <div class="card">
@@ -458,12 +472,10 @@
                         </select>
                     </div>
                     <div class="result-box" id="m1_sigma_epsilon_result">σ = 0 MPa, ε = 0</div>
-                    <!-- Animación de la barra deformándose (visualización exagerada de ε) -->
                     <div class="viz-container" id="viz_m1_esf"></div>
                 </div>
             </div>
 
-            <!-- Hooke -->
             <div class="calc-view" data-calc="m1_hooke">
                 <button class="back-btn" data-module="modulo1">← Volver</button>
                 <div class="card">
@@ -500,7 +512,6 @@
                 </div>
             </div>
 
-            <!-- Resiliencia -->
             <div class="calc-view" data-calc="m1_res">
                 <button class="back-btn" data-module="modulo1">← Volver</button>
                 <div class="card">
@@ -521,7 +532,6 @@
                 </div>
             </div>
 
-            <!-- Factor de Seguridad (con gauge) -->
             <div class="calc-view" data-calc="m1_fs">
                 <button class="back-btn" data-module="modulo1">← Volver</button>
                 <div class="card">
@@ -539,7 +549,6 @@
                         </select>
                     </div>
                     <div class="result-box" id="m1_fs_result">FS = 0</div>
-                    <!-- Gauge visual de zonas de seguridad -->
                     <div class="viz-container" id="viz_m1_fs"></div>
                 </div>
             </div>
@@ -580,32 +589,50 @@
                     <div class="tab-content active" id="m2_prueba1">
                         <div class="calc-section" data-calc="m2_gran">
                             <h3>Análisis Granulométrico (Norma ASTM C 136)</h3>
-                            <div class="note">Siga el procedimiento estándar: tamizar, pesar retenidos y registrar. El módulo de finura se calcula con la serie ASTM designada.</div>
-                            <!-- Curva granulométrica en escala log (ASTM C136) -->
+                            <div class="note">Ingresa "Peso Vacío" y "Peso + Muestra" para calcular automáticamente el peso retenido, o escribe directamente el peso retenido. El % y el Módulo de Finura se calculan sobre el valor final del peso retenido.</div>
                             <div class="viz-container" id="viz_m2_gran_1"></div>
                             <div class="table-responsive">
                                 <table id="m2_gran_table_1">
-                                    <thead><tr><th>Tamiz</th><th>Peso Ret. (g)</th><th>% Ret.</th><th>% Acum.</th><th>% Pasa</th></tr></thead>
+                                    <thead>
+                                        <tr>
+                                            <th>Tamiz</th>
+                                            <th>Apertura (mm)</th>
+                                            <th>P. Vacío</th>
+                                            <th>P. + Muestra</th>
+                                            <th>Peso Ret. (g)</th>
+                                            <th>% Retenido</th>
+                                            <th>% Acumulado</th>
+                                            <th>% Que Pasa</th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
-                                        <tr><td>3"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='3"' step="any" min="0" aria-label="Peso retenido tamiz 3 pulgadas"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                        <tr><td>2"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='2"' step="any" min="0" aria-label="Peso retenido tamiz 2 pulgadas"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                        <tr><td>1 1/2"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='1 1/2"' step="any" min="0" aria-label="Peso retenido tamiz 1 y media pulgadas"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                        <tr><td>1"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='1"' step="any" min="0" aria-label="Peso retenido tamiz 1 pulgada"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                        <tr><td>3/4"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='3/4"' step="any" min="0" aria-label="Peso retenido tamiz 3 cuartos"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                        <tr><td>1/2"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='1/2"' step="any" min="0" aria-label="Peso retenido tamiz media pulgada"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                        <tr><td>3/8"</td><td><input type="number" class="m2_peso_retenido" data-tamiz='3/8"' step="any" min="0" aria-label="Peso retenido tamiz 3 octavos"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                        <tr><td>No. 4</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 4' step="any" min="0" aria-label="Peso retenido tamiz 4"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                        <tr><td>No. 8</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 8' step="any" min="0" aria-label="Peso retenido tamiz 8"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                        <tr><td>No. 16</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 16' step="any" min="0" aria-label="Peso retenido tamiz 16"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                        <tr><td>No. 30</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 30' step="any" min="0" aria-label="Peso retenido tamiz 30"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                        <tr><td>No. 50</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 50' step="any" min="0" aria-label="Peso retenido tamiz 50"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                        <tr><td>No. 100</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 100' step="any" min="0" aria-label="Peso retenido tamiz 100"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                        <tr><td>No. 200</td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 200' step="any" min="0" aria-label="Peso retenido tamiz 200"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
-                                        <tr><td>Fondo</td><td><input type="number" class="m2_peso_retenido" data-tamiz='Fondo' step="any" min="0" aria-label="Peso retenido fondo"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>3"</td><td>75.0</td><td><input type="number" class="m2_peso_vacio" step="any" min="0" aria-label="Peso vacío tamiz 3 pulgadas"></td><td><input type="number" class="m2_peso_muestra" step="any" min="0" aria-label="Peso más muestra tamiz 3 pulgadas"></td><td><input type="number" class="m2_peso_retenido" data-tamiz='3"' step="any" min="0" aria-label="Peso retenido tamiz 3 pulgadas"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>2"</td><td>50.0</td><td><input type="number" class="m2_peso_vacio" step="any" min="0" aria-label="Peso vacío tamiz 2 pulgadas"></td><td><input type="number" class="m2_peso_muestra" step="any" min="0" aria-label="Peso más muestra tamiz 2 pulgadas"></td><td><input type="number" class="m2_peso_retenido" data-tamiz='2"' step="any" min="0" aria-label="Peso retenido tamiz 2 pulgadas"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>1 1/2"</td><td>37.5</td><td><input type="number" class="m2_peso_vacio" step="any" min="0" aria-label="Peso vacío tamiz 1 y media pulgadas"></td><td><input type="number" class="m2_peso_muestra" step="any" min="0" aria-label="Peso más muestra tamiz 1 y media pulgadas"></td><td><input type="number" class="m2_peso_retenido" data-tamiz='1 1/2"' step="any" min="0" aria-label="Peso retenido tamiz 1 y media pulgadas"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>1"</td><td>25.0</td><td><input type="number" class="m2_peso_vacio" step="any" min="0" aria-label="Peso vacío tamiz 1 pulgada"></td><td><input type="number" class="m2_peso_muestra" step="any" min="0" aria-label="Peso más muestra tamiz 1 pulgada"></td><td><input type="number" class="m2_peso_retenido" data-tamiz='1"' step="any" min="0" aria-label="Peso retenido tamiz 1 pulgada"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>3/4"</td><td>19.0</td><td><input type="number" class="m2_peso_vacio" step="any" min="0" aria-label="Peso vacío tamiz 3 cuartos"></td><td><input type="number" class="m2_peso_muestra" step="any" min="0" aria-label="Peso más muestra tamiz 3 cuartos"></td><td><input type="number" class="m2_peso_retenido" data-tamiz='3/4"' step="any" min="0" aria-label="Peso retenido tamiz 3 cuartos"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>1/2"</td><td>12.5</td><td><input type="number" class="m2_peso_vacio" step="any" min="0" aria-label="Peso vacío tamiz media pulgada"></td><td><input type="number" class="m2_peso_muestra" step="any" min="0" aria-label="Peso más muestra tamiz media pulgada"></td><td><input type="number" class="m2_peso_retenido" data-tamiz='1/2"' step="any" min="0" aria-label="Peso retenido tamiz media pulgada"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>3/8"</td><td>9.5</td><td><input type="number" class="m2_peso_vacio" step="any" min="0" aria-label="Peso vacío tamiz 3 octavos"></td><td><input type="number" class="m2_peso_muestra" step="any" min="0" aria-label="Peso más muestra tamiz 3 octavos"></td><td><input type="number" class="m2_peso_retenido" data-tamiz='3/8"' step="any" min="0" aria-label="Peso retenido tamiz 3 octavos"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>No. 4</td><td>4.75</td><td><input type="number" class="m2_peso_vacio" step="any" min="0" aria-label="Peso vacío tamiz 4"></td><td><input type="number" class="m2_peso_muestra" step="any" min="0" aria-label="Peso más muestra tamiz 4"></td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 4' step="any" min="0" aria-label="Peso retenido tamiz 4"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>No. 8</td><td>2.36</td><td><input type="number" class="m2_peso_vacio" step="any" min="0" aria-label="Peso vacío tamiz 8"></td><td><input type="number" class="m2_peso_muestra" step="any" min="0" aria-label="Peso más muestra tamiz 8"></td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 8' step="any" min="0" aria-label="Peso retenido tamiz 8"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>No. 16</td><td>1.18</td><td><input type="number" class="m2_peso_vacio" step="any" min="0" aria-label="Peso vacío tamiz 16"></td><td><input type="number" class="m2_peso_muestra" step="any" min="0" aria-label="Peso más muestra tamiz 16"></td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 16' step="any" min="0" aria-label="Peso retenido tamiz 16"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>No. 30</td><td>0.60</td><td><input type="number" class="m2_peso_vacio" step="any" min="0" aria-label="Peso vacío tamiz 30"></td><td><input type="number" class="m2_peso_muestra" step="any" min="0" aria-label="Peso más muestra tamiz 30"></td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 30' step="any" min="0" aria-label="Peso retenido tamiz 30"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>No. 50</td><td>0.30</td><td><input type="number" class="m2_peso_vacio" step="any" min="0" aria-label="Peso vacío tamiz 50"></td><td><input type="number" class="m2_peso_muestra" step="any" min="0" aria-label="Peso más muestra tamiz 50"></td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 50' step="any" min="0" aria-label="Peso retenido tamiz 50"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>No. 100</td><td>0.15</td><td><input type="number" class="m2_peso_vacio" step="any" min="0" aria-label="Peso vacío tamiz 100"></td><td><input type="number" class="m2_peso_muestra" step="any" min="0" aria-label="Peso más muestra tamiz 100"></td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 100' step="any" min="0" aria-label="Peso retenido tamiz 100"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>No. 200</td><td>0.075</td><td><input type="number" class="m2_peso_vacio" step="any" min="0" aria-label="Peso vacío tamiz 200"></td><td><input type="number" class="m2_peso_muestra" step="any" min="0" aria-label="Peso más muestra tamiz 200"></td><td><input type="number" class="m2_peso_retenido" data-tamiz='No. 200' step="any" min="0" aria-label="Peso retenido tamiz 200"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
+                                        <tr><td>Fondo</td><td>—</td><td><input type="number" class="m2_peso_vacio" step="any" min="0" aria-label="Peso vacío fondo"></td><td><input type="number" class="m2_peso_muestra" step="any" min="0" aria-label="Peso más muestra fondo"></td><td><input type="number" class="m2_peso_retenido" data-tamiz='Fondo' step="any" min="0" aria-label="Peso retenido fondo"></td><td class="m2_pct_retenido">0</td><td class="m2_pct_acum">0</td><td class="m2_pct_pasa">100</td></tr>
                                     </tbody>
                                 </table>
                             </div>
                             <div class="result-box" id="m2_mf_result_1">Módulo de Finura = 0.00</div>
+                            <div class="gran-results">
+                                <div class="gran-results-item"><span>Peso Total</span><strong id="m2_peso_total_1">0.0 g</strong></div>
+                                <div class="gran-results-item"><span>Tamaño Máximo (TM)</span><strong id="m2_tm_1">No determinado</strong></div>
+                                <div class="gran-results-item"><span>Tamaño Máximo Nominal (TMN)</span><strong id="m2_tmn_1">No determinado</strong></div>
+                            </div>
+                            <button class="send-report-btn" data-module="m2" data-prueba="1" type="button">
+                                📤 Enviar a Informe
+                            </button>
                             <button class="success clear-btn" data-module="m2" data-prueba="1">Limpiar Granulometría Prueba 1</button>
                         </div>
 
@@ -729,7 +756,6 @@
                                 <label for="m3_s_1">Desv. estándar (s):</label><input type="number" id="m3_s_1" step="any" min="0">
                             </div>
                             <div class="result-box" id="m3_fcr_result_1">f'cr = 0 MPa</div>
-                            <!-- Comparativa f'c vs f'cr (margen de sobrediseño ACI) -->
                             <div class="viz-container" id="viz_m3_aci_1"></div>
                         </div>
 
@@ -811,7 +837,6 @@
                                 <label for="m4_theta_1">Ángulo θ (rad):</label><input type="number" id="m4_theta_1" step="any" min="0">
                             </div>
                             <div class="result-box" id="m4_torsion_result_1">τ_max = 0 MPa, G = 0 MPa</div>
-                            <!-- Animación visual del giro por torsión -->
                             <div class="viz-container" id="viz_m4_tors_1"></div>
                         </div>
 
@@ -824,7 +849,6 @@
                                 <label for="m4_mad_h_1">Altura h:</label><input type="number" id="m4_mad_h_1" step="any" min="0">
                             </div>
                             <div class="result-box" id="m4_madera_result_1">MOR = 0 MPa</div>
-                            <!-- Diagrama de viga simplemente apoyada con deflexión -->
                             <div class="viz-container" id="viz_m4_mad_1"></div>
                             <button class="success clear-btn" data-module="m4" data-prueba="1">Limpiar Módulo 4 Prueba 1</button>
                         </div>
@@ -881,7 +905,6 @@
                         <div class="calc-section" data-calc="m5_vol">
                             <h3>Análisis Volumétrico</h3>
                             <div class="result-box" id="m5_vol_result_1">VTM = 0%, VMA = 0%, VFA = 0%</div>
-                            <!-- Composición volumétrica apilada: agregado / asfalto / vacíos -->
                             <div class="viz-container" id="viz_m5_vol_1"></div>
                             <button class="success clear-btn" data-module="m5" data-prueba="1">Limpiar Módulo 5 Prueba 1</button>
                         </div>
@@ -911,7 +934,6 @@
                     </table>
                 </div>
                 <div class="result-box" id="m6_stats_result">n = 0, Media = 0, s = 0, CV = 0%</div>
-                <!-- Carta de control (run chart) con bandas ±1s y ±2s -->
                 <div class="viz-container" id="viz_m6_chart"></div>
 
                 <h3>Respaldo de datos</h3>
@@ -929,14 +951,25 @@
             const $ = (id) => document.getElementById(id);
             const $$ = (sel, ctx) => Array.from((ctx||document).querySelectorAll(sel));
 
+            // ==================== TOASTS ====================
             let saveIndicatorTimeout = null;
-            function showSaveIndicator(success = true) {
+            /**
+             * Muestra un toast genérico en la esquina inferior.
+             * @param {string} message  Texto a mostrar
+             * @param {boolean} isError Si es true, se pinta en rojo
+             * @param {number} duration Duración en ms
+             */
+            function showToast(message, isError = false, duration = 1400) {
                 const el = $('saveIndicator');
-                el.textContent = success ? 'Guardado ✓' : '⚠️ Error al guardar';
-                el.classList.toggle('error', !success);
+                el.textContent = message;
+                el.classList.toggle('error', isError);
                 el.classList.add('show');
                 clearTimeout(saveIndicatorTimeout);
-                saveIndicatorTimeout = setTimeout(() => el.classList.remove('show'), 1400);
+                saveIndicatorTimeout = setTimeout(() => el.classList.remove('show'), duration);
+            }
+            /** Wrapper que conserva la firma anterior (feedback de guardado) */
+            function showSaveIndicator(success = true) {
+                showToast(success ? 'Guardado ✓' : '⚠️ Error al guardar', !success, 1400);
             }
 
             function saveState(key, value) {
@@ -1020,6 +1053,13 @@
                 if (card) { openCalculator(card.dataset.module, card.dataset.calc); return; }
                 const backBtn = e.target.closest('.back-btn');
                 if (backBtn) navigateTo(backBtn.dataset.module);
+
+                // --- Botón "Enviar a Informe" (Granulometría) ---
+                const sendBtn = e.target.closest('.send-report-btn');
+                if (sendBtn) {
+                    enviarGranulometriaAInforme('prueba' + sendBtn.dataset.prueba);
+                    return;
+                }
             });
 
             window.addEventListener('popstate', function(e) {
@@ -1072,6 +1112,10 @@
                     btn.textContent = btn.textContent.replace(/Prueba\s+1/, 'Prueba ' + prefix);
                     btn.dataset.prueba = prefix;
                 });
+                // Actualizar el botón "Enviar a Informe" para pruebas 2 y 3
+                target.querySelectorAll('.send-report-btn').forEach(btn => {
+                    btn.dataset.prueba = prefix;
+                });
             }
             duplicateTabContent('m2_prueba1', 'm2_prueba2', '2');
             duplicateTabContent('m2_prueba1', 'm2_prueba3', '3');
@@ -1085,18 +1129,10 @@
             // ==================================================================
             // ==================== VISUALIZACIONES SVG / CSS ====================
             // ==================================================================
-            // Todas las funciones de dibujo son "puras" en el sentido de que
-            // leen el estado actual (inputs o valores ya calculados) y renderizan
-            // un SVG o actualizan un elemento del DOM. Se llaman al final de las
-            // funciones de cálculo correspondientes y NO modifican dichas funciones.
-
-            // --- Helper: leer una variable CSS del :root ---
             function cssVar(name, fallback) {
                 const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
                 return v || fallback;
             }
-
-            // --- Helper: inyectar un SVG completo en un contenedor ---
             function setSvg(containerId, viewBox, body, maxH) {
                 const el = document.getElementById(containerId);
                 if (!el) return false;
@@ -1104,7 +1140,6 @@
                 return true;
             }
 
-            // Aberturas reales de tamiz ASTM en mm (para la curva granulométrica)
             const SIEVE_MM = {
                 '3"': 75, '2"': 50, '1 1/2"': 37.5, '1"': 25, '3/4"': 19,
                 '1/2"': 12.5, '3/8"': 9.5, 'No. 4': 4.75, 'No. 8': 2.36,
@@ -1112,11 +1147,7 @@
                 'No. 200': 0.075, 'Fondo': 0.01
             };
 
-            // ------------------------------------------------------------------
-            // MÓDULO 1 — Gauge del Factor de Seguridad
-            // Muestra una barra horizontal con zonas rojo/amarillo/verde/gris
-            // y un marcador vertical en la posición del FS calculado.
-            // ------------------------------------------------------------------
+            // --- M1: Gauge FS ---
             function drawFSGauge() {
                 const container = document.getElementById('viz_m1_fs');
                 if (!container) return;
@@ -1141,7 +1172,6 @@
                     { from: 1.5,  to: 3,   color: cSuccess, label: 'Seguro' },
                     { from: 3,    to: 5,   color: cMuted,   label: 'Sobredim.' }
                 ];
-
                 let body = '';
                 zones.forEach(z => {
                     const x = barX + (z.from / maxFS) * barW;
@@ -1150,17 +1180,13 @@
                     body += `<text x="${x + w/2}" y="${barY + barH/2 + 4}" text-anchor="middle" font-size="11" fill="#fff" font-weight="600">${z.label}</text>`;
                 });
                 body += `<rect x="${barX}" y="${barY}" width="${barW}" height="${barH}" fill="none" stroke="${cBorder}" stroke-width="1" rx="4"/>`;
-
                 const markerX = barX + (clampedFS / maxFS) * barW;
                 body += `<polygon points="${markerX-9},${barY-10} ${markerX+9},${barY-10} ${markerX},${barY-2}" fill="${cPrimary}"/>`;
                 body += `<line x1="${markerX}" y1="${barY-10}" x2="${markerX}" y2="${barY+barH+4}" stroke="${cPrimary}" stroke-width="2"/>`;
-
                 const txtColor = FS === 0 ? cMuted : (FS < 1 ? cDanger : FS < 1.5 ? '#f59e0b' : cSuccess);
                 body += `<text x="${W/2}" y="38" text-anchor="middle" font-size="20" font-weight="700" fill="${txtColor}">FS = ${FS.toFixed(2)}</text>`;
-
                 body += `<text x="${barX}" y="${barY+barH+22}" text-anchor="middle" font-size="10" fill="${cMuted}">0</text>`;
                 body += `<text x="${barX + barW}" y="${barY+barH+22}" text-anchor="middle" font-size="10" fill="${cMuted}">${maxFS}</text>`;
-
                 let estado = '';
                 if (FS === 0) estado = 'Ingresa σ de fallo y σ admisible';
                 else if (FS < 1) estado = '⚠ Diseño inseguro (FS < 1)';
@@ -1168,36 +1194,22 @@
                 else if (FS < 3) estado = '✓ Diseño seguro (1.5 ≤ FS < 3)';
                 else estado = 'Sobredimensionado (FS ≥ 3)';
                 body += `<text x="${W/2}" y="${H-6}" text-anchor="middle" font-size="12" fill="${cMuted}">${estado}</text>`;
-
                 setSvg('viz_m1_fs', `0 0 ${W} ${H}`, body, 170);
             }
 
-            // ------------------------------------------------------------------
-            // MÓDULO 1 — Animación de barra deformada (ε exagerado)
-            // Se construye una sola vez y luego se actualiza el ancho del elemento
-            // "deformed" con transición CSS, para dar sensación de elongación.
-            // ------------------------------------------------------------------
+            // --- M1: Animación de esfuerzo ---
             function drawEsfuerzoAnimation() {
                 const container = document.getElementById('viz_m1_esf');
                 if (!container) return;
                 const deltaL_mm = convertToBase(parseFloat($('m1_deltaL').value) || 0, $('m1_deltaL_unit').value);
                 const L0_mm = convertToBase(parseFloat($('m1_L0').value) || 0, $('m1_L0_unit').value);
                 const epsilon = safeDiv(deltaL_mm, L0_mm);
-
-                // Exageración visual: ε real suele ser 0.001-0.01 → multiplicamos x 40, tope 35%
                 const visualDelta = Math.min(Math.abs(epsilon) * 40, 0.35);
-
                 if (!container.dataset.init) {
                     container.innerHTML = `
                         <div class="esf-viz">
-                            <div class="esf-row">
-                                <span class="esf-lbl">Original (L₀)</span>
-                                <div class="esf-track"><div class="esf-bar esf-bar-orig"></div></div>
-                            </div>
-                            <div class="esf-row">
-                                <span class="esf-lbl">Deformado (ΔL)</span>
-                                <div class="esf-track"><div class="esf-bar esf-bar-def"></div></div>
-                            </div>
+                            <div class="esf-row"><span class="esf-lbl">Original (L₀)</span><div class="esf-track"><div class="esf-bar esf-bar-orig"></div></div></div>
+                            <div class="esf-row"><span class="esf-lbl">Deformado (ΔL)</span><div class="esf-track"><div class="esf-bar esf-bar-def"></div></div></div>
                             <div class="esf-info">ε = <strong class="esf-eps">0</strong>  ·  ΔL/L₀</div>
                         </div>`;
                     container.dataset.init = '1';
@@ -1209,11 +1221,7 @@
                 epsLabel.textContent = epsilon === 0 ? '0' : epsilon.toExponential(4);
             }
 
-            // ------------------------------------------------------------------
-            // MÓDULO 2 — Curva granulométrica ASTM C136 (escala log en X)
-            // Reconstruye los puntos leyendo los % pasa de cada fila de la tabla
-            // y los conecta con una polilínea sobre un eje X logarítmico.
-            // ------------------------------------------------------------------
+            // --- M2: Curva granulométrica (%Pasa en celda [7]) ---
             function drawGranulometriaChart(prueba) {
                 const idx = prueba.slice(-1);
                 const container = document.getElementById(`viz_m2_gran_${idx}`);
@@ -1228,7 +1236,7 @@
                     const tamiz = row.cells[0].textContent.trim();
                     const peso = parseFloat(row.querySelector('.m2_peso_retenido').value) || 0;
                     if (peso > 0) hasData = true;
-                    const pasa = parseFloat(row.cells[4].textContent) || 0;
+                    const pasa = parseFloat(row.cells[7].textContent) || 0;
                     const mm = SIEVE_MM[tamiz];
                     if (mm !== undefined) points.push({ mm, pasa, tamiz });
                 });
@@ -1237,15 +1245,12 @@
                     container.innerHTML = '<div class="viz-empty">Ingresa pesos retenidos para ver la curva granulométrica (ASTM C136)</div>';
                     return;
                 }
-
-                // Ordenar por abertura descendente (izq = grueso, der = fino)
                 points.sort((a,b) => b.mm - a.mm);
 
                 const W = 600, H = 340;
                 const mL = 55, mR = 20, mT = 22, mB = 60;
                 const plotW = W - mL - mR;
                 const plotH = H - mT - mB;
-
                 const logMin = Math.log10(0.01), logMax = Math.log10(100);
                 const xPos = mm => mL + ((Math.log10(mm) - logMin) / (logMax - logMin)) * plotW;
                 const yPos = p => mT + (1 - p/100) * plotH;
@@ -1257,57 +1262,39 @@
                 const cCard = cssVar('--card', '#ffffff');
 
                 let body = '';
-
-                // Grid horizontal cada 10%
                 for (let p = 0; p <= 100; p += 10) {
                     const y = yPos(p);
                     body += `<line x1="${mL}" y1="${y}" x2="${mL+plotW}" y2="${y}" stroke="${cGrid}" stroke-width="${p === 0 || p === 100 ? 1.5 : 0.5}"/>`;
                     body += `<text x="${mL-6}" y="${y+4}" text-anchor="end" font-size="10" fill="${cText}">${p}</text>`;
                 }
-
-                // Grid vertical en cada tamiz + etiqueta rotada
                 points.forEach(pt => {
                     const x = xPos(pt.mm);
                     body += `<line x1="${x}" y1="${mT}" x2="${x}" y2="${mT+plotH}" stroke="${cGrid}" stroke-width="0.5"/>`;
                     body += `<text x="${x}" y="${mT+plotH+14}" text-anchor="end" font-size="9" fill="${cText}" transform="rotate(-50 ${x} ${mT+plotH+14})">${pt.tamiz}</text>`;
                 });
-
-                // Ejes
                 body += `<line x1="${mL}" y1="${mT}" x2="${mL}" y2="${mT+plotH}" stroke="${cPrimary}" stroke-width="1.5"/>`;
                 body += `<line x1="${mL}" y1="${mT+plotH}" x2="${mL+plotW}" y2="${mT+plotH}" stroke="${cPrimary}" stroke-width="1.5"/>`;
-
-                // Etiquetas de ejes
                 body += `<text x="${mL+plotW/2}" y="${H-8}" text-anchor="middle" font-size="11" fill="${cText}">Abertura del tamiz (mm) — escala logarítmica</text>`;
                 body += `<text x="14" y="${mT+plotH/2}" text-anchor="middle" font-size="11" fill="${cText}" transform="rotate(-90 14 ${mT+plotH/2})">% que pasa</text>`;
-
-                // Polyline
                 const linePoints = points.map(pt => `${xPos(pt.mm)},${yPos(pt.pasa)}`).join(' ');
                 body += `<polyline points="${linePoints}" fill="none" stroke="${cLine}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
-
-                // Puntos
                 points.forEach(pt => {
                     body += `<circle cx="${xPos(pt.mm)}" cy="${yPos(pt.pasa)}" r="4" fill="${cCard}" stroke="${cLine}" stroke-width="2"/>`;
                 });
-
                 setSvg(`viz_m2_gran_${idx}`, `0 0 ${W} ${H}`, body, 360);
             }
 
-            // ------------------------------------------------------------------
-            // MÓDULO 3 — Comparativa f'c vs f'cr (ACI)
-            // Dos barras horizontales: valor especificado y valor requerido.
-            // ------------------------------------------------------------------
+            // --- M3: Comparativa ACI ---
             function drawACIComparison(prueba) {
                 const idx = prueba.slice(-1);
                 const container = document.getElementById(`viz_m3_aci_${idx}`);
                 if (!container) return;
                 const fc = parseFloat(document.getElementById(`m3_fc_espec_${idx}`).value) || 0;
                 const s = parseFloat(document.getElementById(`m3_s_${idx}`).value) || 0;
-
                 if (fc === 0) {
                     container.innerHTML = '<div class="viz-empty">Ingresa f\'c especificado y desviación estándar para ver el margen ACI</div>';
                     return;
                 }
-
                 let fcr;
                 if (fc <= 35) fcr = Math.max(fc + 1.34*s, fc + 2.33*s - 3.45);
                 else fcr = Math.max(fc + 1.34*s, 0.90*fc + 2.33*s);
@@ -1316,7 +1303,6 @@
                 const W = 600, H = 180;
                 const barX = 160, barW = 360;
                 const bar1Y = 46, bar2Y = 106, barH = 34;
-
                 const cFc = cssVar('--text-muted', '#94a3b8');
                 const cFcr = cssVar('--secondary', '#2563eb');
                 const cText = cssVar('--text', '#0f172a');
@@ -1326,26 +1312,18 @@
                 let body = '';
                 body += `<text x="${barX-10}" y="${bar1Y+barH/2+5}" text-anchor="end" font-size="12" fill="${cText}" font-weight="500">f'c especificado</text>`;
                 body += `<text x="${barX-10}" y="${bar2Y+barH/2+5}" text-anchor="end" font-size="12" fill="${cText}" font-weight="500">f'cr requerido</text>`;
-
                 const w1 = (fc / maxV) * barW;
                 body += `<rect x="${barX}" y="${bar1Y}" width="${w1}" height="${barH}" fill="${cFc}" opacity="0.85" rx="4"/>`;
                 body += `<text x="${barX + w1 + 8}" y="${bar1Y+barH/2+5}" font-size="12" fill="${cText}" font-weight="600">${fc.toFixed(1)} MPa</text>`;
-
                 const w2 = (fcr / maxV) * barW;
                 body += `<rect x="${barX}" y="${bar2Y}" width="${w2}" height="${barH}" fill="${cFcr}" opacity="0.85" rx="4"/>`;
                 body += `<text x="${barX + w2 + 8}" y="${bar2Y+barH/2+5}" font-size="12" fill="${cText}" font-weight="600">${fcr.toFixed(1)} MPa</text>`;
-
                 const margin = fcr - fc;
                 body += `<text x="${W/2}" y="${H-8}" text-anchor="middle" font-size="12" fill="${cTextMuted}">Margen de sobrediseño ACI: <tspan font-weight="700" fill="${cAccent}">+${margin.toFixed(1)} MPa</tspan> (${((margin/fc)*100).toFixed(1)}%)</text>`;
-
                 setSvg(`viz_m3_aci_${idx}`, `0 0 ${W} ${H}`, body, 200);
             }
 
-            // ------------------------------------------------------------------
-            // MÓDULO 4 — Diagrama de viga simplemente apoyada con deflexión
-            // Esquema clásico: dos apoyos triangulares, carga central hacia abajo
-            // y curva de deflexión exagerada debajo de la viga.
-            // ------------------------------------------------------------------
+            // --- M4: Viga madera ---
             function drawMaderaBeam(prueba) {
                 const idx = prueba.slice(-1);
                 const container = document.getElementById(`viz_m4_mad_${idx}`);
@@ -1361,32 +1339,22 @@
                 const beamX = 70, beamW = 460, beamY = 95, beamH = 18;
                 const sup1X = beamX + 20, sup2X = beamX + beamW - 20;
                 const centerX = beamX + beamW / 2;
-
                 const cBeam = cssVar('--primary', '#1e3a5f');
                 const cLoad = cssVar('--danger', '#dc2626');
                 const cDefl = cssVar('--accent', '#f59e0b');
                 const cText = cssVar('--text-muted', '#64748b');
-                const cCard = cssVar('--card', '#ffffff');
 
                 let body = '';
-                // Viga
                 body += `<rect x="${beamX}" y="${beamY}" width="${beamW}" height="${beamH}" fill="${cBeam}" opacity="0.9" rx="2"/>`;
-
-                // Apoyos
                 const triH = 22, triW = 26;
                 body += `<polygon points="${sup1X-triW/2},${beamY+beamH} ${sup1X+triW/2},${beamY+beamH} ${sup1X},${beamY+beamH+triH}" fill="${cBeam}" opacity="0.65"/>`;
                 body += `<polygon points="${sup2X-triW/2},${beamY+beamH} ${sup2X+triW/2},${beamY+beamH} ${sup2X},${beamY+beamH+triH}" fill="${cBeam}" opacity="0.65"/>`;
-                // Rayado bajo apoyos
                 body += `<line x1="${sup1X-16}" y1="${beamY+beamH+triH+4}" x2="${sup1X+16}" y2="${beamY+beamH+triH+4}" stroke="${cText}" stroke-width="1"/>`;
                 body += `<line x1="${sup2X-16}" y1="${beamY+beamH+triH+4}" x2="${sup2X+16}" y2="${beamY+beamH+triH+4}" stroke="${cText}" stroke-width="1"/>`;
-
-                // Flecha de carga
                 const arrowTop = 26, arrowBot = beamY - 4;
                 body += `<line x1="${centerX}" y1="${arrowTop}" x2="${centerX}" y2="${arrowBot}" stroke="${cLoad}" stroke-width="2.5"/>`;
                 body += `<polygon points="${centerX-7},${arrowBot-9} ${centerX+7},${arrowBot-9} ${centerX},${arrowBot}" fill="${cLoad}"/>`;
                 body += `<text x="${centerX}" y="${arrowTop-8}" text-anchor="middle" font-size="13" fill="${cLoad}" font-weight="600">P = ${hasData ? P.toFixed(1) : '?'}</text>`;
-
-                // Curva de deflexión (parábola exagerada)
                 const deflMax = 30;
                 const curveY = beamY + beamH + 12;
                 let pts = [];
@@ -1399,38 +1367,26 @@
                 }
                 body += `<polyline points="${pts.join(' ')}" fill="none" stroke="${cDefl}" stroke-width="2" stroke-dasharray="5 3"/>`;
                 body += `<text x="${centerX}" y="${curveY + deflMax + 16}" text-anchor="middle" font-size="10" fill="${cDefl}" font-style="italic">deformación exagerada</text>`;
-
-                // Cota L
                 const dimY = beamY + beamH + triH + 16;
                 body += `<line x1="${sup1X}" y1="${dimY}" x2="${sup2X}" y2="${dimY}" stroke="${cText}" stroke-width="0.8"/>`;
                 body += `<line x1="${sup1X}" y1="${dimY-4}" x2="${sup1X}" y2="${dimY+4}" stroke="${cText}" stroke-width="0.8"/>`;
                 body += `<line x1="${sup2X}" y1="${dimY-4}" x2="${sup2X}" y2="${dimY+4}" stroke="${cText}" stroke-width="0.8"/>`;
                 body += `<text x="${centerX}" y="${dimY + 16}" text-anchor="middle" font-size="12" fill="${cText}">L = ${hasData ? L.toFixed(0) : '?'} mm</text>`;
-
-                // Valor MOR
                 if (hasData) {
                     body += `<text x="${W/2}" y="${H-6}" text-anchor="middle" font-size="13" font-weight="600" fill="${cBeam}">MOR = ${MOR.toFixed(2)} MPa</text>`;
                 } else {
                     body += `<text x="${W/2}" y="${H-6}" text-anchor="middle" font-size="12" fill="${cText}">Ingresa P, L, b y h para calcular el MOR</text>`;
                 }
-
                 setSvg(`viz_m4_mad_${idx}`, `0 0 ${W} ${H}`, body, 250);
             }
 
-            // ------------------------------------------------------------------
-            // MÓDULO 4 — Animación de torsión (aguja rotando θ)
-            // Se construye una sola vez y luego se actualiza transform:rotate
-            // con transición CSS para dar sensación de giro progresivo.
-            // ------------------------------------------------------------------
+            // --- M4: Torsión ---
             function drawTorsionAnimation(prueba) {
                 const idx = prueba.slice(-1);
                 const container = document.getElementById(`viz_m4_tors_${idx}`);
                 if (!container) return;
                 const theta = parseFloat(document.getElementById(`m4_theta_${idx}`).value) || 0;
-
-                // Exageración visual: θ * 8, con límite ±60° para no dar un giro poco intuitivo
                 let degVisual = theta === 0 ? 0 : Math.max(-60, Math.min(60, theta * 8 * 180 / Math.PI));
-
                 if (!container.dataset.init) {
                     container.innerHTML = `
                         <div class="tor-viz">
@@ -1447,15 +1403,11 @@
                 degLabel.textContent = ((theta * 180 / Math.PI)).toFixed(1) + '°';
             }
 
-            // ------------------------------------------------------------------
-            // MÓDULO 5 — Barra apilada: composición volumétrica de la mezcla
-            // Agregado + Asfalto efectivo + Vacíos de aire = 100% del volumen.
-            // ------------------------------------------------------------------
+            // --- M5: Barra apilada ---
             function drawMarshallStackedBar(prueba) {
                 const idx = prueba.slice(-1);
                 const container = document.getElementById(`viz_m5_vol_${idx}`);
                 if (!container) return;
-
                 const A = parseFloat(document.getElementById(`m5_A_${idx}`).value) || 0;
                 const B = parseFloat(document.getElementById(`m5_B_${idx}`).value) || 0;
                 const C = parseFloat(document.getElementById(`m5_C_${idx}`).value) || 0;
@@ -1468,18 +1420,15 @@
                     container.innerHTML = '<div class="viz-empty">Completa A, B, C, Gmm y Gsb para ver la composición volumétrica</div>';
                     return;
                 }
-
                 const VTM = Math.max(0, safeDiv(Gmm - Gmb, Gmm) * 100);
                 const VMA = Math.max(0, 100 - safeDiv(Gmb * Ps, Gsb));
                 const VFA = safeDiv(VMA - VTM, VMA) * 100;
-
                 const pctAgregado = Math.max(0, 100 - VMA);
                 const pctAsfalto = Math.max(0, VMA - VTM);
                 const pctVacios = VTM;
 
                 const W = 600, H = 210;
                 const barX = 30, barY = 58, barW = 540, barH = 62;
-
                 const cAgregado = cssVar('--text-muted', '#94a3b8');
                 const cAsfalto = cssVar('--primary', '#1e3a5f');
                 const cVacios = cssVar('--accent', '#f59e0b');
@@ -1490,25 +1439,20 @@
                 let body = '';
                 let x = barX;
                 const segs = [
-                    { pct: pctAgregado, color: cAgregado, label: 'Agregado' },
-                    { pct: pctAsfalto, color: cAsfalto, label: 'Asfalto' },
-                    { pct: pctVacios, color: cVacios, label: 'Aire' }
+                    { pct: pctAgregado, color: cAgregado },
+                    { pct: pctAsfalto, color: cAsfalto },
+                    { pct: pctVacios, color: cVacios }
                 ];
                 segs.forEach(s => {
                     const w = (s.pct / 100) * barW;
                     if (w > 0.5) {
                         body += `<rect x="${x}" y="${barY}" width="${w}" height="${barH}" fill="${s.color}" opacity="0.88"/>`;
-                        if (w > 44) {
-                            body += `<text x="${x + w/2}" y="${barY + barH/2 + 5}" text-anchor="middle" font-size="13" fill="#fff" font-weight="600">${s.pct.toFixed(1)}%</text>`;
-                        }
+                        if (w > 44) body += `<text x="${x + w/2}" y="${barY + barH/2 + 5}" text-anchor="middle" font-size="13" fill="#fff" font-weight="600">${s.pct.toFixed(1)}%</text>`;
                         x += w;
                     }
                 });
                 body += `<rect x="${barX}" y="${barY}" width="${barW}" height="${barH}" fill="none" stroke="${cBorder}" stroke-width="1" rx="4"/>`;
-
                 body += `<text x="${W/2}" y="32" text-anchor="middle" font-size="14" font-weight="600" fill="${cText}">Composición volumétrica de la mezcla</text>`;
-
-                // Leyenda
                 const legendY = barY + barH + 26;
                 const legItems = [
                     { color: cAgregado, label: `Agregado (${pctAgregado.toFixed(1)}%)` },
@@ -1520,36 +1464,25 @@
                     body += `<rect x="${lx}" y="${legendY}" width="14" height="14" fill="${item.color}" rx="2"/>`;
                     body += `<text x="${lx+20}" y="${legendY+11}" font-size="11" fill="${cTextMuted}">${item.label}</text>`;
                 });
-
-                // Detalle VTM/VMA/VFA
                 const detailY = legendY + 32;
                 body += `<text x="${barX}" y="${detailY}" font-size="11" fill="${cTextMuted}">VTM = <tspan font-weight="600" fill="${cVacios}">${VTM.toFixed(2)}%</tspan></text>`;
                 body += `<text x="${barX+150}" y="${detailY}" font-size="11" fill="${cTextMuted}">VMA = <tspan font-weight="600" fill="${cAsfalto}">${VMA.toFixed(2)}%</tspan></text>`;
                 body += `<text x="${barX+300}" y="${detailY}" font-size="11" fill="${cTextMuted}">VFA = <tspan font-weight="600" fill="${cText}">${VFA.toFixed(2)}%</tspan></text>`;
-
                 setSvg(`viz_m5_vol_${idx}`, `0 0 ${W} ${H}`, body, 230);
             }
 
-            // ------------------------------------------------------------------
-            // MÓDULO 6 — Carta de control (run chart)
-            // Eje X = índice de muestra, eje Y = valor. Línea media y bandas
-            // sombreadas en ±1s y ±2s para detectar valores fuera de control.
-            // ------------------------------------------------------------------
+            // --- M6: Carta de control ---
             function drawControlChart() {
                 const container = document.getElementById('viz_m6_chart');
                 if (!container) return;
-
                 const n = statsValues.length;
                 if (n === 0) {
                     container.innerHTML = '<div class="viz-empty">Agrega valores para ver la carta de control</div>';
                     return;
                 }
-
                 const mean = statsValues.reduce((a,b)=>a+b,0) / n;
                 const variance = n > 1 ? statsValues.reduce((a,b)=>a + (b-mean)**2,0) / (n - 1) : 0;
                 const s = Math.sqrt(variance);
-
-                // Rango del eje Y
                 const dataMin = Math.min(...statsValues);
                 const dataMax = Math.max(...statsValues);
                 let yMin = Math.min(dataMin, mean - 2*s);
@@ -1558,14 +1491,12 @@
                 if (!isFinite(yMax)) yMax = mean + 1;
                 if (yMax === yMin) { yMin -= 1; yMax += 1; }
                 const rng = yMax - yMin;
-                yMin -= rng * 0.12;
-                yMax += rng * 0.12;
+                yMin -= rng * 0.12; yMax += rng * 0.12;
 
                 const W = 600, H = 300;
                 const mL = 58, mR = 30, mT = 30, mB = 42;
                 const plotW = W - mL - mR;
                 const plotH = H - mT - mB;
-
                 const xPos = i => n === 1 ? mL + plotW/2 : mL + (i / (n-1)) * plotW;
                 const yPos = v => mT + (1 - (v - yMin) / (yMax - yMin)) * plotH;
 
@@ -1578,14 +1509,11 @@
                 const cTextStrong = cssVar('--text', '#0f172a');
 
                 let body = '';
-
-                // Bandas ±2s (exterior) y ±1s (interior)
                 if (s > 0) {
                     const y2t = yPos(mean + 2*s), y2b = yPos(mean - 2*s);
                     body += `<rect x="${mL}" y="${y2t}" width="${plotW}" height="${y2b-y2t}" fill="${cBand2}" opacity="0.08"/>`;
                     const y1t = yPos(mean + s), y1b = yPos(mean - s);
                     body += `<rect x="${mL}" y="${y1t}" width="${plotW}" height="${y1b-y1t}" fill="${cBand1}" opacity="0.14"/>`;
-                    // Líneas de referencia ±1s y ±2s
                     [1, 2].forEach(k => {
                         const yt = yPos(mean + k*s), yb = yPos(mean - k*s);
                         body += `<line x1="${mL}" y1="${yt}" x2="${mL+plotW}" y2="${yt}" stroke="${cGrid}" stroke-width="0.8"/>`;
@@ -1594,35 +1522,23 @@
                         body += `<text x="${mL-6}" y="${yb+4}" text-anchor="end" font-size="9" fill="${cText}">-${k}s</text>`;
                     });
                 }
-
-                // Línea de la media
                 const yMean = yPos(mean);
                 body += `<line x1="${mL}" y1="${yMean}" x2="${mL+plotW}" y2="${yMean}" stroke="${cMean}" stroke-width="1.6" stroke-dasharray="6 4"/>`;
                 body += `<text x="${mL+plotW+4}" y="${yMean+4}" font-size="10" fill="${cMean}" font-weight="600">x̄</text>`;
-
-                // Ejes
                 const cAxis = cssVar('--border-strong', '#cbd5e1');
                 body += `<line x1="${mL}" y1="${mT}" x2="${mL}" y2="${mT+plotH}" stroke="${cAxis}" stroke-width="1"/>`;
                 body += `<line x1="${mL}" y1="${mT+plotH}" x2="${mL+plotW}" y2="${mT+plotH}" stroke="${cAxis}" stroke-width="1"/>`;
-
-                // Etiquetas Y
                 body += `<text x="${mL-6}" y="${mT+4}" text-anchor="end" font-size="9" fill="${cText}">${yMax.toFixed(1)}</text>`;
                 body += `<text x="${mL-6}" y="${mT+plotH+4}" text-anchor="end" font-size="9" fill="${cText}">${yMin.toFixed(1)}</text>`;
-
-                // Etiquetas X
                 body += `<text x="${xPos(0)}" y="${mT+plotH+20}" text-anchor="middle" font-size="10" fill="${cText}">1</text>`;
                 if (n > 1) {
                     body += `<text x="${xPos(n-1)}" y="${mT+plotH+20}" text-anchor="middle" font-size="10" fill="${cText}">${n}</text>`;
                     body += `<text x="${mL + plotW/2}" y="${mT+plotH+34}" text-anchor="middle" font-size="10" fill="${cText}"># muestra</text>`;
                 }
-
-                // Polyline
                 if (n >= 2) {
                     const linePts = statsValues.map((v, i) => `${xPos(i)},${yPos(v)}`).join(' ');
                     body += `<polyline points="${linePts}" fill="none" stroke="${cMean}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
                 }
-
-                // Puntos coloreados según desviación
                 statsValues.forEach((v, i) => {
                     let color = cssVar('--success', '#16a34a');
                     if (s > 0) {
@@ -1632,19 +1548,84 @@
                     }
                     body += `<circle cx="${xPos(i)}" cy="${yPos(v)}" r="4.5" fill="${color}" stroke="${cCard}" stroke-width="1.5"/>`;
                 });
-
-                // Título con CV
                 const cv = mean !== 0 ? (s / mean) * 100 : 0;
                 body += `<text x="${W/2}" y="16" text-anchor="middle" font-size="12" font-weight="600" fill="${cTextStrong}">Carta de control · n=${n} · x̄=${mean.toFixed(2)} · s=${s.toFixed(2)} · CV=${cv.toFixed(2)}%</text>`;
-
                 setSvg('viz_m6_chart', `0 0 ${W} ${H}`, body, 320);
+            }
+
+            // ==================================================================
+            // ==================== CONECTOR: GRANULOMETRÍA → INFORME ===========
+            // ==================================================================
+            /**
+             * Recolecta los datos de la tabla de granulometría de la prueba indicada,
+             * los empaqueta junto con los resultados calculados y los guarda en
+             * localStorage bajo la clave 'datosInformeActual', lista para el módulo
+             * de Informes (que se implementará después).
+             * @param {string} prueba  'prueba1' | 'prueba2' | 'prueba3'
+             */
+            function enviarGranulometriaAInforme(prueba) {
+                const idx = prueba.slice(-1);
+                const table = document.getElementById(`m2_gran_table_${idx}`);
+                if (!table) return;
+
+                // --- 1. Extraer la tabla fila por fila ---
+                const datosTabla = [];
+                table.querySelectorAll('tbody tr').forEach(row => {
+                    datosTabla.push({
+                        tamiz:         row.cells[0].textContent.trim(),
+                        aperturaMm:    row.cells[1].textContent.trim(),
+                        pesoVacio:     row.querySelector('.m2_peso_vacio').value || '',
+                        pesoMuestra:   row.querySelector('.m2_peso_muestra').value || '',
+                        pesoRetenido:  parseFloat(row.querySelector('.m2_peso_retenido').value) || 0,
+                        pctRetenido:   parseFloat(row.cells[5].textContent) || 0,
+                        pctAcumulado:  parseFloat(row.cells[6].textContent) || 0,
+                        pctPasa:       parseFloat(row.cells[7].textContent) || 0
+                    });
+                });
+
+                // --- 2. Extraer los resultados calculados ---
+                const mfText = document.getElementById(`m2_mf_result_${idx}`)?.textContent || '';
+                const mf = parseFloat(mfText.replace('Módulo de Finura = ', '')) || 0;
+
+                const pesoTotalText = document.getElementById(`m2_peso_total_${idx}`)?.textContent || '0 g';
+                const pesoTotal = parseFloat(pesoTotalText.replace(' g', '')) || 0;
+
+                const resultadoTM  = document.getElementById(`m2_tm_${idx}`)?.textContent  || 'No determinado';
+                const resultadoTMN = document.getElementById(`m2_tmn_${idx}`)?.textContent || 'No determinado';
+
+                const datosResultados = {
+                    pesoTotal: pesoTotal,
+                    moduloFinura: mf,
+                    tamanoMaximo: resultadoTM,
+                    tamanoMaximoNominal: resultadoTMN
+                };
+
+                // --- 3. Empaquetar todo en un único objeto JSON ---
+                const reporteData = {
+                    tipo: "Granulometría ASTM C136",
+                    prueba: prueba,
+                    fecha: new Date().toISOString(),
+                    tabla: datosTabla,
+                    resultados: datosResultados
+                };
+
+                // --- 4. Guardar en localStorage ---
+                try {
+                    localStorage.setItem('datosInformeActual', JSON.stringify(reporteData));
+                    showToast(
+                        '✅ Datos guardados. Ve a la pestaña de Informes para generar tu documento.',
+                        false,
+                        2800
+                    );
+                } catch (err) {
+                    console.error('Error guardando datos del informe:', err);
+                    showToast('⚠️ Error al guardar los datos del informe', true, 2400);
+                }
             }
 
             // ==================================================================
             // ==================== FUNCIONES DE CÁLCULO ====================
             // ==================================================================
-            // Nota: no se modifica su lógica. Solo se añaden llamadas al final
-            // a las funciones de dibujo correspondientes.
 
             function calcModulo1() {
                 const shape = $('m1_geo_shape').value;
@@ -1685,51 +1666,101 @@
                 const FS = safeDiv(sigma_fallo_MPa, sigma_adm_MPa);
                 $('m1_fs_result').textContent = `FS = ${FS.toFixed(2)}`;
 
-                // --- Visualizaciones del Módulo 1 ---
                 drawFSGauge();
                 drawEsfuerzoAnimation();
             }
 
+            /* Índices de celda: [0]Tamiz [1]Apertura [2]P.Vacío [3]P.+Muestra
+               [4]Input Peso Ret. [5]%Ret [6]%Acum [7]%Pasa */
             function calcGranulometria(prueba) {
                 const idx = prueba.slice(-1);
                 const table = document.getElementById(`m2_gran_table_${idx}`);
                 if (!table) return;
+
                 const rows = table.querySelectorAll('tbody tr');
                 const pesos = [];
-                rows.forEach(row => { pesos.push(parseFloat(row.querySelector('.m2_peso_retenido').value) || 0); });
-                const total = pesos.reduce((a,b)=>a+b,0);
-                let acum = 0;
-                const stdSeries = ['3"', '1 1/2"', '3/4"', '3/8"', 'No. 4', 'No. 8', 'No. 16', 'No. 30', 'No. 50', 'No. 100'];
-                let mfSum = 0;
-                rows.forEach((row, idxRow) => {
-                    const tamiz = row.cells[0].textContent.trim();
-                    const pctRet = total > 0 ? (pesos[idxRow] / total) * 100 : 0;
-                    acum += pctRet;
-                    row.cells[2].textContent = pctRet.toFixed(2);
-                    row.cells[3].textContent = acum.toFixed(2);
-                    row.cells[4].textContent = (100 - acum).toFixed(2);
-                    if (stdSeries.includes(tamiz)) mfSum += acum;
+                rows.forEach(row => {
+                    pesos.push(parseFloat(row.querySelector('.m2_peso_retenido').value) || 0);
                 });
+                const total = pesos.reduce((a, b) => a + b, 0);
+
+                const stdSeries = ['3/8"', 'No. 4', 'No. 8', 'No. 16', 'No. 30', 'No. 50', 'No. 100'];
+
+                let acum = 0;
+                let mfSum = 0;
+                let tm = null;
+                let tmn = null;
+                let tmnFound = false;
+
+                rows.forEach((row, i) => {
+                    const tamiz = row.cells[0].textContent.trim();
+                    const apertura = row.cells[1].textContent.trim();
+                    const peso = pesos[i];
+
+                    const pctRet = total > 0 ? (peso / total) * 100 : 0;
+                    acum += pctRet;
+                    const pctAcum = acum;
+                    const pctPasa = 100 - pctAcum;
+
+                    row.cells[5].textContent = pctRet.toFixed(2);
+                    row.cells[6].textContent = pctAcum.toFixed(2);
+                    row.cells[7].textContent = pctPasa.toFixed(2);
+
+                    if (stdSeries.includes(tamiz)) mfSum += pctAcum;
+
+                    if (total > 0 && tamiz !== 'Fondo' && Math.abs(pctPasa - 100) < 0.005) {
+                        tm = { tamiz, apertura };
+                    }
+                    if (!tmnFound && total > 0 && tamiz !== 'Fondo' && pctPasa >= 90 && pctPasa < 100) {
+                        tmn = { tamiz, apertura };
+                        tmnFound = true;
+                    }
+                });
+
                 const MF = mfSum / 100;
                 const mfResult = document.getElementById(`m2_mf_result_${idx}`);
                 if (mfResult) mfResult.textContent = `Módulo de Finura = ${MF.toFixed(2)}`;
-                const estado = {};
-                rows.forEach(row => { estado[row.cells[0].textContent.trim()] = parseFloat(row.querySelector('.m2_peso_retenido').value) || 0; });
-                saveState(`m2_granulometria_${prueba}`, estado);
 
-                // --- Visualización: curva granulométrica ASTM C136 ---
+                const pesoTotalEl = document.getElementById(`m2_peso_total_${idx}`);
+                if (pesoTotalEl) pesoTotalEl.textContent = `${total.toFixed(1)} g`;
+
+                const tmEl = document.getElementById(`m2_tm_${idx}`);
+                if (tmEl) tmEl.textContent = tm ? `${tm.tamiz} (${tm.apertura} mm)` : 'No determinado';
+
+                const tmnEl = document.getElementById(`m2_tmn_${idx}`);
+                if (tmnEl) tmnEl.textContent = tmn ? `${tmn.tamiz} (${tmn.apertura} mm)` : 'No determinado';
+
+                const estadoRet = {}, estadoVacio = {}, estadoMuestra = {};
+                rows.forEach(row => {
+                    const tamiz = row.cells[0].textContent.trim();
+                    estadoRet[tamiz] = parseFloat(row.querySelector('.m2_peso_retenido').value) || 0;
+                    const v = row.querySelector('.m2_peso_vacio').value;
+                    const m = row.querySelector('.m2_peso_muestra').value;
+                    if (v !== '') estadoVacio[tamiz] = v;
+                    if (m !== '') estadoMuestra[tamiz] = m;
+                });
+                saveState(`m2_granulometria_${prueba}`, estadoRet);
+                saveState(`m2_gran_vacio_${prueba}`, estadoVacio);
+                saveState(`m2_gran_muestra_${prueba}`, estadoMuestra);
+
                 drawGranulometriaChart(prueba);
             }
 
             function loadGranulometria(prueba) {
                 const idx = prueba.slice(-1);
-                const estado = loadState(`m2_granulometria_${prueba}`, {});
+                const estadoRet = loadState(`m2_granulometria_${prueba}`, {});
+                const estadoVacio = loadState(`m2_gran_vacio_${prueba}`, {});
+                const estadoMuestra = loadState(`m2_gran_muestra_${prueba}`, {});
                 const table = document.getElementById(`m2_gran_table_${idx}`);
                 if (!table) return;
                 table.querySelectorAll('tbody tr').forEach(row => {
                     const tamiz = row.cells[0].textContent.trim();
-                    const input = row.querySelector('.m2_peso_retenido');
-                    input.value = estado.hasOwnProperty(tamiz) ? estado[tamiz] : '';
+                    const inputRet = row.querySelector('.m2_peso_retenido');
+                    const inputVacio = row.querySelector('.m2_peso_vacio');
+                    const inputMuestra = row.querySelector('.m2_peso_muestra');
+                    inputRet.value = estadoRet.hasOwnProperty(tamiz) ? estadoRet[tamiz] : '';
+                    inputVacio.value = estadoVacio.hasOwnProperty(tamiz) ? estadoVacio[tamiz] : '';
+                    inputMuestra.value = estadoMuestra.hasOwnProperty(tamiz) ? estadoMuestra[tamiz] : '';
                 });
                 calcGranulometria(prueba);
             }
@@ -1750,7 +1781,6 @@
                 const vac_suelto = g_base > 0 ? ((g_base * gamma_w - pu_suelto) / (g_base * gamma_w)) * 100 : 0;
                 const vac_comp = g_base > 0 ? ((g_base * gamma_w - pu_comp) / (g_base * gamma_w)) * 100 : 0;
                 document.getElementById(`m2_vacios_result_${idx}`).textContent = `% Vacíos (suelto) = ${vac_suelto.toFixed(2)}%, (compactado) = ${vac_comp.toFixed(2)}%`;
-                // (Sin visualización: son valores aislados sin nada que comparar)
             }
 
             function calcModulo3(prueba) {
@@ -1794,7 +1824,6 @@
                 const eN = safeDiv(Pb_N, areaNeta);
                 document.getElementById(`m3_bloque_result_${idx}`).textContent = `Área bruta = ${areaBruta.toFixed(0)} mm², Área neta = ${areaNeta.toFixed(0)} mm², σ bruto = ${eB.toFixed(2)} MPa, σ neto = ${eN.toFixed(2)} MPa`;
 
-                // --- Visualización: comparativa f'c vs f'cr (ACI) ---
                 drawACIComparison(prueba);
             }
 
@@ -1821,7 +1850,6 @@
                 const hm = parseFloat(document.getElementById(`m4_mad_h_${idx}`).value) || 0;
                 document.getElementById(`m4_madera_result_${idx}`).textContent = `MOR = ${safeDiv(3 * Pm * Lm, 2 * bm * hm * hm).toFixed(2)} MPa`;
 
-                // --- Visualizaciones del Módulo 4 ---
                 drawTorsionAnimation(prueba);
                 drawMaderaBeam(prueba);
             }
@@ -1842,11 +1870,10 @@
                 const VFA = safeDiv(VMA - VTM, VMA) * 100;
                 document.getElementById(`m5_vol_result_${idx}`).textContent = `VTM = ${VTM.toFixed(2)}%, VMA = ${VMA.toFixed(2)}%, VFA = ${VFA.toFixed(2)}%`;
 
-                // --- Visualización: composición volumétrica apilada ---
                 drawMarshallStackedBar(prueba);
             }
 
-            // ==================== ESTADÍSTICA (Módulo 6) ====================
+            // ==================== ESTADÍSTICA ====================
             let statsValues = loadState('stats_values', []);
             function renderStats() {
                 const tbody = $('m6_stats_body');
@@ -1868,8 +1895,6 @@
                     $('m6_stats_result').textContent = 'n = 0, Media = 0, s = 0, CV = 0%';
                 }
                 saveState('stats_values', statsValues);
-
-                // --- Visualización: carta de control ---
                 drawControlChart();
             }
             window.addStatValue = function() {
@@ -1896,9 +1921,12 @@
                     } else {
                         const table = document.getElementById(`m2_gran_table_${prueba}`);
                         if (table) {
-                            table.querySelectorAll('.m2_peso_retenido').forEach(input => input.value = '');
+                            table.querySelectorAll('.m2_peso_retenido, .m2_peso_vacio, .m2_peso_muestra')
+                                 .forEach(input => input.value = '');
                             calcGranulometria('prueba' + prueba);
                         }
+                        saveState(`m2_gran_vacio_prueba${prueba}`, {});
+                        saveState(`m2_gran_muestra_prueba${prueba}`, {});
                     }
                 } else {
                     const prefix = module === 'm3' ? 'm3' : module === 'm4' ? 'm4' : 'm5';
@@ -1917,6 +1945,31 @@
             }
             function handleInputOrChange(e) {
                 const target = e.target;
+
+                // --- Auto-cálculo: Peso Vacío / Peso + Muestra → Peso Retenido ---
+                if (target.classList.contains('m2_peso_vacio') || target.classList.contains('m2_peso_muestra')) {
+                    const row = target.closest('tr');
+                    const table = target.closest('table');
+                    if (row && table) {
+                        const vacioInput = row.querySelector('.m2_peso_vacio');
+                        const muestraInput = row.querySelector('.m2_peso_muestra');
+                        const retenidoInput = row.querySelector('.m2_peso_retenido');
+                        const vacioStr = vacioInput.value.trim();
+                        const muestraStr = muestraInput.value.trim();
+                        if (muestraStr !== '') {
+                            const vacio = vacioStr === '' ? 0 : (parseFloat(vacioStr) || 0);
+                            const muestra = parseFloat(muestraStr) || 0;
+                            const ret = Math.max(0, muestra - vacio);
+                            retenidoInput.value = String(Math.round(ret * 100) / 100);
+                        }
+                        const idx = table.id.slice(-1);
+                        calcGranulometria('prueba' + idx);
+                        scheduleSaveFeedback();
+                    }
+                    return;
+                }
+
+                // --- Peso Retenido directo ---
                 if (target.classList.contains('m2_peso_retenido')) {
                     const table = target.closest('table');
                     if (table) {
@@ -1926,6 +1979,7 @@
                     }
                     return;
                 }
+
                 if (target.id) {
                     const ok = saveState(target.id, target.value);
                     if (!ok) showSaveIndicator(false);
@@ -1993,7 +2047,8 @@
             function restoreState() {
                 for (let i = 0; i < localStorage.length; i++) {
                     const key = localStorage.key(i);
-                    if (key && key.startsWith('m') && !key.includes('granulometria') && !key.includes('volumetric')) {
+                    if (key && key.startsWith('m') && !key.includes('granulometria') && !key.includes('volumetric')
+                        && !key.includes('gran_vacio') && !key.includes('gran_muestra')) {
                         const el = document.getElementById(key);
                         if (el) el.value = loadState(key);
                     }
