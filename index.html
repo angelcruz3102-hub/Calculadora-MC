@@ -1112,7 +1112,6 @@
                     btn.textContent = btn.textContent.replace(/Prueba\s+1/, 'Prueba ' + prefix);
                     btn.dataset.prueba = prefix;
                 });
-                // Actualizar el botón "Enviar a Informe" para pruebas 2 y 3
                 target.querySelectorAll('.send-report-btn').forEach(btn => {
                     btn.dataset.prueba = prefix;
                 });
@@ -1140,6 +1139,7 @@
                 return true;
             }
 
+            // Mapa de aberturas en mm (ASTM). Coincide con la columna "Apertura (mm)" del HTML.
             const SIEVE_MM = {
                 '3"': 75, '2"': 50, '1 1/2"': 37.5, '1"': 25, '3/4"': 19,
                 '1/2"': 12.5, '3/8"': 9.5, 'No. 4': 4.75, 'No. 8': 2.36,
@@ -1557,29 +1557,60 @@
             // ==================== CONECTOR: GRANULOMETRÍA → INFORME ===========
             // ==================================================================
             /**
-             * Recolecta los datos de la tabla de granulometría de la prueba indicada,
-             * los empaqueta junto con los resultados calculados y los guarda en
-             * localStorage bajo la clave 'datosInformeActual', lista para el módulo
-             * de Informes (que se implementará después).
-             * @param {string} prueba  'prueba1' | 'prueba2' | 'prueba3'
+             * Recolecta los datos de la tabla de granulometría y los guarda en localStorage
+             * bajo la clave 'datosInformeActual', lista para el módulo de Informes.
+             *
+             * CORRECCIONES APLICADAS:
+             *  - La clave 'abertura' ahora es el nombre primario (numérico, para gráfica).
+             *  - Se añaden alias 'apertura' y 'aperturaMm' por retrocompatibilidad.
+             *  - Se añade 'aperturaTexto' con el string original ("75.0" o "—") para tabla.
+             *  - Fallback a SIEVE_MM[tamiz] si el textContent de la celda viene vacío o "—".
+             *  - console.log detallado para verificar qué se envía.
              */
             function enviarGranulometriaAInforme(prueba) {
                 const idx = prueba.slice(-1);
                 const table = document.getElementById(`m2_gran_table_${idx}`);
-                if (!table) return;
+                if (!table) {
+                    console.error('❌ No se encontró la tabla de granulometría:', `m2_gran_table_${idx}`);
+                    showToast('⚠️ No se encontró la tabla de granulometría', true, 2400);
+                    return;
+                }
 
                 // --- 1. Extraer la tabla fila por fila ---
                 const datosTabla = [];
                 table.querySelectorAll('tbody tr').forEach(row => {
+                    const tamiz = row.cells[0].textContent.trim();
+                    const aperturaTexto = row.cells[1].textContent.trim();
+
+                    // Fallback robusto: intentar parsear el texto; si falla, usar SIEVE_MM
+                    let aberturaNum = parseFloat(aperturaTexto);
+                    if (isNaN(aberturaNum)) {
+                        aberturaNum = (SIEVE_MM[tamiz] !== undefined) ? SIEVE_MM[tamiz] : null;
+                    }
+
+                    const pesoVacio    = row.querySelector('.m2_peso_vacio').value || '';
+                    const pesoMuestra  = row.querySelector('.m2_peso_muestra').value || '';
+                    const pesoRetenido = parseFloat(row.querySelector('.m2_peso_retenido').value) || 0;
+                    const pctRetenido  = parseFloat(row.cells[5].textContent) || 0;
+                    const pctAcumulado = parseFloat(row.cells[6].textContent) || 0;
+                    const pctPasa      = parseFloat(row.cells[7].textContent) || 0;
+
                     datosTabla.push({
-                        tamiz:         row.cells[0].textContent.trim(),
-                        aperturaMm:    row.cells[1].textContent.trim(),
-                        pesoVacio:     row.querySelector('.m2_peso_vacio').value || '',
-                        pesoMuestra:   row.querySelector('.m2_peso_muestra').value || '',
-                        pesoRetenido:  parseFloat(row.querySelector('.m2_peso_retenido').value) || 0,
-                        pctRetenido:   parseFloat(row.cells[5].textContent) || 0,
-                        pctAcumulado:  parseFloat(row.cells[6].textContent) || 0,
-                        pctPasa:       parseFloat(row.cells[7].textContent) || 0
+                        tamiz:         tamiz,
+
+                        // --- CLAVES DE APERTURA ---
+                        abertura:      aberturaNum,      // ← PRIMARIA (nombre pedido, numérico)
+                        apertura:      aberturaNum,      // ← alias ortográfico
+                        aperturaMm:    aberturaNum,      // ← alias retrocompatible
+                        aperturaTexto: aperturaTexto,    // ← string original ("75.0" o "—")
+
+                        // --- RESTO DE CAMPOS ---
+                        pesoVacio:     pesoVacio,
+                        pesoMuestra:   pesoMuestra,
+                        pesoRetenido:  pesoRetenido,
+                        pctRetenido:   pctRetenido,
+                        pctAcumulado:  pctAcumulado,
+                        pctPasa:       pctPasa
                     });
                 });
 
@@ -1594,22 +1625,54 @@
                 const resultadoTMN = document.getElementById(`m2_tmn_${idx}`)?.textContent || 'No determinado';
 
                 const datosResultados = {
-                    pesoTotal: pesoTotal,
-                    moduloFinura: mf,
-                    tamanoMaximo: resultadoTM,
+                    pesoTotal:           pesoTotal,
+                    moduloFinura:        mf,
+                    tamanoMaximo:        resultadoTM,
                     tamanoMaximoNominal: resultadoTMN
                 };
 
                 // --- 3. Empaquetar todo en un único objeto JSON ---
                 const reporteData = {
-                    tipo: "Granulometría ASTM C136",
-                    prueba: prueba,
-                    fecha: new Date().toISOString(),
-                    tabla: datosTabla,
+                    tipo:       "Granulometría ASTM C136",
+                    prueba:     prueba,
+                    fecha:      new Date().toISOString(),
+                    tabla:      datosTabla,
                     resultados: datosResultados
                 };
 
-                // --- 4. Guardar en localStorage ---
+                // --- 4. LOGS DE VERIFICACIÓN (para depurar en consola) ---
+                try {
+                    const primerasFilas = datosTabla.slice(0, 3).map(f => ({
+                        tamiz: f.tamiz,
+                        abertura: f.abertura,
+                        pesoRetenido: f.pesoRetenido,
+                        pctPasa: f.pctPasa
+                    }));
+                    const conApertura = datosTabla.filter(f => f.abertura !== null && !isNaN(f.abertura));
+                    const sinApertura = datosTabla.filter(f => f.abertura === null || isNaN(f.abertura));
+
+                    console.group('📤 Enviando granulometría a Informe');
+                    console.log('Prueba:', prueba);
+                    console.log('Total filas:', datosTabla.length);
+                    console.log('Filas con abertura válida:', conApertura.length);
+                    console.log('Filas sin abertura válida:', sinApertura.length,
+                                sinApertura.map(f => f.tamiz));
+                    console.log('Primeras 3 filas:', primerasFilas);
+                    console.log('Eje X (abertura):', datosTabla.map(f => f.abertura));
+                    console.log('Eje Y (% pasa):', datosTabla.map(f => f.pctPasa));
+                    console.log('Resultados:', datosResultados);
+                    console.log('Objeto completo:', reporteData);
+                    console.groupEnd();
+
+                    if (sinApertura.length > 0) {
+                        console.warn('⚠️ Hay filas sin abertura válida. Revisa el mapa SIEVE_MM o el HTML.',
+                                     sinApertura);
+                    }
+                } catch (logErr) {
+                    console.warn('No se pudo generar el log de depuración:', logErr);
+                }
+
+                // --- 5. Guardar en localStorage ---
                 try {
                     localStorage.setItem('datosInformeActual', JSON.stringify(reporteData));
                     showToast(
